@@ -1,0 +1,37 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# JavaScript
+node_modules/
+.npm-cache/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.uv-cache/
+htmlcov/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs and local runtime files
+*.log
+*.pid
+
+# Private uploads and generated user data
+uploads/
+private-data/

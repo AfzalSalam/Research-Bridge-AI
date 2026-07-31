@@ -1,0 +1,29 @@
+{
+  "name": "research-bridge-ai",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.17.0",
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11 <12"
+  },
+  "workspaces": [
+    "apps/web"
+  ],
+  "overrides": {
+    "next@16.2.12": {
+      "postcss": "8.5.25",
+      "sharp": "0.35.3"
+    }
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @research-bridge/web",
+    "lint": "npm run lint --workspace @research-bridge/web",
+    "typecheck": "npm run typecheck --workspace @research-bridge/web",
+    "test": "npm run test --workspace @research-bridge/web",
+    "build": "npm run build --workspace @research-bridge/web"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
+  }
+}
