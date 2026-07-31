@@ -10,7 +10,9 @@ No application code was built. The repository, Git state, local toolchain,
 product documents, and Figma Make prototype were audited. A Phase 00 execution
 plan now records the current state, approved placement-release direction,
 target architecture, design recommendations, risks, validation, and rollback
-strategy.
+strategy. After approval, `PROJECT_SPEC.md`, `ROADMAP.md`, `START_HERE.md`, and
+`CODEX_PROMPTS.md` were reconciled so the placement release and post-placement
+ranking research are no longer mixed together.
 
 ### Why it exists
 
@@ -91,15 +93,13 @@ git diff --check
 - No application, database, API, tests, CI, or deployment exists yet.
 - The Figma Make prototype was audited as a visual reference; its Vite code was
   not imported.
-- Some product documents still describe advanced ranking inside the original
-  pre-deployment sequence. They should be reconciled after this plan is
-  approved.
+- The documentation is reconciled, but it describes planned behavior rather
+  than an implemented application.
 
 ### Next step
 
-Approve or amend the Phase 00 plan, reconcile the authoritative product and
-roadmap documents, create the first documentation baseline commit, and then
-prepare `docs/plans/phase-01-foundation.md` before writing application code.
+Prepare and approve `docs/plans/phase-01-foundation.md`, then implement only the
+reproducible frontend/backend/database foundation and its quality gates.
 
 ---
 

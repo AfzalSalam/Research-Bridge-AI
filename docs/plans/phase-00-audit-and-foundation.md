@@ -1,6 +1,6 @@
 # Phase 00 — Repository Audit and Foundation Plan
 
-**Status:** Approved
+**Status:** Complete
 
 **Prepared:** 2026-07-31
 
@@ -381,7 +381,7 @@ There are no genuinely blocking questions for Phase 1.
 - [x] Create this execution plan.
 - [x] Update the learning log.
 - [x] User approves or corrects this plan.
-- [ ] Establish the accepted documentation baseline in Git.
+- [x] Establish the accepted documentation baseline in Git.
 
 ### Placement release gate
 
@@ -439,8 +439,6 @@ not weaken these quality gates.
 
 ## 14. Exact next step
 
-Review and approve or amend this plan. After approval, reconcile
-`PROJECT_SPEC.md`, `ROADMAP.md`, and `CODEX_PROMPTS.md` with the placement
-release boundary, establish the documentation baseline commit, and then run
-**Phase 1 — Foundation only** using a new
-`docs/plans/phase-01-foundation.md` before writing application code.
+Create and approve `docs/plans/phase-01-foundation.md`, then implement **Phase
+1 — Foundation only**. Do not begin product features, academic integrations,
+LLM work, authentication, or deployment during foundation.
