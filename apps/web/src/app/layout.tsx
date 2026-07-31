@@ -5,6 +5,7 @@ import "@fontsource-variable/source-serif-4";
 import "./globals.css";
 
 import { SiteHeader } from "@/components/navigation/site-header";
+import { DemoProvider } from "@/features/demo/demo-store";
 
 export const metadata: Metadata = {
   title: {
@@ -25,8 +26,10 @@ export default function RootLayout({
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>
-        <SiteHeader />
-        {children}
+        <DemoProvider>
+          <SiteHeader />
+          {children}
+        </DemoProvider>
       </body>
     </html>
   );

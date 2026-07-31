@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
-import { RouteShell } from "@/components/layout/route-shell";
+import { Container } from "@/components/layout/container";
+import { PageHeader } from "@/components/layout/page-header";
+import { ApplicationsExperience } from "@/features/applications/applications-experience";
+import { DemoNotice } from "@/features/demo/components/demo-notice";
+import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
 
 export const metadata: Metadata = {
   title: "Application Tracker",
@@ -9,17 +13,19 @@ export const metadata: Metadata = {
 
 export default function ApplicationsPage() {
   return (
-    <RouteShell
-      description="Track deliberate, human-reviewed outreach from saved candidate to final outcome."
-      eyebrow="Applications"
-      plannedItems={[
-        "Explicit application status transitions",
-        "Editable outreach drafts with evidence references",
-        "No automatic or mass email sending",
-      ]}
-      stateDescription="The tracker will begin once saved entities and outreach drafts have durable backend records."
-      stateTitle="You have not tracked any applications"
-      title="Keep every research conversation accountable"
-    />
+    <main id="main-content">
+      <Container className="py-10 sm:py-14 lg:py-16">
+        <PageHeader
+          description="Move saved opportunities and human-reviewed outreach through explicit states without confusing preparation with submission."
+          eyebrow="Step 5 · Track"
+          title="Keep every research conversation accountable"
+        />
+        <WorkflowSteps current="Track" />
+        <DemoNotice className="mt-8" />
+        <div className="mt-8">
+          <ApplicationsExperience />
+        </div>
+      </Container>
+    </main>
   );
 }

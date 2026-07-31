@@ -25,12 +25,12 @@ export default async function Home() {
             <p className="mt-8 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl sm:leading-9">
               Research Bridge AI turns a broad interest into reviewable papers,
               plausible mentors, visible evidence, and outreach you approve.
-              Unknown facts remain unknown.
+              This recruiter demo makes every fictional record and unknown fact explicit.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Button asChild size="lg" variant="evidence">
-                <Link href="/discover">
-                  Explore the shell
+                <Link href="/profile">
+                  Launch the product demo
                   <ArrowRight aria-hidden="true" />
                 </Link>
               </Button>
@@ -42,7 +42,7 @@ export default async function Home() {
 
           <aside className="lg:pt-28" aria-label="Live system status">
             <p className="mb-3 text-xs font-bold tracking-[0.12em] text-brand-indigo uppercase">
-              Phase 2 · Interface foundation
+              Phase 3 · Typed product journey
             </p>
             <HealthCard result={health} />
           </aside>

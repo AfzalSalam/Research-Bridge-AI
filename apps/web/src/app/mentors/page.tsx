@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
-import { RouteShell } from "@/components/layout/route-shell";
+import { Container } from "@/components/layout/container";
+import { PageHeader } from "@/components/layout/page-header";
+import { DemoNotice } from "@/features/demo/components/demo-notice";
+import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
+import { MentorExperience } from "@/features/mentors/mentor-experience";
 
 export const metadata: Metadata = {
   title: "Research Mentors",
@@ -9,17 +13,19 @@ export const metadata: Metadata = {
 
 export default function MentorsPage() {
   return (
-    <RouteShell
-      description="Review professor candidates through publications, affiliations, identifiers, and transparent match evidence."
-      eyebrow="Mentors"
-      plannedItems={[
-        "Professor identity resolution with ambiguity surfaced",
-        "Publication-level evidence and source provenance",
-        "Deterministic matching added only after retrieval quality is measured",
-      ]}
-      stateDescription="Professor records and matching are intentionally absent until the underlying academic evidence pipeline is trustworthy."
-      stateTitle="No professor evidence has been retrieved"
-      title="Understand the researcher before the match"
-    />
+    <main id="main-content">
+      <Container className="py-10 sm:py-14 lg:py-16">
+        <PageHeader
+          description="Inspect exactly why a fictional researcher appears, choose specific papers, and create a cautious outreach draft that remains yours to edit."
+          eyebrow="Step 3 · Evidence"
+          title="Understand the researcher before the match"
+        />
+        <WorkflowSteps current="Evidence" />
+        <DemoNotice className="mt-8" />
+        <div className="mt-8">
+          <MentorExperience />
+        </div>
+      </Container>
+    </main>
   );
 }

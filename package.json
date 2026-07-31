@@ -21,6 +21,7 @@
     "lint": "npm run lint --workspace @research-bridge/web",
     "typecheck": "npm run typecheck --workspace @research-bridge/web",
     "test": "npm run test --workspace @research-bridge/web",
+    "test:e2e": "npm run test:e2e --workspace @research-bridge/web",
     "build": "npm run build --workspace @research-bridge/web"
   },
   "allowScripts": {

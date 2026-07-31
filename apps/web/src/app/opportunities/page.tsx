@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
-import { RouteShell } from "@/components/layout/route-shell";
+import { Container } from "@/components/layout/container";
+import { PageHeader } from "@/components/layout/page-header";
+import { DemoNotice } from "@/features/demo/components/demo-notice";
+import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
+import { OpportunitiesExperience } from "@/features/opportunities/opportunities-experience";
 
 export const metadata: Metadata = {
   title: "Research Opportunities",
@@ -9,17 +13,19 @@ export const metadata: Metadata = {
 
 export default function OpportunitiesPage() {
   return (
-    <RouteShell
-      description="Find research internships and lab opportunities without converting guesses into facts."
-      eyebrow="Opportunities"
-      plannedItems={[
-        "Verified source URL and last-checked timestamp",
-        "Unknown funding, mode, and availability shown honestly",
-        "Saved opportunities with clear provenance",
-      ]}
-      stateDescription="Opportunity ingestion and verification arrive after the core discovery workflow. No unverified listings are shown here."
-      stateTitle="No verified opportunities are available"
-      title="Research openings you can verify"
-    />
+    <main id="main-content">
+      <Container className="py-10 sm:py-14 lg:py-16">
+        <PageHeader
+          description="Filter fictional opportunities, inspect their source metadata, and save only what you intend to review. Unknown fields remain explicit."
+          eyebrow="Step 4 · Save"
+          title="Research openings you can verify"
+        />
+        <WorkflowSteps current="Save" />
+        <DemoNotice className="mt-8" />
+        <div className="mt-8">
+          <OpportunitiesExperience />
+        </div>
+      </Container>
+    </main>
   );
 }

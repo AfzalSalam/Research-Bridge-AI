@@ -2,14 +2,16 @@
 
 Research Bridge AI is an evidence-first academic discovery and research-
 opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the completed Phase 2 visual system: a responsive
-Next.js shell, a FastAPI backend, and local PostgreSQL with pgvector available
+full-stack foundation and the completed Phase 3 product demo: a responsive
+Next.js journey, a FastAPI backend, and local PostgreSQL with pgvector available
 for later phases.
 
-Product features such as editable profiles, OpenAlex search, mentor relevance,
-outreach drafting, internships, and authentication are intentionally not
-implemented yet. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active plan under
-`docs/plans/` for the approved sequence.
+The browser demo includes an editable fictional profile, transparent fixture
+search states, paper-backed fictional researcher records, deterministic custom
+outreach, fictional opportunities, and an application tracker. It is visibly
+mocked: no academic API, LLM, email provider, authentication, or durable
+database is connected yet. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active
+plan under `docs/plans/` for the approved sequence.
 
 ## Architecture
 
@@ -17,6 +19,10 @@ implemented yet. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active plan under
 Browser
   -> Next.js App Router (apps/web, port 3000)
       -> responsive root shell + project-owned design system
+      -> validated DemoProvider state (tab-scoped sessionStorage)
+          -> typed fictional fixtures
+          -> deterministic evidence-grounded draft template
+          -> profile, discovery, mentors, opportunities, applications
       -> typed server-side health client
           -> FastAPI (apps/api, port 8000)
               -> /api/v1/health
@@ -25,9 +31,9 @@ Docker Compose
   -> PostgreSQL 17 + pgvector (port 5432)
 ```
 
-The health endpoint deliberately does not depend on PostgreSQL. It confirms
-that the API process and typed frontend/backend boundary work even while the
-database is unavailable.
+The Phase 3 journey is deliberately local and works without FastAPI. The
+landing-page health endpoint still confirms the typed frontend/backend boundary
+and deliberately does not depend on PostgreSQL.
 
 ## Prerequisites
 
@@ -95,18 +101,26 @@ Open another PowerShell window at the repository root:
 npm.cmd run dev
 ```
 
-Open <http://localhost:3000>. The page shows either the typed API health
-response or an honest unavailable state.
+Open <http://localhost:3000> and choose **Launch the product demo**. FastAPI and
+PostgreSQL are optional for the Phase 3 fictional journey; start them when you
+want the landing page to show a healthy full-stack boundary.
 
 Useful frontend routes:
 
 - `/design-system`: internal tokens, primitives, form patterns, and data-state
   gallery;
-- `/profile`, `/discover`, `/mentors`, `/opportunities`, `/applications`:
-  honest responsive boundaries for later product phases.
+- `/profile`: validated fictional student context;
+- `/discover`: transparent complete, partial, empty, error, and loading fixture
+  scenarios;
+- `/mentors`: responsive master-detail evidence and editable deterministic
+  outreach;
+- `/opportunities`: source-linked fictional listings, unknown fields, filters,
+  and save actions;
+- `/applications`: explicit status, notes, follow-up, and event history.
 
-The route shells contain no fake mentor records, scores, opportunities, or
-application data. They document scope until the typed demo journey is built.
+Every person, paper, institution, and opportunity is fictional and uses inert
+`example.org` evidence URLs. Changes remain in the current browser tab. Use
+**Reset demo** on any product route to restore the canonical fixture state.
 
 ## Quality checks
 
@@ -117,8 +131,13 @@ npm.cmd run lint
 npm.cmd run typecheck
 npm.cmd run test
 npm.cmd run build
+npm.cmd run test:e2e
 npm.cmd audit --omit=dev --audit-level=high
 ```
+
+`test:e2e` creates a production build, starts an isolated local server, runs the
+desktop recruiter journey plus mobile and responsive-matrix checks, and then
+stops the server.
 
 Backend:
 
@@ -165,6 +184,13 @@ API_BASE_URL=http://localhost:8000
 ```
 
 Restart the Next.js development server after changing environment variables.
+The Phase 3 demo routes still work because they are intentionally local.
+
+### Demo changes disappeared
+
+Phase 3 uses `sessionStorage`, so data is scoped to the current browser tab.
+Closing the tab or choosing **Reset demo** returns to the canonical fictional
+fixtures. Durable persistence arrives in a later database phase.
 
 ### uv selects Python 3.14
 
@@ -196,4 +222,5 @@ the decision and retest evidence are recorded in the Phase 1 plan.
 - Roadmap: `ROADMAP.md`
 - Phase 1 plan: `docs/plans/phase-01-foundation.md`
 - Phase 2 plan: `docs/plans/phase-02-design-system-and-responsive-shell.md`
+- Phase 3 plan: `docs/plans/phase-03-typed-mock-product-journey.md`
 - Learning log: `docs/LEARNING_LOG.md`

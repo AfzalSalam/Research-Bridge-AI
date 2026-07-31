@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
-import { RouteShell } from "@/components/layout/route-shell";
+import { Container } from "@/components/layout/container";
+import { PageHeader } from "@/components/layout/page-header";
+import { DemoNotice } from "@/features/demo/components/demo-notice";
+import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
+import { ProfileExperience } from "@/features/profile/profile-experience";
 
 export const metadata: Metadata = {
   title: "Research Profile",
@@ -9,17 +13,19 @@ export const metadata: Metadata = {
 
 export default function ProfilePage() {
   return (
-    <RouteShell
-      description="Build the verified student context that future matching and outreach will be allowed to use."
-      eyebrow="Profile"
-      plannedItems={[
-        "Research interests and preferred academic domains",
-        "Verified education, projects, skills, and availability",
-        "Private resume handling with explicit consent",
-      ]}
-      stateDescription="The responsive profile boundary is ready. Typed fields, validation, persistence, and privacy controls belong to the profile phase."
-      stateTitle="No profile form has been implemented yet"
-      title="Your research profile, grounded in facts"
-    />
+    <main id="main-content">
+      <Container className="py-10 sm:py-14 lg:py-16">
+        <PageHeader
+          description="Edit a fictional student profile and establish exactly which facts later explanations and drafts may reuse."
+          eyebrow="Step 1 · Profile"
+          title="Your research profile, grounded in facts"
+        />
+        <WorkflowSteps current="Profile" />
+        <DemoNotice className="mt-8" />
+        <div className="mt-8">
+          <ProfileExperience />
+        </div>
+      </Container>
+    </main>
   );
 }

@@ -40,6 +40,8 @@ and a Playwright critical flow.
 
 No real academic APIs, AI, authentication, or database persistence.
 
+**Status:** Complete.
+
 ## Phase 4 — Backend contracts
 
 Add modular FastAPI routers, configuration, structured errors, request IDs,

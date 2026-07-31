@@ -417,6 +417,185 @@ real academic APIs, persistence, ranking, or LLM behavior.
 
 ---
 
+## 2026-07-31 — Phase 3: Typed mock product journey
+
+### What was built
+
+- A complete fictional placement-demo journey from student profile through
+  discovery, researcher evidence, custom outreach, saved opportunities, and
+  application tracking.
+- Zod contracts for every demo entity and the complete browser state.
+- A reducer-driven React context with schema-versioned, validated
+  `sessionStorage` hydration and a global reset action.
+- Three visibly fictional researcher records, five fictional papers, and three
+  fictional opportunities. All source links use the reserved `example.org`
+  domain.
+- An honest discovery simulation with named stages and selectable complete,
+  partial, empty, and error outcomes.
+- A mobile list-to-detail mentor experience, selectable paper evidence, and an
+  editable deterministic email draft with provenance links.
+- Opportunity filtering/saving and an application tracker with explicit status
+  changes, notes, follow-up dates, and event history.
+- Unit tests for fixtures, state transitions, and draft grounding plus
+  Playwright coverage for the recruiter journey, mobile detail flow, and all
+  product routes at four responsive widths.
+
+### Why it exists
+
+Phase 2 proved the visual system. Phase 3 proves that the system can carry a
+coherent product story a recruiter can operate and inspect before real APIs or
+AI make the system expensive and harder to debug. It also freezes useful UI
+contracts for Phase 4: the backend can replace the fixture adapter without
+forcing a redesign.
+
+The demo is intentionally complex in explainable ways: validated data,
+deterministic state transitions, provenance, failure states, responsive
+master-detail behavior, and automated critical-flow testing. It avoids
+complexity that would be hard to defend, such as invented ranking scores,
+agent labels, or fake live integrations.
+
+### Concepts introduced
+
+- **Runtime schema:** Zod checks data when it enters the application, while
+  TypeScript checks how code uses that data during development.
+- **Hydration boundary:** the UI waits for the browser snapshot to be validated
+  before showing interactive forms, preventing saved data from overwriting fast
+  user input.
+- **Reducer:** a pure function maps the current state plus one named action to a
+  new state. This makes transitions testable and avoids scattered mutations.
+- **Versioned browser state:** the storage key and state schema carry a version,
+  so later incompatible structures can be rejected or migrated deliberately.
+- **Deterministic generation:** the outreach builder always produces content
+  from selected, validated inputs. It can be tested without an LLM or network.
+- **Evidence boundary:** an outreach draft can use the student profile, selected
+  mentor, and selected papers—nothing else.
+- **Master-detail interface:** desktop keeps candidates beside detail; mobile
+  turns them into two focused screens with an explicit back action.
+- **Honest partial failure:** available results remain visible while missing
+  sources are named; the UI does not silently substitute invented data.
+- **E2E test:** Playwright drives the built application like a user and verifies
+  that independent components work as one journey.
+
+### Data flow
+
+```text
+validated fictional fixtures
+  -> createInitialDemoState()
+  -> DemoProvider + demoReducer
+      -> validate stored Phase 3 snapshot with Zod
+      -> expose state and named actions to client features
+          -> Profile saves allowed student facts
+          -> Discover records query + explicit fixture outcome
+          -> Mentors selects researcher + paper evidence
+          -> deterministic draft builder
+              -> editable draft + evidence URLs + mode/version
+          -> Opportunities saves a source-linked fixture
+          -> Applications records explicit status/history
+      -> validate and persist the new tab-scoped snapshot
+```
+
+No Phase 3 route writes to FastAPI, PostgreSQL, an LLM, or an email provider.
+The only existing backend request remains the landing-page health check.
+
+### Important files
+
+- `apps/web/src/features/demo/contracts.ts`: Zod schemas and inferred
+  TypeScript types.
+- `apps/web/src/features/demo/fixtures.ts`: canonical fictional entities and
+  starting state.
+- `apps/web/src/features/demo/demo-reducer.ts`: pure state transitions.
+- `apps/web/src/features/demo/demo-store.tsx`: validated hydration, persistence,
+  and React context.
+- `apps/web/src/features/demo/draft-template.ts`: bounded deterministic email
+  construction.
+- `apps/web/src/features/profile/profile-experience.tsx`: validated profile
+  form and allowed-fact explanation.
+- `apps/web/src/features/discovery/discovery-experience.tsx`: staged fixture
+  search and complete/partial/empty/error states.
+- `apps/web/src/features/mentors/mentor-experience.tsx`: responsive evidence
+  inspection, paper selection, editable draft, and tracking action.
+- `apps/web/src/features/opportunities/opportunities-experience.tsx`: filters,
+  source truth, unknown states, saving, and tracking.
+- `apps/web/src/features/applications/applications-experience.tsx`: explicit
+  tracker transitions and history.
+- `apps/web/e2e/demo-journey.spec.ts`: critical journey, mobile, and responsive
+  browser assertions.
+- `apps/web/scripts/run-e2e.mjs`: reliable build-server-test cleanup on Windows.
+- `docs/plans/phase-03-typed-mock-product-journey.md`: architecture, boundaries,
+  risks, acceptance criteria, and verification record.
+
+### How to run and test it
+
+From the repository root:
+
+```powershell
+npm.cmd run dev
+```
+
+Open `http://localhost:3000` and select **Launch the product demo**. The product
+routes work without the backend. To verify everything:
+
+```powershell
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+npm.cmd audit --omit=dev --audit-level=high
+```
+
+The phase passes strict TypeScript, ESLint, 17 unit/component tests, the
+production build, and four Playwright tests. The browser matrix covers five
+product routes at 360, 390, 768, and 1280 pixels.
+
+### Common errors and debugging
+
+- If a form briefly shows defaults before saved data, the feature is rendering
+  before `hydrated` becomes true. Keep the loading boundary outside the form so
+  form hooks mount only after validation.
+- If a stored snapshot is ignored, inspect the storage key
+  `research-bridge.demo.phase-03.v1` and validate it against `demoStateSchema`.
+  Resetting the demo replaces incompatible data safely.
+- If a discovery test never finishes, inspect the named reducer actions and
+  timer cleanup. Do not add fixed waits to tests; wait for the result heading.
+- If an outreach draft lacks a profile edit, confirm the profile save completed
+  and that persistence ran before a full reload.
+- If a title-only paper produces a detailed claim, the deterministic template
+  boundary has been violated. Title-only records may mention only title, year,
+  and topic metadata cautiously.
+- If Playwright leaves a Next process running on Windows, use
+  `scripts/run-e2e.mjs`; it owns and closes the production server explicitly.
+- If mobile content appears clipped, distinguish the intentionally scrollable
+  workflow rail from page overflow by comparing document `scrollWidth` and
+  `clientWidth`.
+- A Node engine warning means the shell is using Node 26; use the pinned Node 24
+  release for the supported environment.
+
+### Limitations
+
+- Every Phase 3 record is fictional and every product source URL is inert.
+- `sessionStorage` is neither secure nor durable and is limited to one tab.
+- Search progress is a local simulation, not OpenAlex or another academic API.
+- Mentor ordering is explicitly not ranking; there are no numeric scores.
+- The outreach builder is deterministic and local. It is not an LLM, does not
+  discover email addresses, and cannot send messages.
+- No authentication, user isolation, resume upload, database repository, or
+  application API exists yet.
+- The production npm dependency graph has zero reported vulnerabilities. The
+  full development graph retains nine high-severity Brace Expansion advisories
+  through ESLint plugins; npm only proposes a breaking ESLint 10 upgrade, so the
+  repository keeps trusted lint globs and records the risk instead of forcing an
+  incompatible upgrade.
+
+### Next step
+
+Phase 4 adds versioned FastAPI product contracts, structured errors, request
+IDs, service interfaces, mock services, OpenAPI export, and a contract-checked
+TypeScript client. The frontend fixture access will move behind that API without
+changing the approved journey or introducing real academic retrieval yet.
+
+---
+
 ## YYYY-MM-DD — Phase name
 
 ### What was built

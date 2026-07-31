@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 
-import { RouteShell } from "@/components/layout/route-shell";
+import { Container } from "@/components/layout/container";
+import { PageHeader } from "@/components/layout/page-header";
+import { DemoNotice } from "@/features/demo/components/demo-notice";
+import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
+import { DiscoveryExperience } from "@/features/discovery/discovery-experience";
 
 export const metadata: Metadata = {
   title: "Discover Research",
@@ -9,17 +13,19 @@ export const metadata: Metadata = {
 
 export default function DiscoverPage() {
   return (
-    <RouteShell
-      description="Explore academic work through traceable sources before asking AI to explain or expand anything."
-      eyebrow="Discover"
-      plannedItems={[
-        "Intent-aware academic search with explicit filters",
-        "Normalized paper records from approved academic APIs",
-        "Source links, identifiers, and partial-failure handling",
-      ]}
-      stateDescription="The search interface and external API clients will be added in the discovery phase. This placeholder does not pretend that retrieval is active."
-      stateTitle="Academic search is not connected yet"
-      title="Start with the evidence"
-    />
+    <main id="main-content">
+      <Container className="py-10 sm:py-14 lg:py-16">
+        <PageHeader
+          description="Run a transparent local retrieval simulation, inspect partial failures, and move from a topic to fictional paper-backed researcher candidates."
+          eyebrow="Step 2 · Discover"
+          title="Start with the evidence"
+        />
+        <WorkflowSteps current="Discover" />
+        <DemoNotice className="mt-8" />
+        <div className="mt-8">
+          <DiscoveryExperience />
+        </div>
+      </Container>
+    </main>
   );
 }
