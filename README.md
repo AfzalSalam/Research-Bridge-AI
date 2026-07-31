@@ -1,13 +1,14 @@
 # Research Bridge AI
 
 Research Bridge AI is an evidence-first academic discovery and research-
-opportunity platform. The current repository phase contains the reproducible
-full-stack foundation: a Next.js frontend, a FastAPI backend, and local
-PostgreSQL with pgvector available for later phases.
+opportunity platform. The repository currently contains a reproducible
+full-stack foundation and the completed Phase 2 visual system: a responsive
+Next.js shell, a FastAPI backend, and local PostgreSQL with pgvector available
+for later phases.
 
-Product features such as profiles, OpenAlex search, mentor relevance, outreach
-drafting, internships, and authentication are intentionally not implemented in
-Phase 1. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active plan under
+Product features such as editable profiles, OpenAlex search, mentor relevance,
+outreach drafting, internships, and authentication are intentionally not
+implemented yet. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active plan under
 `docs/plans/` for the approved sequence.
 
 ## Architecture
@@ -15,6 +16,7 @@ Phase 1. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active plan under
 ```text
 Browser
   -> Next.js App Router (apps/web, port 3000)
+      -> responsive root shell + project-owned design system
       -> typed server-side health client
           -> FastAPI (apps/api, port 8000)
               -> /api/v1/health
@@ -95,6 +97,16 @@ npm.cmd run dev
 
 Open <http://localhost:3000>. The page shows either the typed API health
 response or an honest unavailable state.
+
+Useful frontend routes:
+
+- `/design-system`: internal tokens, primitives, form patterns, and data-state
+  gallery;
+- `/profile`, `/discover`, `/mentors`, `/opportunities`, `/applications`:
+  honest responsive boundaries for later product phases.
+
+The route shells contain no fake mentor records, scores, opportunities, or
+application data. They document scope until the typed demo journey is built.
 
 ## Quality checks
 
@@ -183,4 +195,5 @@ the decision and retest evidence are recorded in the Phase 1 plan.
 - Product specification: `PROJECT_SPEC.md`
 - Roadmap: `ROADMAP.md`
 - Phase 1 plan: `docs/plans/phase-01-foundation.md`
+- Phase 2 plan: `docs/plans/phase-02-design-system-and-responsive-shell.md`
 - Learning log: `docs/LEARNING_LOG.md`

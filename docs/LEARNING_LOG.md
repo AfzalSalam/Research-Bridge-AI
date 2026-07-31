@@ -245,6 +245,178 @@ motion without adding product behavior early.
 
 ---
 
+## 2026-07-31 — Phase 02: Design system and responsive shell
+
+### What was built
+
+The Figma Make prototype was translated into a project-owned frontend system:
+
+- semantic warm-neutral, teal, indigo, warning, and error tokens;
+- locally bundled Manrope and Source Serif 4 variable fonts;
+- an accessible brand header with desktop navigation, a mobile Sheet, current
+  route semantics, and a skip link;
+- reusable Button, Badge, Input, Textarea, Field, Separator, Skeleton, Sheet,
+  status badge, layout, and data-state components;
+- responsive shells for Profile, Discover, Mentors, Opportunities, and
+  Applications;
+- an internal `/design-system` gallery; and
+- a redesigned landing page that preserves the real typed health boundary.
+
+The route shells are intentionally honest. They describe their future product
+surface but do not contain invented mentors, rankings, papers, opportunities,
+or application records.
+
+### Why it exists
+
+Future product screens need a consistent visual and interaction language before
+they accumulate feature-specific UI. This phase turns the best parts of the
+prototype into reusable constraints, fixes its mobile and accessibility
+problems, and gives Phase 3 stable routes and primitives to compose.
+
+It also protects product credibility. Teal communicates verified evidence,
+amber communicates unknown or incomplete information, and text labels always
+accompany color. This keeps attractive presentation from turning uncertainty
+into a false claim.
+
+### Concepts introduced
+
+- **Design token:** a named visual decision such as `brand-teal`, `surface`, or
+  `border`. Components consume the role instead of repeating a raw hex value.
+- **Semantic color:** color named by purpose rather than appearance. `unknown`
+  explains meaning more reliably than `yellow`.
+- **Component primitive:** a small owned building block with consistent states,
+  focus behavior, and sizing. shadcn supplied source code, which was inspected
+  and adapted rather than used as a remote UI runtime.
+- **Client boundary:** only pathname-aware navigation and the interactive Sheet
+  need browser JavaScript. Pages and most layout components remain Server
+  Components.
+- **Progressive disclosure:** desktop can show broad navigation while mobile
+  moves it into a labelled drawer, preserving access without squeezing links.
+- **Data state:** loading, empty, partial, unavailable, and error are distinct
+  product outcomes. Treating them separately prevents a blank screen or a
+  misleading success state.
+- **Responsive invariant:** a condition that must remain true at every tested
+  width, such as one main landmark, one page heading, and no horizontal scroll.
+- **Self-hosted font asset:** the font files ship with the application build.
+  The first build showed why this matters: `next/font/google` needed network
+  access, while the local Fontsource packages build reproducibly offline.
+- **Focus return:** after a modal navigation closes, keyboard focus returns to
+  the control that opened it, so the user does not lose their place.
+
+### Data flow
+
+The visual shell introduces no new business-data flow. The only live request is
+still the Phase 1 health boundary:
+
+```text
+browser request
+  -> Next.js RootLayout
+      -> skip link + responsive SiteHeader
+      -> route Server Component
+          -> landing page only: typed server-side health client
+              -> FastAPI GET /api/v1/health
+              -> available or unavailable HealthResult
+          -> shared semantic component presentation
+```
+
+Navigation interaction is isolated:
+
+```text
+mobile menu button
+  -> Radix Sheet client component
+  -> labelled dialog + focus containment
+  -> route Link
+  -> Sheet closes and focus can return to the trigger
+```
+
+### Important files
+
+- `apps/web/src/app/globals.css`: semantic tokens, Tailwind mappings, font
+  roles, focus rules, reduced motion, and selection behavior.
+- `apps/web/src/app/layout.tsx`: self-hosted fonts, skip link, metadata, and
+  shared SiteHeader.
+- `apps/web/src/components/navigation/site-header.tsx`: desktop and mobile
+  navigation with `aria-current` and the Sheet client boundary.
+- `apps/web/src/components/ui/`: repository-owned shadcn-derived primitives.
+- `apps/web/src/components/states/data-state.tsx`: reusable loading, empty,
+  error, partial, and unavailable presentation.
+- `apps/web/src/components/layout/route-shell.tsx`: honest placeholder boundary
+  reused by future product destinations.
+- `apps/web/src/app/design-system/page.tsx`: running visual and state reference.
+- `apps/web/src/app/page.tsx`: responsive editorial landing page with the live
+  health status.
+- `apps/web/src/config/navigation.ts`: typed navigation labels, destinations,
+  descriptions, and icons.
+- `docs/plans/phase-02-design-system-and-responsive-shell.md`: decisions,
+  Figma audit, scope, acceptance criteria, and validation evidence.
+
+### How to run and test it
+
+Start the frontend from the repository root:
+
+```powershell
+npm.cmd run dev
+```
+
+Open `http://localhost:3000` and use `/design-system` to inspect the primitives.
+To show the healthy full-stack state, start FastAPI in another terminal as
+documented in `README.md`.
+
+Run the frontend gates:
+
+```powershell
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd run test
+npm.cmd run build
+npm.cmd audit --omit=dev --audit-level=high
+```
+
+The completed phase passed lint, strict TypeScript, 11 tests in five files, and
+the production build. All seven routes were also measured at 360, 390, 768, and
+1280 CSS pixels; all 28 combinations had no horizontal overflow and retained
+exactly one `main` and one `h1`.
+
+### Common errors and debugging
+
+- If PowerShell blocks `npm.ps1`, use `npm.cmd`.
+- If the build tries to contact `fonts.googleapis.com`, a Google font import has
+  been reintroduced. Root layout should import the local Fontsource packages.
+- If mobile content overflows, measure `document.documentElement.scrollWidth`
+  against `innerWidth` and inspect long unbreakable specimens, grid items that
+  lack `min-width: 0`, and fixed-width controls.
+- If the mobile Sheet does not announce a useful name, keep `SheetTitle` and
+  `SheetDescription`; visually hiding them is acceptable, removing them is not.
+- If keyboard focus disappears after closing the Sheet, test focus return to
+  the `Open navigation` trigger and avoid wrapping Radix close behavior in a
+  component that drops event props or refs.
+- If the health card says `API unavailable`, start FastAPI on port 8000. The
+  unavailable state is still a valid and intentionally styled result.
+- A Node engine warning means the local shell is using Node 26 rather than the
+  repository's pinned Node 24 target.
+
+### Limitations
+
+- Route shells are layout boundaries, not working forms or data screens.
+- The component gallery is internal documentation, not a public Storybook.
+- Dark mode, localization, product motion, TanStack Query, React Hook Form,
+  Zod, and Playwright remain out of scope until a phase needs them.
+- No mentor, paper, opportunity, ranking, draft, or application fixture exists
+  yet.
+- The full npm audit retains the documented development-only Brace Expansion
+  advisory in the lint graph; the production graph reports zero
+  vulnerabilities.
+- Browser layout checks were performed locally; automated cross-browser E2E
+  coverage begins with the typed mock journey.
+
+### Next step
+
+Create and approve `docs/plans/phase-03-typed-mock-product-journey.md`. Define
+the typed fixture contracts and complete recruiter-demo journey before adding
+real academic APIs, persistence, ranking, or LLM behavior.
+
+---
+
 ## YYYY-MM-DD — Phase name
 
 ### What was built

@@ -20,12 +20,16 @@ tests, linting, type checking, builds, and Windows-friendly documentation.
 
 Do not implement business features.
 
+**Status:** Complete.
+
 ## Phase 2 — Design system and responsive shell
 
 Translate the approved Figma direction into project-owned tokens, typography,
 accessible shadcn/ui-based primitives, responsive navigation, route shells,
 data-state patterns, and a component gallery. Fix the mobile navigation and
 overflow problems found during the Figma audit.
+
+**Status:** Complete.
 
 ## Phase 3 — Typed mock product journey
 
