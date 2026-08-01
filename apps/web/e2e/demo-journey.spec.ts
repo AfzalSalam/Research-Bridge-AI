@@ -93,9 +93,11 @@ test("mentor list becomes a focused detail flow on mobile", async ({ page }) => 
   await expect(page.getByRole("heading", { name: "Fictional researcher candidates" })).toBeVisible();
 });
 
-test("live papers lead to grouped researcher evidence without professor claims", async ({
+test("live papers lead to grounded, versioned, human-reviewed outreach", async ({
+  context,
   page,
 }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/discover");
   await page.getByRole("button", { name: "Search OpenAlex" }).click();
   await page.getByRole("link", { name: "Find researchers" }).click();
@@ -113,6 +115,21 @@ test("live papers lead to grouped researcher evidence without professor claims",
   await expect(page.getByText(/historical paper evidence/)).toBeVisible();
   await expect(page.getByText(/placement-relevance-v1/)).toBeVisible();
   await expect(page.getByText("Academic title", { exact: true })).toBeVisible();
+  await page.getByLabel("2. Choose generation mode").selectOption("deterministic");
+  await page.getByRole("button", { name: "Build grounded draft" }).click();
+  await expect(page.getByRole("heading", { name: "Outreach draft" })).toBeVisible();
+  await expect(page.getByText("Claim-to-evidence map")).toBeVisible();
+  await expect(page.getByText(/Deterministic mode requested/)).toBeVisible();
+
+  const subject = page.getByRole("textbox", { name: "Subject", exact: true });
+  await subject.fill("Edited evidence-grounded clinical AI question");
+  await expect(page.getByRole("checkbox", { name: /I reviewed the current saved/i })).toBeDisabled();
+  await page.getByRole("button", { name: "Save new version" }).click();
+  await expect(page.getByText("Saved version 2")).toBeVisible();
+
+  await page.getByRole("checkbox", { name: /I reviewed the current saved/i }).check();
+  await page.getByRole("button", { name: "Copy reviewed draft" }).click();
+  await expect(page.getByRole("button", { name: "Copied for your review" })).toBeVisible();
   await expect(page.getByRole("button", { name: /send/i })).toHaveCount(0);
 });
 

@@ -4,6 +4,7 @@ import httpx2
 
 from app.clients.openalex import OpenAlexClient
 from app.core.config import Settings
+from app.providers.openai_outreach import OpenAIOutreachProvider
 from app.services.search_cache import MemoryPaperSearchCache
 
 
@@ -14,6 +15,14 @@ class DiscoveryRuntime:
     http_client: httpx2.AsyncClient
     provider: OpenAlexClient
     cache: MemoryPaperSearchCache
+
+
+@dataclass(frozen=True, slots=True)
+class OutreachRuntime:
+    """Optional application-scoped model connection and provider."""
+
+    http_client: httpx2.AsyncClient | None
+    provider: OpenAIOutreachProvider | None
 
 
 def create_discovery_runtime(settings: Settings) -> DiscoveryRuntime:
@@ -57,3 +66,35 @@ def create_discovery_runtime(settings: Settings) -> DiscoveryRuntime:
         provider=provider,
         cache=cache,
     )
+
+
+def create_outreach_runtime(settings: Settings) -> OutreachRuntime:
+    if settings.openai_api_key is None:
+        return OutreachRuntime(http_client=None, provider=None)
+    timeout = httpx2.Timeout(
+        connect=settings.openai_connect_timeout_seconds,
+        read=settings.openai_read_timeout_seconds,
+        write=settings.openai_write_timeout_seconds,
+        pool=settings.openai_pool_timeout_seconds,
+    )
+    limits = httpx2.Limits(
+        max_connections=settings.openai_max_connections,
+        max_keepalive_connections=settings.openai_max_keepalive_connections,
+        keepalive_expiry=30,
+    )
+    client = httpx2.AsyncClient(
+        base_url=settings.openai_base_url,
+        timeout=timeout,
+        limits=limits,
+        follow_redirects=False,
+        trust_env=False,
+    )
+    provider = OpenAIOutreachProvider(
+        client,
+        api_key=settings.openai_api_key.get_secret_value(),
+        model=settings.openai_outreach_model,
+        max_attempts=settings.openai_max_attempts,
+        backoff_base_seconds=settings.openai_backoff_base_seconds,
+        backoff_cap_seconds=settings.openai_backoff_cap_seconds,
+    )
+    return OutreachRuntime(http_client=client, provider=provider)

@@ -1447,3 +1447,240 @@ draft, and approve any external use. Prompts will be versioned, outputs will be
 structurally validated, claims will map to verified profile/paper evidence, and
 a deterministic fallback will remain available. The product still will not
 mass-send or automatically send email.
+
+## 2026-08-01 — Phase 08: Evidence-grounded outreach
+
+### What was built
+
+The live researcher journey now continues from evidence inspection into a safe
+outreach workspace. A student selects one researcher and one or two supporting
+papers, chooses either the best available generator or the deterministic
+template, and creates a persisted draft. The result exposes the exact profile
+facts and papers used, a claim-to-evidence map, uncertainty warnings,
+generation provenance, the current version, and revision history.
+
+The optional generator is a narrow OpenAI Responses API adapter. It requests a
+strict JSON structure with the versioned prompt `outreach-grounded.v1`, uses low
+reasoning and bounded output, disables provider-side storage, and never receives
+an email address. If the key is absent or the provider times out, refuses,
+returns invalid JSON, cites unknown evidence, or produces unsafe prose, the
+server creates the deterministic `outreach-template.v1` draft instead.
+
+Draft editing is durable. Each successful save updates the convenient latest
+snapshot and appends an immutable numbered revision in the same transaction. An
+expected-version field prevents one browser view from silently overwriting a
+newer save. Editing changes the evidence-map status to
+`manual-edit-needs-review`, clears the browser review acknowledgement, and
+requires another explicit review before copy is enabled. Research Bridge AI has
+no send button, SMTP client, Gmail/Outlook connector, or inferred recipient
+address.
+
+### Why it exists
+
+A generic cold email is easy to produce and easy for a recruiter to dismiss.
+The engineering value is in proving why each customized statement is allowed.
+This phase treats generation as an untrusted composition step inside a larger
+deterministic workflow: trusted code selects evidence, validates references,
+applies uncertainty rules, chooses fallback behavior, persists versions, and
+requires human approval.
+
+That boundary also makes the feature useful without paid model access. The
+deterministic template is a real supported path rather than an error message,
+so development, testing, recruiter demos, and provider outages all retain the
+same evidence and persistence guarantees.
+
+### Concepts introduced
+
+- **Server-reconstructed evidence:** the browser sends IDs and the original
+  query, not factual prose. The server reruns discovery and rejects a researcher
+  or paper that is not in that verified result.
+- **Structured generation:** the model may return only a small typed
+  composition. Pydantic validation rejects missing, extra, or malformed fields
+  before any prose becomes a draft.
+- **Prompt versioning:** `outreach-grounded.v1` identifies the exact behavioral
+  contract used for model-assisted composition. Template and prompt versions are
+  stored separately because deterministic and model paths evolve differently.
+- **Grounding audit:** every generated paragraph must cite allowlisted profile
+  fact keys or selected paper UUIDs. Unknown references and unsupported claims
+  fail closed to the deterministic template.
+- **Title-only evidence:** a paper title proves that the title exists; it does
+  not prove a method, result, or conclusion. Model prose based only on a title is
+  replaced with a conservative deterministic sentence.
+- **Graceful degradation:** a provider failure changes generation provenance,
+  not the usefulness of the request. Safe fallback reasons are public, while
+  keys and raw provider details are not logged or persisted.
+- **Optimistic concurrency:** `expectedVersion` says which version the user
+  edited. A mismatch returns 409 instead of overwriting another saved revision.
+- **Snapshot plus revision log:** the latest draft row makes normal reads simple;
+  immutable revision rows preserve history for audit and interview explanation.
+- **Human-in-the-loop gate:** review is an explicit user action tied to the
+  current saved subject/body. Copying is deliberately different from sending.
+- **Runtime contract checking:** generated TypeScript types help at compile
+  time, while Zod verifies that a live API response—including UTC timestamps—
+  matches the browser's assumptions.
+- **Structural evaluation:** the Phase 8 evaluator measures rejection of invalid
+  evidence references and unsupported assertions. It does not pretend to
+  measure email response probability or writing quality.
+
+### Data flow
+
+```text
+Live mentor detail
+  -> user selects 1 researcher + 1–2 supporting paper IDs
+  -> POST /api/v1/outreach/drafts
+  -> OutreachService reruns bounded mentor discovery
+      -> OpenAlex evidence + normalized database catalog
+      -> saved fictional profile or safe fictional fallback
+  -> build server-owned evidence package
+  -> deterministic request/no key?
+      -> outreach-template.v1
+     otherwise
+      -> Responses API + outreach-grounded.v1 strict JSON
+      -> Pydantic structure check
+      -> evidence-reference and prose grounding checks
+      -> unsafe output? deterministic fallback
+  -> one database transaction
+      -> latest outreach_drafts snapshot
+      -> selected draft_papers links
+      -> outreach_draft_revisions version 1
+  -> strict API response + generated TypeScript + Zod
+  -> editor + provenance + claim-to-evidence inspector
+
+Edited subject/body + expectedVersion
+  -> PUT /api/v1/outreach/drafts/{id}
+  -> owner scope + row/version check
+  -> update latest snapshot + append immutable revision
+  -> manual-edit-needs-review
+  -> user reviews current saved text
+  -> copy to clipboard only; no send transport
+```
+
+### Important files
+
+- `apps/api/app/outreach/drafting.py`: evidence package, version constants,
+  deterministic template, provider-output grounding, title-only policy, and
+  safe fallback domain errors.
+- `apps/api/app/providers/openai_outreach.py`: bounded Responses API adapter,
+  strict JSON Schema request, retries, refusal parsing, and secret-safe errors.
+- `apps/api/app/services/outreach.py`: selection revalidation, provider/fallback
+  orchestration, persistence mapping, and public UTC normalization.
+- `apps/api/app/repositories/outreach.py`: owner-scoped create/read/update,
+  transactional revisions, row locking, and version conflicts.
+- `apps/api/app/schemas/outreach.py`: strict create, update, evidence,
+  provenance, revision, and response contracts.
+- `apps/api/alembic/versions/20260801_0003_outreach_revisions.py`: schema upgrade
+  for grounding metadata and immutable revisions.
+- `apps/api/scripts/evaluate_outreach_grounding.py` and
+  `apps/api/reports/phase-08-outreach-grounding-baseline.json`: reproducible
+  structural grounding baseline and honest limitations.
+- `apps/web/src/features/outreach/live-outreach-workspace.tsx`: paper selection,
+  mode choice, async states, editor, evidence inspector, save/review/copy gates.
+- `apps/web/src/features/outreach/contracts.ts`: runtime Zod boundary for the
+  live response.
+- `apps/web/src/lib/api/outreach.ts`: checked adapter around the generated API
+  client.
+- `docs/plans/phase-08-evidence-grounded-outreach.md`: decisions, threat
+  boundaries, contracts, and completion evidence.
+
+### How to run and test it
+
+Apply the new migration and start the API:
+
+```powershell
+docker compose --env-file .env up -d db
+Set-Location apps/api
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+`OPENAI_API_KEY` is optional. Leave it unset to exercise the deterministic
+fallback. To test model-assisted composition manually, put the key only in
+`apps/api/.env`, keep the official base URL, and restart FastAPI. Then start the
+frontend from the repository root:
+
+```powershell
+npm.cmd run dev
+```
+
+Open `/discover`, retrieve live paper evidence, choose **Find researchers**,
+run the researcher search, select paper evidence, and build a draft. Inspect the
+generation badges and evidence map, edit the subject or body, save version 2,
+acknowledge review, and copy it.
+
+The Phase 8 automated gates are:
+
+```powershell
+Set-Location apps/api
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app scripts
+uv run pytest
+uv run python -m scripts.export_openapi --check
+uv run python -m scripts.evaluate_mentor_relevance --check
+uv run python -m scripts.evaluate_outreach_grounding --check
+
+Set-Location ../..
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd --workspace @research-bridge/web run api:check
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+```
+
+The isolated Playwright runner migrates a temporary SQLite database, starts a
+loopback OpenAlex fixture, and never calls OpenAI. This keeps the full browser
+journey reproducible and free of API cost.
+
+### Common errors and debugging
+
+- **Deterministic fallback appears unexpectedly:** inspect `fallbackReason` in
+  the evidence panel. `provider-not-configured` means the optional key is absent;
+  refusal, unavailable, invalid-output, and grounding failures are separate.
+- **`422 outreach_mentor_not_found` or `outreach_paper_not_found`:** the selected
+  ID was not present when the server reconstructed the bounded discovery result.
+  Run the search again and select from the current candidate evidence.
+- **`409 draft_version_conflict`:** another save already advanced the version.
+  Reload the latest draft before applying the edit again.
+- **The review checkbox is disabled:** save the current edits first. Review is
+  intentionally tied to the latest persisted subject and body.
+- **Clipboard copy fails:** browser permissions may deny programmatic clipboard
+  access. The draft remains editable so it can be selected and copied manually.
+- **A timestamp fails the browser contract in SQLite:** stored SQLite datetimes
+  can be naive. All outreach persistence timestamps must pass through the UTC
+  response normalizer; PostgreSQL already returns timezone-aware values.
+- **Tables or columns are missing:** run `uv run alembic upgrade head` and check
+  the database URL used by the API process.
+- **`uv` cache initialization fails on Windows:** use the existing
+  `.venv\Scripts\python.exe` for a focused check or set a workspace-local
+  `UV_CACHE_DIR`.
+
+### Limitations
+
+- Authentication is not implemented. A server-only demo owner partitions
+  records, and the stored profile is intentionally fictional.
+- Only OpenAlex publication evidence is live. Recipient title, current
+  institution, contact address, availability, funding, and open positions remain
+  unknown.
+- The grounding audit is a conservative structural and phrase-based guard, not
+  a complete semantic fact checker. Representative human evaluation is still
+  required before claiming prose quality.
+- The checked evaluator has three synthetic cases. It proves deterministic
+  invariants, not generalization or outreach success.
+- A manual edit invalidates the generated map but does not automatically create
+  a sentence-level map for new prose; the user must inspect it before copying.
+- The server replays bounded discovery rather than loading a durable saved-search
+  snapshot, so rapidly changing upstream results can invalidate an old browser
+  selection.
+- The adapter is tested against owned HTTP fixtures; no paid live model request
+  is part of the automated suite.
+- The application copies text only. Sending, bulk outreach, reply tracking, and
+  guessed emails are deliberately absent.
+
+### Next step
+
+Phase 9 should replace the fictional opportunity and tracker path with verified
+opportunity ingestion, explicit source/last-verified/stale metadata, allowlisted
+controlled extraction only for documented gaps, and durable application status
+history. The source policy and state-transition model should be planned before
+implementation.

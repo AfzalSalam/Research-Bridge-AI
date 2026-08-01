@@ -21,6 +21,7 @@ from app.db.models.workflow import (
     ApplicationEvent,
     DraftPaper,
     OutreachDraft,
+    OutreachDraftRevision,
     SavedItem,
 )
 
@@ -33,6 +34,7 @@ __all__ = [
     "Institution",
     "Opportunity",
     "OutreachDraft",
+    "OutreachDraftRevision",
     "Paper",
     "PaperAuthor",
     "PaperAuthorInstitution",

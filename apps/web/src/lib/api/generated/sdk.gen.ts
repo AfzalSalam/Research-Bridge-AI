@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses } from './types.gen';
+import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -148,5 +148,40 @@ export class Sdk extends HeyApiClient {
      */
     public readHealthApiV1HealthGet<ThrowOnError extends boolean = false>(options?: Options<ReadHealthApiV1HealthGetData, ThrowOnError>) {
         return (options?.client ?? this.client).get<ReadHealthApiV1HealthGetResponses, unknown, ThrowOnError>({ url: '/api/v1/health', ...options });
+    }
+
+    /**
+     * Create a draft from one selected researcher and selected papers
+     */
+    public createOutreachDraftApiV1OutreachDraftsPost<ThrowOnError extends boolean = false>(options: Options<CreateOutreachDraftApiV1OutreachDraftsPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<CreateOutreachDraftApiV1OutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostErrors, ThrowOnError>({
+            url: '/api/v1/outreach/drafts',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Read the latest owner-scoped outreach draft
+     */
+    public readOutreachDraftApiV1OutreachDraftsDraftIdGet<ThrowOnError extends boolean = false>(options: Options<ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ThrowOnError>({ url: '/api/v1/outreach/drafts/{draft_id}', ...options });
+    }
+
+    /**
+     * Save a new editable draft revision
+     */
+    public updateOutreachDraftApiV1OutreachDraftsDraftIdPut<ThrowOnError extends boolean = false>(options: Options<UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, ThrowOnError>) {
+        return (options.client ?? this.client).put<UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, ThrowOnError>({
+            url: '/api/v1/outreach/drafts/{draft_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
     }
 }

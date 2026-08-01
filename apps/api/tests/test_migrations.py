@@ -33,6 +33,7 @@ def test_initial_migration_reaches_head_without_model_drift(tmp_path: Path) -> N
         "institutions",
         "opportunities",
         "outreach_drafts",
+        "outreach_draft_revisions",
         "paper_authors",
         "paper_author_institutions",
         "paper_topics",
@@ -57,10 +58,19 @@ def test_initial_migration_reaches_head_without_model_drift(tmp_path: Path) -> N
         topic_columns = {
             row[1] for row in connection.execute("PRAGMA table_info(paper_topics)")
         }
+        draft_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(outreach_drafts)")
+        }
 
     assert "openalex_id" in institution_columns
     assert {"work_type", "language", "is_retracted"} <= paper_columns
     assert {"openalex_topic_id", "score"} <= topic_columns
+    assert {
+        "claim_evidence",
+        "evidence_map_status",
+        "fallback_reason",
+        "reviewed_at",
+    } <= draft_columns
 
     command.downgrade(config, "base")
 

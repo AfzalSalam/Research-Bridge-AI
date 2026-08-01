@@ -25,6 +25,48 @@
         "title": "ClaimEvidence",
         "type": "object"
       },
+      "ClaimEvidenceReference": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "anyOf": [
+              {
+                "format": "uri",
+                "maxLength": 2083,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceurl"
+          },
+          "type": {
+            "enum": [
+              "student-fact",
+              "paper"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "id",
+          "label"
+        ],
+        "title": "ClaimEvidenceReference",
+        "type": "object"
+      },
       "DemoBootstrapResponse": {
         "additionalProperties": false,
         "description": "Canonical catalog needed to initialize the stateless demo journey.",
@@ -358,6 +400,31 @@
         "title": "DiscoverySource",
         "type": "object"
       },
+      "DraftClaimEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 1200,
+            "minLength": 5,
+            "title": "Claim",
+            "type": "string"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimEvidenceReference"
+            },
+            "minItems": 1,
+            "title": "References",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "references"
+        ],
+        "title": "DraftClaimEvidence",
+        "type": "object"
+      },
       "ErrorBody": {
         "additionalProperties": false,
         "description": "Stable error information returned by every API failure.",
@@ -436,6 +503,19 @@
           "limited"
         ],
         "type": "string"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
       },
       "HealthResponse": {
         "description": "Public contract returned by the process health endpoint.",
@@ -1134,6 +1214,49 @@
         "title": "OutreachDraft",
         "type": "object"
       },
+      "OutreachDraftCreateRequest": {
+        "additionalProperties": false,
+        "description": "Human-selected IDs; factual evidence is always resolved on the server.",
+        "properties": {
+          "generationPreference": {
+            "default": "auto",
+            "enum": [
+              "auto",
+              "deterministic"
+            ],
+            "title": "Generationpreference",
+            "type": "string"
+          },
+          "mentorId": {
+            "format": "uuid",
+            "title": "Mentorid",
+            "type": "string"
+          },
+          "paperIds": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Paperids",
+            "type": "array"
+          },
+          "query": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query",
+          "mentorId",
+          "paperIds"
+        ],
+        "title": "OutreachDraftCreateRequest",
+        "type": "object"
+      },
       "OutreachDraftRequest": {
         "additionalProperties": false,
         "description": "Evidence selected by a human before draft creation is allowed.",
@@ -1161,6 +1284,346 @@
           "paperIds"
         ],
         "title": "OutreachDraftRequest",
+        "type": "object"
+      },
+      "OutreachDraftResponse": {
+        "additionalProperties": false,
+        "description": "Latest editable draft snapshot with complete evidence metadata.",
+        "properties": {
+          "body": {
+            "maxLength": 5000,
+            "minLength": 80,
+            "title": "Body",
+            "type": "string"
+          },
+          "canSend": {
+            "const": false,
+            "default": false,
+            "title": "Cansend",
+            "type": "boolean"
+          },
+          "claimEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/DraftClaimEvidence"
+            },
+            "minItems": 1,
+            "title": "Claimevidence",
+            "type": "array"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "draftVersion": {
+            "minimum": 1.0,
+            "title": "Draftversion",
+            "type": "integer"
+          },
+          "evidenceMapStatus": {
+            "enum": [
+              "verified-generated",
+              "manual-edit-needs-review"
+            ],
+            "title": "Evidencemapstatus",
+            "type": "string"
+          },
+          "generation": {
+            "$ref": "#/components/schemas/OutreachGenerationMetadata"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mentorId": {
+            "format": "uuid",
+            "title": "Mentorid",
+            "type": "string"
+          },
+          "recipientContact": {
+            "title": "Recipientcontact",
+            "type": "null"
+          },
+          "recipientDisplayName": {
+            "title": "Recipientdisplayname",
+            "type": "string"
+          },
+          "recipientLastVerifiedAt": {
+            "format": "date-time",
+            "title": "Recipientlastverifiedat",
+            "type": "string"
+          },
+          "recipientSourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Recipientsourceurl",
+            "type": "string"
+          },
+          "revisions": {
+            "items": {
+              "$ref": "#/components/schemas/OutreachDraftRevisionSummary"
+            },
+            "minItems": 1,
+            "title": "Revisions",
+            "type": "array"
+          },
+          "selectedPapers": {
+            "items": {
+              "$ref": "#/components/schemas/OutreachPaperEvidence"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Selectedpapers",
+            "type": "array"
+          },
+          "selectedStudentFacts": {
+            "items": {
+              "$ref": "#/components/schemas/SelectedStudentFact"
+            },
+            "minItems": 1,
+            "title": "Selectedstudentfacts",
+            "type": "array"
+          },
+          "subject": {
+            "maxLength": 160,
+            "minLength": 5,
+            "title": "Subject",
+            "type": "string"
+          },
+          "uncertaintyWarnings": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Uncertaintywarnings",
+            "type": "array"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "mentorId",
+          "recipientDisplayName",
+          "recipientSourceUrl",
+          "recipientLastVerifiedAt",
+          "subject",
+          "body",
+          "selectedStudentFacts",
+          "selectedPapers",
+          "claimEvidence",
+          "uncertaintyWarnings",
+          "evidenceMapStatus",
+          "generation",
+          "draftVersion",
+          "revisions",
+          "createdAt",
+          "updatedAt"
+        ],
+        "title": "OutreachDraftResponse",
+        "type": "object"
+      },
+      "OutreachDraftRevisionSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "evidenceMapStatus": {
+            "enum": [
+              "verified-generated",
+              "manual-edit-needs-review"
+            ],
+            "title": "Evidencemapstatus",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "evidenceMapStatus",
+          "createdAt"
+        ],
+        "title": "OutreachDraftRevisionSummary",
+        "type": "object"
+      },
+      "OutreachDraftUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "maxLength": 5000,
+            "minLength": 80,
+            "title": "Body",
+            "type": "string"
+          },
+          "expectedVersion": {
+            "minimum": 1.0,
+            "title": "Expectedversion",
+            "type": "integer"
+          },
+          "subject": {
+            "maxLength": 160,
+            "minLength": 5,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "body",
+          "expectedVersion"
+        ],
+        "title": "OutreachDraftUpdateRequest",
+        "type": "object"
+      },
+      "OutreachGenerationMetadata": {
+        "additionalProperties": false,
+        "properties": {
+          "fallbackReason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "deterministic-requested",
+                  "provider-not-configured",
+                  "provider-unavailable",
+                  "provider-refused",
+                  "invalid-provider-output",
+                  "grounding-check-failed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fallbackreason"
+          },
+          "mode": {
+            "enum": [
+              "deterministic",
+              "llm"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "promptVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promptversion"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "templateVersion": {
+            "title": "Templateversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "provider",
+          "model",
+          "promptVersion",
+          "templateVersion",
+          "fallbackReason"
+        ],
+        "title": "OutreachGenerationMetadata",
+        "type": "object"
+      },
+      "OutreachPaperEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "evidenceStrength": {
+            "enum": [
+              "full-abstract",
+              "title-only"
+            ],
+            "title": "Evidencestrength",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lastVerifiedAt": {
+            "format": "date-time",
+            "title": "Lastverifiedat",
+            "type": "string"
+          },
+          "publicationYear": {
+            "title": "Publicationyear",
+            "type": "integer"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "publicationYear",
+          "venue",
+          "evidenceStrength",
+          "sourceUrl",
+          "lastVerifiedAt"
+        ],
+        "title": "OutreachPaperEvidence",
         "type": "object"
       },
       "PaperAuthor": {
@@ -1655,6 +2118,40 @@
         "title": "RelevancePolicy",
         "type": "object"
       },
+      "SelectedStudentFact": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "enum": [
+              "profile.name",
+              "profile.program",
+              "profile.institution",
+              "profile.researchInterests",
+              "profile.skills",
+              "profile.projectTitle",
+              "profile.projectSummary",
+              "profile.weeklyAvailability"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "value"
+        ],
+        "title": "SelectedStudentFact",
+        "type": "object"
+      },
       "StudentProfile": {
         "additionalProperties": false,
         "description": "Verified student facts allowed to influence a demo draft.",
@@ -1744,6 +2241,46 @@
           "weeklyAvailability"
         ],
         "title": "StudentProfile",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
         "type": "object"
       },
       "app__schemas__demo__MentorCandidate": {
@@ -1971,7 +2508,7 @@
     }
   },
   "info": {
-    "description": "Evidence-first academic discovery API. Phase 7 derives explainable researcher candidates from normalized OpenAlex paper evidence.",
+    "description": "Evidence-first academic discovery API. Phase 8 adds human-selected, evidence-grounded, editable outreach without sending email.",
     "title": "Research Bridge API",
     "version": "0.1.0"
   },
@@ -2393,6 +2930,141 @@
           "system"
         ]
       }
+    },
+    "/api/v1/outreach/drafts": {
+      "post": {
+        "operationId": "create_outreach_draft_api_v1_outreach_drafts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutreachDraftCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutreachDraftResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create a draft from one selected researcher and selected papers",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
+    "/api/v1/outreach/drafts/{draft_id}": {
+      "get": {
+        "operationId": "read_outreach_draft_api_v1_outreach_drafts__draft_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Draft Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutreachDraftResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read the latest owner-scoped outreach draft",
+        "tags": [
+          "outreach"
+        ]
+      },
+      "put": {
+        "operationId": "update_outreach_draft_api_v1_outreach_drafts__draft_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Draft Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutreachDraftUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutreachDraftResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save a new editable draft revision",
+        "tags": [
+          "outreach"
+        ]
+      }
     }
   },
   "tags": [
@@ -2407,6 +3079,10 @@
     {
       "description": "Real paper evidence from bounded academic providers.",
       "name": "discovery"
+    },
+    {
+      "description": "Human-reviewed drafts grounded in selected evidence.",
+      "name": "outreach"
     }
   ]
 }

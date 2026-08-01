@@ -8,7 +8,7 @@ import { ProfileExperience } from "@/features/profile/profile-experience";
 
 export const metadata: Metadata = {
   title: "Research Profile",
-  description: "The future evidence-backed student research profile workspace.",
+  description: "The evidence boundary for research matching and grounded outreach.",
 };
 
 export default function ProfilePage() {

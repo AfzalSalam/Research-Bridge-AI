@@ -11,7 +11,12 @@ from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import REQUEST_ID_HEADER, request_context_middleware
 from app.db.session import Database, create_database
-from app.runtime import DiscoveryRuntime, create_discovery_runtime
+from app.runtime import (
+    DiscoveryRuntime,
+    OutreachRuntime,
+    create_discovery_runtime,
+    create_outreach_runtime,
+)
 
 
 @asynccontextmanager
@@ -22,8 +27,11 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
         yield
     finally:
         runtime = cast(DiscoveryRuntime, application.state.discovery_runtime)
+        outreach_runtime = cast(OutreachRuntime, application.state.outreach_runtime)
         database = cast(Database, application.state.database)
         await runtime.http_client.aclose()
+        if outreach_runtime.http_client is not None:
+            await outreach_runtime.http_client.aclose()
         await database.engine.dispose()
 
 
@@ -36,8 +44,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         title=app_settings.app_name,
         version=app_settings.app_version,
         description=(
-            "Evidence-first academic discovery API. Phase 7 derives explainable "
-            "researcher candidates from normalized OpenAlex paper evidence."
+            "Evidence-first academic discovery API. Phase 8 adds human-selected, "
+            "evidence-grounded, editable outreach without sending email."
         ),
         lifespan=application_lifespan,
         openapi_tags=[
@@ -50,13 +58,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "name": "discovery",
                 "description": "Real paper evidence from bounded academic providers.",
             },
+            {
+                "name": "outreach",
+                "description": "Human-reviewed drafts grounded in selected evidence.",
+            },
         ],
     )
     application.state.settings = app_settings
     application.state.database = create_database(app_settings)
     application.state.discovery_runtime = create_discovery_runtime(app_settings)
+    application.state.outreach_runtime = create_outreach_runtime(app_settings)
     application.state.demo_service_override = None
     application.state.paper_provider_override = None
+    application.state.outreach_generator_override = None
     register_exception_handlers(application)
     application.middleware("http")(request_context_middleware)
 

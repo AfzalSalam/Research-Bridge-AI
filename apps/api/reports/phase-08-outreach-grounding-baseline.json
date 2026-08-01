@@ -1,0 +1,29 @@
+{
+  "phase": 8,
+  "fixtureVersion": "phase-07-relevance-fixtures.v1",
+  "promptVersion": "outreach-grounded.v1",
+  "templateVersion": "outreach-template.v1",
+  "scope": "Small structural fixture evaluation; no reply or selection outcome is measured.",
+  "cases": {
+    "providerCompositionsAttempted": 3,
+    "providerCompositionsAccepted": 1,
+    "providerCompositionsRejected": 2,
+    "deterministicFallbacksProduced": 3
+  },
+  "metrics": {
+    "groundingAcceptanceRate": 0.3333,
+    "unsafeCompositionRejectionRate": 1.0,
+    "fallbackCoverageRate": 1.0,
+    "unsupportedReferenceRate": 0.0,
+    "titleOnlySafetyRate": 1.0,
+    "auditLatencyMs": {
+      "mean": 0.1213,
+      "p50": 0.0988,
+      "p95": 0.1831
+    }
+  },
+  "limitations": [
+    "The fixture set is intentionally tiny and measures structural safety only.",
+    "It does not measure writing quality, professor replies, selection, or real provider latency."
+  ]
+}

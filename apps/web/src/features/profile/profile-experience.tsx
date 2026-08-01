@@ -121,8 +121,9 @@ function ProfileForm() {
           </p>
           <h2 className="mt-3 text-2xl font-medium">Facts the product may reuse</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-            In the real product, these fields become the allowed evidence boundary for
-            matching explanations and outreach. This phase stores only fictional data.
+            These fields are the allowed evidence boundary for live matching and
+            outreach. Until authentication, this phase stores only fictional profile
+            data.
           </p>
         </div>
 

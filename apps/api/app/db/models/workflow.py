@@ -94,11 +94,17 @@ class OutreachDraft(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     recipient_contact: Mapped[str | None] = mapped_column(String(320), nullable=True)
     subject: Mapped[str] = mapped_column(String(160), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
-    selected_student_facts: Mapped[list[str]] = mapped_column(
+    selected_student_facts: Mapped[list[dict[str, str]]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    claim_evidence: Mapped[list[dict[str, object]]] = mapped_column(
         JSON, nullable=False, default=list
     )
     uncertainty_warnings: Mapped[list[str]] = mapped_column(
         JSON, nullable=False, default=list
+    )
+    evidence_map_status: Mapped[str] = mapped_column(
+        String(40), nullable=False, default="verified-generated"
     )
     generation_mode: Mapped[DraftGenerationMode] = mapped_column(
         enum_type(DraftGenerationMode, name="draft_generation_mode"), nullable=False
@@ -107,6 +113,10 @@ class OutreachDraft(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     prompt_version: Mapped[str | None] = mapped_column(String(80), nullable=True)
     provider: Mapped[str | None] = mapped_column(String(120), nullable=True)
     model_name: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    fallback_reason: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     draft_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
 
     owner: Mapped[AccountOwner] = relationship(back_populates="drafts")
@@ -115,6 +125,11 @@ class OutreachDraft(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         back_populates="draft",
         cascade="all, delete-orphan",
         order_by="DraftPaper.position",
+    )
+    revisions: Mapped[list[OutreachDraftRevision]] = relationship(
+        back_populates="draft",
+        cascade="all, delete-orphan",
+        order_by="OutreachDraftRevision.version",
     )
 
 
@@ -135,6 +150,37 @@ class DraftPaper(Base):
 
     draft: Mapped[OutreachDraft] = relationship(back_populates="paper_links")
     paper: Mapped[Paper] = relationship(back_populates="draft_links")
+
+
+class OutreachDraftRevision(UUIDPrimaryKeyMixin, Base):
+    """Immutable subject/body snapshot for one owner edit version."""
+
+    __tablename__ = "outreach_draft_revisions"
+    __table_args__ = (
+        CheckConstraint("version >= 1", name="version_positive"),
+        UniqueConstraint("draft_id", "version"),
+    )
+
+    draft_id: Mapped[UUID] = mapped_column(
+        ForeignKey("outreach_drafts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    editor_owner_id: Mapped[UUID] = mapped_column(
+        ForeignKey("account_owners.id", ondelete="RESTRICT"), nullable=False
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    subject: Mapped[str] = mapped_column(String(160), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    claim_evidence: Mapped[list[dict[str, object]]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    evidence_map_status: Mapped[str] = mapped_column(String(40), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    draft: Mapped[OutreachDraft] = relationship(back_populates="revisions")
 
 
 class Application(UUIDPrimaryKeyMixin, TimestampMixin, Base):

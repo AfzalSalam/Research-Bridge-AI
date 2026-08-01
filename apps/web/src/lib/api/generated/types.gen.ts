@@ -21,6 +21,28 @@ export type ClaimEvidence = {
 };
 
 /**
+ * ClaimEvidenceReference
+ */
+export type ClaimEvidenceReference = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl?: string | null;
+    /**
+     * Type
+     */
+    type: 'student-fact' | 'paper';
+};
+
+/**
  * DemoBootstrapResponse
  *
  * Canonical catalog needed to initialize the stateless demo journey.
@@ -186,6 +208,20 @@ export type DiscoverySource = {
 };
 
 /**
+ * DraftClaimEvidence
+ */
+export type DraftClaimEvidence = {
+    /**
+     * Claim
+     */
+    claim: string;
+    /**
+     * References
+     */
+    references: Array<ClaimEvidenceReference>;
+};
+
+/**
  * ErrorBody
  *
  * Stable error information returned by every API failure.
@@ -239,6 +275,16 @@ export type ErrorResponse = {
 };
 
 export type EvidenceConfidence = 'high' | 'moderate' | 'limited';
+
+/**
+ * HTTPValidationError
+ */
+export type HttpValidationError = {
+    /**
+     * Detail
+     */
+    detail?: Array<ValidationError>;
+};
 
 /**
  * HealthResponse
@@ -620,6 +666,30 @@ export type OutreachDraft = {
 };
 
 /**
+ * OutreachDraftCreateRequest
+ *
+ * Human-selected IDs; factual evidence is always resolved on the server.
+ */
+export type OutreachDraftCreateRequest = {
+    /**
+     * Generationpreference
+     */
+    generationPreference?: 'auto' | 'deterministic';
+    /**
+     * Mentorid
+     */
+    mentorId: string;
+    /**
+     * Paperids
+     */
+    paperIds: Array<string>;
+    /**
+     * Query
+     */
+    query: string;
+};
+
+/**
  * OutreachDraftRequest
  *
  * Evidence selected by a human before draft creation is allowed.
@@ -634,6 +704,187 @@ export type OutreachDraftRequest = {
      */
     paperIds: Array<string>;
     profile: StudentProfile;
+};
+
+/**
+ * OutreachDraftResponse
+ *
+ * Latest editable draft snapshot with complete evidence metadata.
+ */
+export type OutreachDraftResponse = {
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Cansend
+     */
+    canSend?: false;
+    /**
+     * Claimevidence
+     */
+    claimEvidence: Array<DraftClaimEvidence>;
+    /**
+     * Createdat
+     */
+    createdAt: string;
+    /**
+     * Draftversion
+     */
+    draftVersion: number;
+    /**
+     * Evidencemapstatus
+     */
+    evidenceMapStatus: 'verified-generated' | 'manual-edit-needs-review';
+    generation: OutreachGenerationMetadata;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Mentorid
+     */
+    mentorId: string;
+    /**
+     * Recipientcontact
+     */
+    recipientContact?: null;
+    /**
+     * Recipientdisplayname
+     */
+    recipientDisplayName: string;
+    /**
+     * Recipientlastverifiedat
+     */
+    recipientLastVerifiedAt: string;
+    /**
+     * Recipientsourceurl
+     */
+    recipientSourceUrl: string;
+    /**
+     * Revisions
+     */
+    revisions: Array<OutreachDraftRevisionSummary>;
+    /**
+     * Selectedpapers
+     */
+    selectedPapers: Array<OutreachPaperEvidence>;
+    /**
+     * Selectedstudentfacts
+     */
+    selectedStudentFacts: Array<SelectedStudentFact>;
+    /**
+     * Subject
+     */
+    subject: string;
+    /**
+     * Uncertaintywarnings
+     */
+    uncertaintyWarnings: Array<string>;
+    /**
+     * Updatedat
+     */
+    updatedAt: string;
+};
+
+/**
+ * OutreachDraftRevisionSummary
+ */
+export type OutreachDraftRevisionSummary = {
+    /**
+     * Createdat
+     */
+    createdAt: string;
+    /**
+     * Evidencemapstatus
+     */
+    evidenceMapStatus: 'verified-generated' | 'manual-edit-needs-review';
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
+ * OutreachDraftUpdateRequest
+ */
+export type OutreachDraftUpdateRequest = {
+    /**
+     * Body
+     */
+    body: string;
+    /**
+     * Expectedversion
+     */
+    expectedVersion: number;
+    /**
+     * Subject
+     */
+    subject: string;
+};
+
+/**
+ * OutreachGenerationMetadata
+ */
+export type OutreachGenerationMetadata = {
+    /**
+     * Fallbackreason
+     */
+    fallbackReason: 'deterministic-requested' | 'provider-not-configured' | 'provider-unavailable' | 'provider-refused' | 'invalid-provider-output' | 'grounding-check-failed' | null;
+    /**
+     * Mode
+     */
+    mode: 'deterministic' | 'llm';
+    /**
+     * Model
+     */
+    model: string | null;
+    /**
+     * Promptversion
+     */
+    promptVersion: string | null;
+    /**
+     * Provider
+     */
+    provider: string | null;
+    /**
+     * Templateversion
+     */
+    templateVersion: string;
+};
+
+/**
+ * OutreachPaperEvidence
+ */
+export type OutreachPaperEvidence = {
+    /**
+     * Evidencestrength
+     */
+    evidenceStrength: 'full-abstract' | 'title-only';
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Lastverifiedat
+     */
+    lastVerifiedAt: string;
+    /**
+     * Publicationyear
+     */
+    publicationYear: number;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Venue
+     */
+    venue: string | null;
 };
 
 /**
@@ -891,6 +1142,24 @@ export type RelevancePolicy = {
 };
 
 /**
+ * SelectedStudentFact
+ */
+export type SelectedStudentFact = {
+    /**
+     * Key
+     */
+    key: 'profile.name' | 'profile.program' | 'profile.institution' | 'profile.researchInterests' | 'profile.skills' | 'profile.projectTitle' | 'profile.projectSummary' | 'profile.weeklyAvailability';
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Value
+     */
+    value: string;
+};
+
+/**
  * StudentProfile
  *
  * Verified student facts allowed to influence a demo draft.
@@ -936,6 +1205,34 @@ export type StudentProfile = {
      * Weeklyavailability
      */
     weeklyAvailability: '5-10 hours' | '10-15 hours' | '15+ hours';
+};
+
+/**
+ * ValidationError
+ */
+export type ValidationError = {
+    /**
+     * Context
+     */
+    ctx?: {
+        [key: string]: unknown;
+    };
+    /**
+     * Input
+     */
+    input?: unknown;
+    /**
+     * Location
+     */
+    loc: Array<string | number>;
+    /**
+     * Message
+     */
+    msg: string;
+    /**
+     * Error Type
+     */
+    type: string;
 };
 
 /**
@@ -1302,3 +1599,88 @@ export type ReadHealthApiV1HealthGetResponses = {
 };
 
 export type ReadHealthApiV1HealthGetResponse = ReadHealthApiV1HealthGetResponses[keyof ReadHealthApiV1HealthGetResponses];
+
+export type CreateOutreachDraftApiV1OutreachDraftsPostData = {
+    body: OutreachDraftCreateRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/outreach/drafts';
+};
+
+export type CreateOutreachDraftApiV1OutreachDraftsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateOutreachDraftApiV1OutreachDraftsPostError = CreateOutreachDraftApiV1OutreachDraftsPostErrors[keyof CreateOutreachDraftApiV1OutreachDraftsPostErrors];
+
+export type CreateOutreachDraftApiV1OutreachDraftsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: OutreachDraftResponse;
+};
+
+export type CreateOutreachDraftApiV1OutreachDraftsPostResponse = CreateOutreachDraftApiV1OutreachDraftsPostResponses[keyof CreateOutreachDraftApiV1OutreachDraftsPostResponses];
+
+export type ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/outreach/drafts/{draft_id}';
+};
+
+export type ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOutreachDraftApiV1OutreachDraftsDraftIdGetError = ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors[keyof ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors];
+
+export type ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: OutreachDraftResponse;
+};
+
+export type ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponse = ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses[keyof ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses];
+
+export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData = {
+    body: OutreachDraftUpdateRequest;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/outreach/drafts/{draft_id}';
+};
+
+export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutError = UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors[keyof UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors];
+
+export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: OutreachDraftResponse;
+};
+
+export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponse = UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses[keyof UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses];

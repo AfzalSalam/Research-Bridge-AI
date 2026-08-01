@@ -38,6 +38,18 @@ class Settings(BaseSettings):
     openalex_max_attempts: int = Field(default=3, ge=1, le=4)
     openalex_backoff_base_seconds: float = Field(default=0.25, ge=0, le=5)
     openalex_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
+    openai_api_key: SecretStr | None = None
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_outreach_model: str = "gpt-5.6-terra"
+    openai_connect_timeout_seconds: float = Field(default=3.0, ge=0.1, le=30)
+    openai_read_timeout_seconds: float = Field(default=20.0, ge=0.1, le=120)
+    openai_write_timeout_seconds: float = Field(default=5.0, ge=0.1, le=30)
+    openai_pool_timeout_seconds: float = Field(default=2.0, ge=0.1, le=30)
+    openai_max_connections: int = Field(default=5, ge=1, le=25)
+    openai_max_keepalive_connections: int = Field(default=2, ge=0, le=10)
+    openai_max_attempts: int = Field(default=2, ge=1, le=3)
+    openai_backoff_base_seconds: float = Field(default=0.5, ge=0, le=5)
+    openai_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
     discovery_cache_ttl_seconds: int = Field(default=600, ge=30, le=3600)
     discovery_cache_max_entries: int = Field(default=128, ge=1, le=1000)
     mentor_query_evidence_weight: float = Field(default=0.35, ge=0, le=1)
@@ -95,6 +107,40 @@ class Settings(BaseSettings):
         )
         if abs(total - 1) > 1e-9:
             raise ValueError("mentor relevance weights must total one")
+        return self
+
+    @model_validator(mode="after")
+    def validate_openai_origin(self) -> "Settings":
+        """Restrict model traffic to the official API or owned test loopback."""
+
+        parsed = urlparse(self.openai_base_url)
+        has_clean_origin = (
+            parsed.username is None
+            and parsed.password is None
+            and parsed.params == ""
+            and parsed.query == ""
+            and parsed.fragment == ""
+        )
+        official_origin = (
+            has_clean_origin
+            and parsed.scheme == "https"
+            and parsed.hostname == "api.openai.com"
+            and parsed.port is None
+            and parsed.path.rstrip("/") == "/v1"
+        )
+        loopback_test_origin = (
+            has_clean_origin
+            and self.app_environment in {"test", "e2e"}
+            and parsed.scheme == "http"
+            and parsed.hostname in {"127.0.0.1", "localhost"}
+            and parsed.path.rstrip("/") in {"", "/v1"}
+        )
+        if not (official_origin or loopback_test_origin):
+            raise ValueError(
+                "openai_base_url must use the official HTTPS /v1 origin; "
+                "loopback HTTP is allowed only in test or e2e"
+            )
+        self.openai_base_url = self.openai_base_url.rstrip("/")
         return self
 
     @property

@@ -32,3 +32,11 @@ def test_loopback_provider_stub_is_allowed_only_for_tests() -> None:
     )
 
     assert settings.openalex_base_url == "http://127.0.0.1:8123"
+
+
+def test_openai_origin_is_fixed_outside_owned_test_stubs() -> None:
+    with pytest.raises(ValidationError, match="official HTTPS /v1 origin"):
+        Settings(
+            app_environment="production",
+            openai_base_url="https://example.org/v1",
+        )

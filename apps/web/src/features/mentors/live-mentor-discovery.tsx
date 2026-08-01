@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { EvidenceLink } from "@/features/demo/components/evidence-link";
+import { LiveOutreachWorkspace } from "@/features/outreach/live-outreach-workspace";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import {
   liveMentorSearchFormSchema,
@@ -250,9 +251,11 @@ function Papers({ candidate }: { candidate: MentorCandidateResult }) {
 function CandidateDetail({
   candidate,
   onBack,
+  query,
 }: {
   candidate: MentorCandidateResult;
   onBack: () => void;
+  query: string;
 }) {
   return (
     <article>
@@ -296,13 +299,7 @@ function CandidateDetail({
       </p>
       <Contributions candidate={candidate} />
       <Papers candidate={candidate} />
-      <section className="mt-10 border-t-2 border-brand-indigo pt-7">
-        <h3 className="text-xl font-medium">Evidence-grounded outreach is next</h3>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-          Phase 8 will use a human-selected researcher and papers to build an editable
-          draft from verified facts only. It will not mass-send or invent an address.
-        </p>
-      </section>
+      <LiveOutreachWorkspace candidate={candidate} key={candidate.id} query={query} />
     </article>
   );
 }
@@ -352,7 +349,12 @@ function ResultWorkspace({ result }: { result: MentorDiscoveryResponse }) {
         </div>
         <div className={cn(!selected && "hidden lg:block")}>
           {selected ? (
-            <CandidateDetail candidate={selected} key={selected.id} onBack={returnToCandidates} />
+            <CandidateDetail
+              candidate={selected}
+              key={selected.id}
+              onBack={returnToCandidates}
+              query={result.query}
+            />
           ) : (
             <DataState description="Choose a candidate to inspect its evidence and uncertainty boundaries." kind="empty" title="Select a researcher" />
           )}
@@ -385,7 +387,7 @@ export function LiveMentorDiscovery({ initialQuery }: { initialQuery?: string })
   const error = mutation.error instanceof ApiError ? mutation.error : null;
   const result = mutation.data;
   return (
-    <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
+    <div className="grid gap-8">
       <section className="min-w-0">
         <form className="border border-border bg-surface p-5 sm:p-7" noValidate onSubmit={handleSubmit(submit)}>
           <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_9rem_auto] md:items-end">
@@ -436,18 +438,20 @@ export function LiveMentorDiscovery({ initialQuery }: { initialQuery?: string })
           {result && result.candidates.length ? <ResultWorkspace key={`${result.query}-${result.source.retrievedAt}`} result={result} /> : null}
         </div>
       </section>
-      <aside className="border border-border bg-surface-subtle p-6 xl:sticky xl:top-24">
-        <div className="grid size-10 place-items-center rounded-full bg-brand-teal-soft text-brand-teal-strong">
-          <UserRoundSearch aria-hidden="true" className="size-5" />
+      <aside className="grid gap-6 border border-border bg-surface-subtle p-6 lg:grid-cols-[11rem_minmax(0,1fr)_18rem] lg:items-start lg:gap-8">
+        <div>
+          <div className="grid size-10 place-items-center rounded-full bg-brand-teal-soft text-brand-teal-strong">
+            <UserRoundSearch aria-hidden="true" className="size-5" />
+          </div>
+          <h2 className="mt-5 text-xl font-medium">What this proves</h2>
         </div>
-        <h2 className="mt-5 text-xl font-medium">What this proves</h2>
-        <ul className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">
+        <ul className="grid gap-4 text-sm leading-6 text-muted-foreground sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           <li className="flex gap-2"><Database aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Repeated authors collapse into one candidate with all supporting papers.</li>
           <li className="flex gap-2"><Scale aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Five documented features control ordering; an LLM cannot invent scores.</li>
           <li className="flex gap-2"><ShieldQuestion aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Title, current employer, contact, and openings stay unknown until verified.</li>
           <li className="flex gap-2"><FileSearch aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Positive contributions retain paper evidence IDs.</li>
         </ul>
-        <div className="mt-6 border-t border-border pt-5">
+        <div className="border-t border-border pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
           <p className="text-xs font-bold tracking-[0.1em] text-muted-foreground uppercase">Profile context</p>
           {result ? (
             <><p className="mt-3 text-sm font-medium">{result.profileInputs.projectTitle}</p><p className="mt-2 text-xs leading-5 text-muted-foreground">{result.profileInputs.researchInterests.join(" · ")}</p></>

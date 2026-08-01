@@ -19,6 +19,12 @@ uv run uvicorn app.main:app --reload --port 8000
   or OpenAlex Work ID with normalized evidence and provenance;
 - `POST /api/v1/discovery/mentors`: derive paper-backed researcher candidates
   with a versioned deterministic evidence policy and explicit unknowns;
+- `POST /api/v1/outreach/drafts`: verify one researcher and one or two papers,
+  then create a grounded, persisted draft;
+- `GET /api/v1/outreach/drafts/{draft_id}`: load the owner-scoped latest draft
+  and revision summaries;
+- `PUT /api/v1/outreach/drafts/{draft_id}`: save an editable revision with an
+  optimistic version check;
 - `GET /api/v1/demo/bootstrap`: fictional catalog and canonical profile;
 - `POST /api/v1/demo/discovery`: deterministic complete/partial/empty/error
   scenarios;
@@ -48,12 +54,26 @@ uses deterministic tie-breaking. The internal total controls review order and
 evidence bands but is not returned as a misleading public fit score. Academic
 title, current institution, contact, and availability remain unknown.
 
+Live outreach reruns mentor discovery and accepts only server-resolved IDs. It
+builds a typed evidence package, optionally asks the OpenAI Responses API for a
+strict structured composition, audits references and unsupported language, and
+falls back to `outreach-template.v1` on every unavailable, refused, invalid, or
+unsafe model path. Latest draft state and immutable revision snapshots are
+durable. No route sends email or discovers contact addresses.
+
 `OPENALEX_API_KEY` is optional but recommended for development because the
 anonymous allowance is very small. Keep it only in `apps/api/.env`; it is held
 as a `SecretStr` and must never be copied to browser configuration. The API uses
 the official `https://api.openalex.org` origin. A loopback HTTP origin is
 accepted only in `test` or `e2e`, which lets deterministic tests use their owned
 fixture server without enabling arbitrary upstream URLs in development.
+
+`OPENAI_API_KEY` is also optional and server-only. Without it, outreach remains
+fully usable through the deterministic fallback. `OPENAI_OUTREACH_MODEL`
+defaults to `gpt-5.6-terra`; provider calls use low reasoning, strict JSON
+Schema output, `store: false`, bounded output, explicit timeouts, and bounded
+retries. The base URL is restricted to the official OpenAI HTTPS origin outside
+tests.
 
 ## Database changes
 
@@ -66,10 +86,10 @@ uv run alembic current --check-heads
 uv run alembic check
 ```
 
-Phase 6 adds `20260801_0002`, including the OpenAlex catalog fields and the
-paper-author-institution relationship needed to preserve historical
-affiliations. Migrations are reversible on disposable data; downgrading to base
-removes all application tables.
+Phase 8 adds `20260801_0003`, extending the latest outreach snapshot with claim
+evidence and fallback metadata and adding immutable
+`outreach_draft_revisions`. Migrations are reversible on disposable data;
+downgrading to base removes all application tables.
 
 ## Contract and quality checks
 
@@ -80,6 +100,7 @@ uv run mypy app scripts
 uv run pytest
 uv run python -m scripts.export_openapi --check
 uv run python -m scripts.evaluate_mentor_relevance --check
+uv run python -m scripts.evaluate_outreach_grounding --check
 ```
 
 After an intentional Pydantic or route change, export the reviewed contract:

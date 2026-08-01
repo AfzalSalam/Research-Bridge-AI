@@ -88,6 +88,8 @@ structured outputs, claim-to-evidence mapping, editable draft versions,
 uncertainty warnings, provider metadata, deterministic fallback templates, and
 failure/grounding tests. Never send email automatically.
 
+**Status:** Complete.
+
 ## Phase 9 — Internships and application tracker
 
 Implement verified opportunity ingestion, allowlisted controlled extraction
