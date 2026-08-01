@@ -973,3 +973,241 @@ bounded retries, rate-limit and partial-failure handling, normalization,
 deduplication, and provenance writes. It will not add ranking yet: retrieved
 evidence must be correct and measurable before candidate ordering becomes its
 own Phase 7 concern.
+
+---
+
+## 2026-08-01 — Phase 06: OpenAlex discovery and normalization
+
+### What was built
+
+Research Bridge now has its first live academic-data path. A student can search
+for papers with a focused topic, a DOI, or an OpenAlex Work ID. FastAPI
+classifies the query, retrieves only the required OpenAlex fields through one
+application-scoped async client, validates provider records, reconstructs
+abstracts, normalizes academic identities, removes duplicate works, and stores
+the surviving evidence with provenance.
+
+The academic persistence model now preserves OpenAlex institution IDs, paper
+type/language/retraction state, OpenAlex topic IDs and provider scores, and all
+institutions attached to each paper-specific authorship. The frontend presents
+the results in a responsive evidence workspace with source links, visible
+unknowns, title-only warnings, partial/error/empty/loading states, and a clear
+“OpenAlex provider order — not Research Bridge ranked” label. The deterministic
+recruiter demo remains available in an adjacent tab.
+
+### Why it exists
+
+Professor matching is only defensible when its supporting papers are reliable.
+Phase 6 therefore builds the evidence boundary before deriving mentors or
+calculating relevance. This separation gives Phase 7 clean, persisted inputs
+and prevents a recruiter demo from implying that an LLM or an unexplained score
+selected a professor.
+
+Keeping live discovery beside a deterministic demo solves two different needs:
+live mode proves real API integration and provenance, while demo mode stays
+reliable during interviews even when OpenAlex is unavailable or an allowance
+is exhausted.
+
+### Concepts introduced
+
+- **Provider DTO versus public schema:** provider DTOs tolerate the external
+  OpenAlex shape. Public schemas expose only Research Bridge’s reviewed,
+  normalized contract. This prevents provider changes from leaking directly
+  into the UI.
+- **Dependency inversion:** the discovery service depends on an academic
+  provider protocol, not the concrete OpenAlex client. Tests replace that
+  boundary with fixtures without changing business logic.
+- **Application lifespan:** one async HTTP client and connection pool are
+  created for the FastAPI process and closed at shutdown. Creating a new client
+  for every request would discard pooling and increase latency.
+- **Timeout categories:** connect bounds opening a socket, read bounds waiting
+  for response bytes, write bounds sending request bytes, and pool bounds
+  waiting for a reusable connection.
+- **Retry budget:** an idempotent GET may retry only a small set of transient
+  failures. Capped exponential backoff creates increasing pauses without
+  retrying forever. Daily allowance failures are surfaced rather than amplified.
+- **Query classification:** text, DOI, and OpenAlex Work ID searches use known
+  request templates. User input never chooses the provider host, which is an
+  important SSRF defense.
+- **Inverted-index reconstruction:** OpenAlex can supply an abstract as words
+  mapped to positions. Deterministic code validates positions, detects
+  conflicts, orders tokens, and applies size bounds before producing text.
+- **Conservative identity resolution:** canonical OpenAlex IDs, DOI, ORCID, and
+  ROR are preferred. Title/year fallback is used only when both provider IDs
+  are absent. Unknown identity remains unknown instead of being guessed.
+- **Paper-specific affiliation:** an author may have multiple institutions on
+  one historical paper. The affiliation belongs to the
+  paper-author-institution relationship, not an assumed current employer.
+- **Idempotent upsert:** replaying the same provider records updates their
+  aggregate instead of creating duplicates. Database constraints and one
+  transaction protect the invariant.
+- **Provenance hash:** a stable SHA-256 hash represents the normalized fields
+  supplied by a source. It supports later change detection without treating the
+  hash as evidence itself.
+- **Cache-aside:** the service reads a bounded TTL cache before calling the
+  provider and fills it after validation. Only normalized provider values are
+  cached; persistence still runs on a hit. The current cache is process-local,
+  not shared infrastructure.
+- **Partial success:** malformed or retracted individual records can be skipped
+  while valid papers remain visible with structured warnings. A total provider
+  failure uses the shared error envelope and request ID.
+- **Provider order versus ranking:** OpenAlex’s response order is displayed as
+  received. A provider topic score is metadata about a topic assignment; it is
+  not a student-professor match score.
+
+### Data flow
+
+```text
+Live discovery form
+  -> React Hook Form + Zod validation
+  -> TanStack Query mutation + abort signal
+  -> generated POST /api/v1/discovery/papers client
+  -> FastAPI route + request transaction
+  -> DiscoveryService
+      -> classify text / DOI / OpenAlex Work ID
+      -> bounded cache lookup
+      -> OpenAlex provider
+          -> application-scoped async HTTPX2 client
+          -> timeout + retry + rate-limit boundary
+          -> provider DTO validation
+      -> deterministic normalization + deduplication
+      -> academic repository upsert
+          -> papers + authors + institutions
+          -> ordered authorships + paper-specific affiliations
+          -> topics + provenance
+      -> validated public response
+  -> responsive evidence list with source and uncertainty
+
+Repeated identical query
+  -> normalized cache key includes query kind, limit, and normalizer version
+  -> provider call skipped while entry is fresh
+  -> persistence still runs idempotently
+  -> UI shows “Provider cache hit”
+```
+
+### Important files
+
+- `apps/api/app/clients/openalex.py`: encoded OpenAlex requests, explicit
+  timeouts, bounded retries, rate-limit parsing, and secret-safe failures.
+- `apps/api/app/providers/base.py`: provider protocol and normalized academic
+  value objects.
+- `apps/api/app/providers/openalex/models.py`: tolerant raw provider DTOs.
+- `apps/api/app/providers/openalex/normalizer.py`: Unicode/identifier cleanup,
+  abstract reconstruction, deduplication, warnings, and content hashes.
+- `apps/api/app/services/search_cache.py`: bounded async-safe TTL/LRU cache.
+- `apps/api/app/services/discovery.py`: cache-aside orchestration and public
+  outcome mapping.
+- `apps/api/app/repositories/academic.py`: transactional, idempotent catalog and
+  provenance persistence.
+- `apps/api/alembic/versions/20260801_0002_openalex_catalog.py`: additive and
+  reversible Phase 6 schema change.
+- `apps/api/app/api/v1/routes/discovery.py`: thin live discovery transport.
+- `apps/web/src/features/discovery/live-paper-discovery.tsx`: responsive live
+  form and complete/partial/empty/error/loading evidence states.
+- `apps/web/src/lib/api/discovery.ts`: generated-client adapter plus runtime Zod
+  response validation.
+- `apps/web/scripts/run-e2e.mjs`: isolated migrated database and owned loopback
+  OpenAlex fixture server.
+- `docs/plans/phase-06-openalex-discovery-and-normalization.md`: scope,
+  architecture decisions, risks, and acceptance evidence.
+
+### How to run and test it
+
+Configure and migrate the backend:
+
+```powershell
+Copy-Item apps/api/.env.example apps/api/.env
+# Optional but recommended: set OPENALEX_API_KEY in apps/api/.env
+
+docker compose up -d db
+Set-Location apps/api
+uv sync --all-groups
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+Run the frontend from a second root terminal:
+
+```powershell
+npm.cmd run dev
+```
+
+Open `http://localhost:3000/discover`, keep **Live OpenAlex papers** selected,
+and search a focused topic. The recruiter journey remains under **Recruiter
+demo**.
+
+Phase 6 completion passed 48 backend tests, 22 frontend tests, and seven isolated
+Playwright tests. Ruff, Ruff formatting, mypy, OpenAPI drift, generated-client
+drift, lint, typecheck, production build, production dependency audit, and
+Compose validation passed. A disposable PostgreSQL 17 database passed upgrade,
+zero-drift, ingestion, fresh-process idempotency, downgrade, and re-upgrade.
+Manual browser QA passed at desktop and 390px with no document overflow or
+console warning/error.
+
+```powershell
+Set-Location apps/api
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app scripts
+uv run pytest
+uv run python -m scripts.export_openapi --check
+
+Set-Location ../..
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd --workspace @research-bridge/web run api:check
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+```
+
+### Common errors and debugging
+
+- **`academic_source_rate_limited`:** the provider rejected the allowance.
+  Wait for the displayed retry window or configure a server-only OpenAlex key.
+  Do not add an automatic retry loop around allowance exhaustion.
+- **`academic_source_unavailable`:** check internet access, the request ID, and
+  FastAPI logs. The public error deliberately omits the upstream URL when it
+  could contain a key.
+- **OpenAlex works anonymously but fails after adding a key:** restart FastAPI
+  after editing `.env` and ensure the value has no surrounding placeholder
+  characters. Never place it in frontend environment files.
+- **`openalex_base_url` validation fails:** normal development accepts only the
+  official HTTPS origin. Loopback HTTP is deliberately limited to test/E2E.
+- **Search works but persistence reports a missing column/table:** run `uv run
+  alembic upgrade head` against the same `DATABASE_URL` FastAPI uses.
+- **A title-only result appears:** this is expected when no valid abstract was
+  supplied. Do not infer methods, findings, or fit from the title.
+- **A repeated query still calls OpenAlex:** cache keys include query type and
+  limit, entries expire, and every FastAPI process owns a separate cache.
+- **`alembic check` reports operations:** ORM metadata and the applied migration
+  disagree. Create/review a migration instead of letting startup mutate schema.
+- **The live browser test unexpectedly spends provider allowance:** normal
+  automated E2E must use its loopback fixture. Check that the runner sets the
+  test-only loopback origin before starting the API.
+
+### Limitations
+
+- Phase 6 discovers papers, not professors. Mentor derivation and transparent
+  student relevance begin in Phase 7.
+- Only OpenAlex is live. Semantic Scholar, Crossref, ORCID, arXiv, and
+  controlled extraction remain deferred.
+- The cache is bounded but process-local; it has no cross-process invalidation
+  or durable search history.
+- Topic scores come from OpenAlex and are not Research Bridge ranking scores.
+- Provider DTO tolerance reduces breakage but cannot guarantee that OpenAlex
+  will never make an incompatible contract change.
+- A manual request to the real provider was not made during completion because
+  no personal OpenAlex key was configured. Deterministic client tests, the
+  owned provider stub, and current official documentation covered the boundary
+  without consuming external allowance.
+- Authentication, private-user isolation, ranking, LLM explanations, outreach
+  generation, and email sending remain absent.
+
+### Next step
+
+Phase 7 derives mentor candidates from persisted paper authors and implements a
+transparent placement-release relevance heuristic with feature contributions,
+evidence completeness, uncertainty, and evaluation measurements. It must keep
+provider metadata separate from Research Bridge relevance and must not claim
+research-grade ranking quality.

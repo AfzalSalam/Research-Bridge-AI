@@ -15,6 +15,8 @@ uv run uvicorn app.main:app --reload --port 8000
 ## Current routes
 
 - `GET /api/v1/health`: typed process health;
+- `POST /api/v1/discovery/papers`: real OpenAlex paper retrieval by text, DOI,
+  or OpenAlex Work ID with normalized evidence and provenance;
 - `GET /api/v1/demo/bootstrap`: fictional catalog and canonical profile;
 - `POST /api/v1/demo/discovery`: deterministic complete/partial/empty/error
   scenarios;
@@ -30,6 +32,20 @@ authentication. Every response has an `X-Request-ID`; errors share one
 structured envelope. OpenAPI is available at `/docs` and checked into
 `openapi.json`.
 
+Live discovery follows `route -> service -> repository/provider -> database/API`.
+The service classifies the query, checks a bounded process-local cache, asks the
+typed OpenAlex provider for raw records, normalizes and deduplicates them, and
+persists papers, ordered authorships, paper-specific affiliations, topics, and
+provenance in one transaction. Valid records survive malformed siblings as a
+`partial` response; total provider failures use safe structured errors.
+
+`OPENALEX_API_KEY` is optional but recommended for development because the
+anonymous allowance is very small. Keep it only in `apps/api/.env`; it is held
+as a `SecretStr` and must never be copied to browser configuration. The API uses
+the official `https://api.openalex.org` origin. A loopback HTTP origin is
+accepted only in `test` or `e2e`, which lets deterministic tests use their owned
+fixture server without enabling arbitrary upstream URLs in development.
+
 ## Database changes
 
 Application startup never creates or changes tables. After pulling a schema
@@ -41,8 +57,10 @@ uv run alembic current --check-heads
 uv run alembic check
 ```
 
-The initial migration is reversible with `uv run alembic downgrade base`, but
-that removes all application tables and should only be used on disposable data.
+Phase 6 adds `20260801_0002`, including the OpenAlex catalog fields and the
+paper-author-institution relationship needed to preserve historical
+affiliations. Migrations are reversible on disposable data; downgrading to base
+removes all application tables.
 
 ## Contract and quality checks
 

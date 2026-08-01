@@ -69,6 +69,8 @@ resolution, and representative fixtures.
 
 Other academic providers remain honest interfaces until implemented.
 
+**Status:** Complete.
+
 ## Phase 7 — Basic relevance and evidence
 
 Derive mentor candidates from supporting-paper authors. Implement the

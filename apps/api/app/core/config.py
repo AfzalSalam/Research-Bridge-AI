@@ -1,6 +1,8 @@
 from functools import lru_cache
+from urllib.parse import urlparse
 from uuid import UUID
 
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,6 +27,53 @@ class Settings(BaseSettings):
     )
     database_echo: bool = False
     demo_owner_id: UUID = UUID("00000000-0000-4000-8000-000000000001")
+    openalex_api_key: SecretStr | None = None
+    openalex_base_url: str = "https://api.openalex.org"
+    openalex_connect_timeout_seconds: float = Field(default=3.0, ge=0.1, le=30)
+    openalex_read_timeout_seconds: float = Field(default=10.0, ge=0.1, le=60)
+    openalex_write_timeout_seconds: float = Field(default=5.0, ge=0.1, le=30)
+    openalex_pool_timeout_seconds: float = Field(default=2.0, ge=0.1, le=30)
+    openalex_max_connections: int = Field(default=10, ge=1, le=50)
+    openalex_max_keepalive_connections: int = Field(default=5, ge=0, le=25)
+    openalex_max_attempts: int = Field(default=3, ge=1, le=4)
+    openalex_backoff_base_seconds: float = Field(default=0.25, ge=0, le=5)
+    openalex_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
+    discovery_cache_ttl_seconds: int = Field(default=600, ge=30, le=3600)
+    discovery_cache_max_entries: int = Field(default=128, ge=1, le=1000)
+
+    @model_validator(mode="after")
+    def validate_openalex_origin(self) -> "Settings":
+        """Allow only the official provider, except for owned test loopback stubs."""
+
+        parsed = urlparse(self.openalex_base_url)
+        has_clean_origin = (
+            parsed.username is None
+            and parsed.password is None
+            and parsed.params == ""
+            and parsed.query == ""
+            and parsed.fragment == ""
+        )
+        official_origin = (
+            has_clean_origin
+            and parsed.scheme == "https"
+            and parsed.hostname == "api.openalex.org"
+            and parsed.port is None
+            and parsed.path.rstrip("/") == ""
+        )
+        loopback_test_origin = (
+            has_clean_origin
+            and self.app_environment in {"test", "e2e"}
+            and parsed.scheme == "http"
+            and parsed.hostname in {"127.0.0.1", "localhost"}
+            and parsed.path.rstrip("/") == ""
+        )
+        if not (official_origin or loopback_test_origin):
+            raise ValueError(
+                "openalex_base_url must use the official HTTPS origin; "
+                "loopback HTTP is allowed only in test or e2e"
+            )
+        self.openalex_base_url = self.openalex_base_url.rstrip("/")
+        return self
 
     @property
     def cors_origins(self) -> list[str]:

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses } from './types.gen';
+import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -105,6 +105,20 @@ export class Sdk extends HeyApiClient {
     public updateDemoProfileApiV1DemoProfilePut<ThrowOnError extends boolean = false>(options: Options<UpdateDemoProfileApiV1DemoProfilePutData, ThrowOnError>) {
         return (options.client ?? this.client).put<UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateDemoProfileApiV1DemoProfilePutErrors, ThrowOnError>({
             url: '/api/v1/demo/profile',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Discover and persist normalized OpenAlex papers
+     */
+    public discoverPapersApiV1DiscoveryPapersPost<ThrowOnError extends boolean = false>(options: Options<DiscoverPapersApiV1DiscoveryPapersPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<DiscoverPapersApiV1DiscoveryPapersPostResponses, DiscoverPapersApiV1DiscoveryPapersPostErrors, ThrowOnError>({
+            url: '/api/v1/discovery/papers',
             ...options,
             headers: {
                 'Content-Type': 'application/json',

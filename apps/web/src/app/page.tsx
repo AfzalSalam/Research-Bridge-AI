@@ -42,7 +42,7 @@ export default async function Home() {
 
           <aside className="lg:pt-28" aria-label="Live system status">
             <p className="mb-3 text-xs font-bold tracking-[0.12em] text-brand-indigo uppercase">
-              Phase 5 · Durable profile boundary
+                Phase 6 · Live OpenAlex evidence
             </p>
             <HealthCard result={health} />
           </aside>

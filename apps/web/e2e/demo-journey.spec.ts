@@ -12,6 +12,7 @@ test("student can move from fictional profile to evidence-grounded outreach", as
   await expect(page.getByLabel("Name")).toHaveValue("Riya Demo");
 
   await page.goto("/discover");
+  await page.getByRole("tab", { name: "Recruiter demo" }).click();
   await page.getByRole("button", { name: "Run demo search" }).click();
   await expect(
     page.getByRole("heading", { name: "Researchers connected to paper evidence" }),
@@ -38,6 +39,50 @@ test("student can move from fictional profile to evidence-grounded outreach", as
   await expect(page.getByText("Application record updated in this browser session.")).toBeVisible();
 });
 
+test("live OpenAlex papers retain provider evidence without ranking claims", async ({
+  page,
+}) => {
+  const browserRequests: string[] = [];
+  page.on("request", (request) => browserRequests.push(request.url()));
+  await page.goto("/discover");
+
+  await page.getByRole("button", { name: "Search OpenAlex" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Reviewable publication evidence" }),
+  ).toBeVisible();
+  await expect(page.getByText("Human-centred AI for clinical decision support")).toBeVisible();
+  await expect(page.getByText("Feedback under distribution shift")).toBeVisible();
+  await expect(page.getByText(/not Research Bridge ranked/i).first()).toBeVisible();
+  await expect(page.getByText("Title-only evidence")).toBeVisible();
+  await expect(page.getByRole("link", { name: /DOI record/ })).toHaveAttribute(
+    "href",
+    "https://doi.org/10.1234/rbai.2026.001",
+  );
+  expect(browserRequests.some((url) => url.includes("e2e-provider-key"))).toBe(false);
+
+  await page.getByRole("button", { name: "Search OpenAlex" }).click();
+  await expect(page.getByText("Provider cache hit")).toBeVisible();
+});
+
+test("discovery modes implement keyboard tab navigation", async ({ page }) => {
+  await page.goto("/discover");
+  const liveTab = page.getByRole("tab", { name: "Live OpenAlex papers" });
+  const demoTab = page.getByRole("tab", { name: "Recruiter demo" });
+
+  await liveTab.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(demoTab).toBeFocused();
+  await expect(demoTab).toHaveAttribute("aria-selected", "true");
+  await expect(
+    page.getByRole("tabpanel", { name: "Recruiter demo" }),
+  ).toBeVisible();
+
+  await page.keyboard.press("Home");
+  await expect(liveTab).toBeFocused();
+  await expect(liveTab).toHaveAttribute("aria-selected", "true");
+});
+
 test("mentor list becomes a focused detail flow on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/mentors");
@@ -51,6 +96,7 @@ test("mock API discovery keeps partial, empty, and source failures explicit", as
   page,
 }) => {
   await page.goto("/discover");
+  await page.getByRole("tab", { name: "Recruiter demo" }).click();
 
   await page.getByLabel("Demo response").selectOption("partial");
   await page.getByRole("button", { name: "Run demo search" }).click();

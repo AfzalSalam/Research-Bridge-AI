@@ -4,6 +4,7 @@ from app.db.models.academic import (
     Opportunity,
     Paper,
     PaperAuthor,
+    PaperAuthorInstitution,
     PaperTopic,
     ProvenanceRecord,
 )
@@ -34,6 +35,7 @@ __all__ = [
     "OutreachDraft",
     "Paper",
     "PaperAuthor",
+    "PaperAuthorInstitution",
     "PaperTopic",
     "ProfileInterest",
     "ProfilePreference",

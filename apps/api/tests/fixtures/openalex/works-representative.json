@@ -1,0 +1,127 @@
+{
+  "meta": {
+    "count": 4
+  },
+  "results": [
+    {
+      "id": "https://openalex.org/W1000000001",
+      "doi": "https://doi.org/10.1234/RBAI.2026.001",
+      "title": "Human-centred AI for clinical decision support",
+      "publication_year": 2026,
+      "publication_date": "2026-04-12",
+      "type": "article",
+      "language": "en",
+      "is_retracted": false,
+      "primary_location": {
+        "source": {
+          "display_name": "Journal of Responsible Health AI"
+        }
+      },
+      "authorships": [
+        {
+          "author": {
+            "id": "https://openalex.org/A1000000001",
+            "display_name": "Mira Sen",
+            "orcid": "https://orcid.org/0000-0001-2345-678X"
+          },
+          "is_corresponding": true,
+          "institutions": [
+            {
+              "id": "https://openalex.org/I1000000001",
+              "display_name": "Institute for Human-Centred Computing",
+              "ror": "https://ror.org/03yrm5c26",
+              "country_code": "IN",
+              "geo": {
+                "city": "Bengaluru"
+              }
+            },
+            {
+              "id": "https://openalex.org/I1000000002",
+              "display_name": "St. Anne Clinical Research Centre",
+              "country_code": "GB"
+            }
+          ]
+        },
+        {
+          "author": {
+            "id": "https://openalex.org/A1000000002",
+            "display_name": "José Álvarez"
+          },
+          "is_corresponding": false,
+          "institutions": [
+            {
+              "id": "https://openalex.org/I1000000002",
+              "display_name": "St. Anne Clinical Research Centre",
+              "country_code": "GB"
+            }
+          ]
+        }
+      ],
+      "abstract_inverted_index": {
+        "Human-centred": [0],
+        "AI": [1],
+        "supports": [2],
+        "clinical": [3],
+        "decisions.": [4]
+      },
+      "topics": [
+        {
+          "id": "https://openalex.org/T1000000001",
+          "display_name": "Clinical Decision Support Systems",
+          "score": 0.94
+        },
+        {
+          "id": "https://openalex.org/T1000000002",
+          "display_name": "Explainable Artificial Intelligence",
+          "score": 0.81
+        }
+      ]
+    },
+    {
+      "id": "https://openalex.org/W1000000002",
+      "doi": null,
+      "title": "Feedback under distribution shift",
+      "publication_year": 2025,
+      "publication_date": null,
+      "type": "preprint",
+      "language": null,
+      "is_retracted": false,
+      "primary_location": null,
+      "authorships": [
+        {
+          "author": {
+            "id": "https://openalex.org/A1000000003",
+            "display_name": "李明"
+          },
+          "is_corresponding": null,
+          "institutions": []
+        }
+      ],
+      "abstract_inverted_index": null,
+      "topics": []
+    },
+    {
+      "id": "not-an-openalex-work",
+      "doi": null,
+      "title": null,
+      "publication_year": null,
+      "is_retracted": false,
+      "authorships": [],
+      "topics": []
+    },
+    {
+      "id": "https://openalex.org/W1000000004",
+      "doi": "https://doi.org/10.1234/retracted",
+      "title": "Retracted example that must not be recommended",
+      "publication_year": 2024,
+      "publication_date": "2024-01-01",
+      "type": "article",
+      "language": "en",
+      "is_retracted": true,
+      "primary_location": null,
+      "authorships": [],
+      "abstract_inverted_index": null,
+      "topics": []
+    }
+  ]
+}

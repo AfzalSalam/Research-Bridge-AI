@@ -34,6 +34,7 @@ def test_initial_migration_reaches_head_without_model_drift(tmp_path: Path) -> N
         "opportunities",
         "outreach_drafts",
         "paper_authors",
+        "paper_author_institutions",
         "paper_topics",
         "papers",
         "profile_interests",
@@ -45,6 +46,21 @@ def test_initial_migration_reaches_head_without_model_drift(tmp_path: Path) -> N
         "student_profiles",
     }
     assert expected_tables <= table_names
+
+    with sqlite3.connect(database_path) as connection:
+        institution_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(institutions)")
+        }
+        paper_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(papers)")
+        }
+        topic_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(paper_topics)")
+        }
+
+    assert "openalex_id" in institution_columns
+    assert {"work_type", "language", "is_retracted"} <= paper_columns
+    assert {"openalex_topic_id", "score"} <= topic_columns
 
     command.downgrade(config, "base")
 

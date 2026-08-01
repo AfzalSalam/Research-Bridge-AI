@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
-import { DemoNotice } from "@/features/demo/components/demo-notice";
 import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
 import { DiscoveryExperience } from "@/features/discovery/discovery-experience";
 
 export const metadata: Metadata = {
   title: "Discover Research",
-  description: "The future academic paper discovery workspace.",
+  description: "Retrieve real OpenAlex papers with normalized evidence and provenance.",
 };
 
 export default function DiscoverPage() {
@@ -16,12 +15,11 @@ export default function DiscoverPage() {
     <main id="main-content">
       <Container className="py-10 sm:py-14 lg:py-16">
         <PageHeader
-          description="Run a transparent local retrieval simulation, inspect partial failures, and move from a topic to fictional paper-backed researcher candidates."
+          description="Retrieve real OpenAlex publication evidence or switch to the deterministic recruiter journey. Every result keeps its source, uncertainty, and provider boundary visible."
           eyebrow="Step 2 · Discover"
           title="Start with the evidence"
         />
         <WorkflowSteps current="Discover" />
-        <DemoNotice className="mt-8" />
         <div className="mt-8">
           <DiscoveryExperience />
         </div>

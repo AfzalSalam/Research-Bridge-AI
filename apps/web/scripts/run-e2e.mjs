@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { createServer } from "node:http";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -23,6 +24,13 @@ const pythonExecutable =
 const webBaseUrl = "http://127.0.0.1:3100";
 const apiBaseUrl = "http://127.0.0.1:8100";
 const apiHealthUrl = `${apiBaseUrl}/api/v1/health`;
+const openAlexFixturePath = path.join(
+  apiRoot,
+  "tests",
+  "fixtures",
+  "openalex",
+  "works-representative.json",
+);
 
 function forwardOutput(stream, destination) {
   stream.on("data", (chunk) => destination.write(chunk));
@@ -79,6 +87,48 @@ async function stopServer(server) {
   server.stderr?.destroy();
 }
 
+async function startOpenAlexStub() {
+  const fixture = JSON.parse(await readFile(openAlexFixturePath, "utf8"));
+  const records = fixture.results.slice(0, 2);
+  const server = createServer((request, response) => {
+    const url = new URL(request.url ?? "/", "http://127.0.0.1");
+    response.setHeader("Content-Type", "application/json");
+    response.setHeader("X-RateLimit-Remaining", "99");
+    response.setHeader("X-RateLimit-Reset", "3600");
+    if (request.method !== "GET" || !url.pathname.startsWith("/works")) {
+      response.writeHead(404).end(JSON.stringify({ error: "not found" }));
+      return;
+    }
+    if (url.searchParams.get("api_key") !== "e2e-provider-key") {
+      response.writeHead(401).end(JSON.stringify({ error: "missing test key" }));
+      return;
+    }
+    if (url.pathname === "/works") {
+      response
+        .writeHead(200)
+        .end(JSON.stringify({ meta: { count: records.length }, results: records }));
+      return;
+    }
+    response.writeHead(200).end(JSON.stringify(records[0]));
+  });
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  const address = server.address();
+  if (!address || typeof address === "string") {
+    throw new Error("The OpenAlex E2E stub did not expose a loopback port.");
+  }
+  return { server, baseUrl: `http://127.0.0.1:${address.port}` };
+}
+
+async function stopOpenAlexStub(stub) {
+  if (!stub?.server.listening) return;
+  await new Promise((resolve, reject) =>
+    stub.server.close((error) => (error ? reject(error) : resolve())),
+  );
+}
+
 if (!existsSync(pythonExecutable)) {
   throw new Error(
     `Backend environment not found at ${pythonExecutable}. Run "uv sync --all-groups" in apps/api first.`,
@@ -88,18 +138,22 @@ if (!existsSync(pythonExecutable)) {
 const temporaryRoot = await mkdtemp(path.join(tmpdir(), "research-bridge-e2e-"));
 const databasePath = path.join(temporaryRoot, "e2e.sqlite3").replaceAll("\\", "/");
 const databaseUrl = `sqlite+aiosqlite:///${databasePath}`;
-const apiEnvironment = {
-  ...process.env,
-  APP_ENVIRONMENT: "e2e",
-  DATABASE_URL: databaseUrl,
-  LOG_LEVEL: "WARNING",
-};
 const webEnvironment = { ...process.env, API_BASE_URL: apiBaseUrl };
 
 let apiServer = null;
 let webServer = null;
+let openAlexStub = null;
 let exitCode = 1;
 try {
+  openAlexStub = await startOpenAlexStub();
+  const apiEnvironment = {
+    ...process.env,
+    APP_ENVIRONMENT: "e2e",
+    DATABASE_URL: databaseUrl,
+    LOG_LEVEL: "WARNING",
+    OPENALEX_API_KEY: "e2e-provider-key",
+    OPENALEX_BASE_URL: openAlexStub.baseUrl,
+  };
   await runCommand(pythonExecutable, ["-m", "alembic", "upgrade", "head"], {
     cwd: apiRoot,
     env: apiEnvironment,
@@ -152,6 +206,7 @@ try {
   const shutdownResults = await Promise.allSettled([
     stopServer(webServer),
     stopServer(apiServer),
+    stopOpenAlexStub(openAlexStub),
   ]);
   await rm(temporaryRoot, {
     force: true,

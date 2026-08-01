@@ -201,24 +201,8 @@ export const discoveryResponseSchema = z.object({
   sourceWarning: z.string().min(1).nullable(),
 });
 
-export const apiErrorResponseSchema = z.object({
-  error: z.object({
-    code: z.string().min(1),
-    message: z.string().min(1),
-    requestId: z.string().min(1),
-    details: z.array(
-      z.object({
-        field: z.string(),
-        message: z.string().min(1),
-        type: z.string().min(1),
-      }),
-    ),
-  }),
-});
-
 export type Application = z.infer<typeof applicationSchema>;
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
-export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>;
 export type DemoBootstrap = z.infer<typeof demoBootstrapSchema>;
 export type DemoState = z.infer<typeof demoStateSchema>;
 export type DiscoveryScenario = z.infer<typeof discoveryScenarioSchema>;

@@ -50,6 +50,72 @@ export type DemoBootstrapResponse = {
 };
 
 /**
+ * DiscoveredPaper
+ */
+export type DiscoveredPaper = {
+    /**
+     * Abstractexcerpt
+     */
+    abstractExcerpt: string | null;
+    /**
+     * Authors
+     */
+    authors: Array<PaperAuthor>;
+    /**
+     * Doi
+     */
+    doi: string | null;
+    /**
+     * Evidencestrength
+     */
+    evidenceStrength: 'full-abstract' | 'title-only';
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Language
+     */
+    language: string | null;
+    /**
+     * Lastverifiedat
+     */
+    lastVerifiedAt: string;
+    /**
+     * Openalexid
+     */
+    openalexId: string;
+    /**
+     * Publicationdate
+     */
+    publicationDate: string | null;
+    /**
+     * Publicationyear
+     */
+    publicationYear: number;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Topics
+     */
+    topics: Array<PaperTopic>;
+    /**
+     * Venue
+     */
+    venue: string | null;
+    /**
+     * Worktype
+     */
+    workType: string | null;
+};
+
+/**
  * DiscoveryRequest
  *
  * Bounded input for deterministic demo discovery behavior.
@@ -83,6 +149,40 @@ export type DiscoveryResponse = {
      * Status
      */
     status: 'complete' | 'partial' | 'empty';
+};
+
+/**
+ * DiscoverySource
+ */
+export type DiscoverySource = {
+    /**
+     * Accessmode
+     */
+    accessMode: 'api-key' | 'limited-anonymous';
+    /**
+     * Cachestatus
+     */
+    cacheStatus: 'hit' | 'miss';
+    /**
+     * Name
+     */
+    name?: 'OpenAlex';
+    /**
+     * Ratelimitremaining
+     */
+    rateLimitRemaining?: number | null;
+    /**
+     * Ratelimitresetseconds
+     */
+    rateLimitResetSeconds?: number | null;
+    /**
+     * Retrievedat
+     */
+    retrievedAt: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl?: string;
 };
 
 /**
@@ -352,6 +452,99 @@ export type OutreachDraftRequest = {
 };
 
 /**
+ * PaperAuthor
+ */
+export type PaperAuthor = {
+    /**
+     * Displayname
+     */
+    displayName: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Institutions
+     */
+    institutions: Array<PaperInstitution>;
+    /**
+     * Iscorresponding
+     */
+    isCorresponding: boolean | null;
+    /**
+     * Openalexid
+     */
+    openalexId: string | null;
+    /**
+     * Orcid
+     */
+    orcid: string | null;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+};
+
+/**
+ * PaperDiscoveryRequest
+ *
+ * Bounded paper query for the real OpenAlex discovery boundary.
+ */
+export type PaperDiscoveryRequest = {
+    /**
+     * Limit
+     */
+    limit?: number;
+    /**
+     * Query
+     */
+    query: string;
+};
+
+/**
+ * PaperDiscoveryResponse
+ */
+export type PaperDiscoveryResponse = {
+    /**
+     * Ordering
+     */
+    ordering?: 'openalex-provider';
+    /**
+     * Papers
+     */
+    papers: Array<DiscoveredPaper>;
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Querykind
+     */
+    queryKind: 'text' | 'doi' | 'openalex-id';
+    /**
+     * Returnedcount
+     */
+    returnedCount: number;
+    /**
+     * Skippedcount
+     */
+    skippedCount: number;
+    source: DiscoverySource;
+    /**
+     * Status
+     */
+    status: 'complete' | 'partial' | 'empty';
+    /**
+     * Totalproviderresults
+     */
+    totalProviderResults?: number | null;
+    /**
+     * Warnings
+     */
+    warnings: Array<string>;
+};
+
+/**
  * PaperEvidence
  *
  * Fictional publication evidence with an explicit evidence boundary.
@@ -393,6 +586,62 @@ export type PaperEvidence = {
      * Year
      */
     year: number;
+};
+
+/**
+ * PaperInstitution
+ */
+export type PaperInstitution = {
+    /**
+     * City
+     */
+    city: string | null;
+    /**
+     * Countrycode
+     */
+    countryCode: string | null;
+    /**
+     * Displayname
+     */
+    displayName: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Openalexid
+     */
+    openalexId: string | null;
+    /**
+     * Rorid
+     */
+    rorId: string | null;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+};
+
+/**
+ * PaperTopic
+ */
+export type PaperTopic = {
+    /**
+     * Displayname
+     */
+    displayName: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Openalexid
+     */
+    openalexId: string | null;
+    /**
+     * Score
+     */
+    score?: number | null;
 };
 
 /**
@@ -595,6 +844,43 @@ export type UpdateDemoProfileApiV1DemoProfilePutResponses = {
 };
 
 export type UpdateDemoProfileApiV1DemoProfilePutResponse = UpdateDemoProfileApiV1DemoProfilePutResponses[keyof UpdateDemoProfileApiV1DemoProfilePutResponses];
+
+export type DiscoverPapersApiV1DiscoveryPapersPostData = {
+    body: PaperDiscoveryRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/discovery/papers';
+};
+
+export type DiscoverPapersApiV1DiscoveryPapersPostErrors = {
+    /**
+     * The paper query could not be validated or classified.
+     */
+    422: ErrorResponse;
+    /**
+     * The normalized paper catalog could not be persisted.
+     */
+    500: ErrorResponse;
+    /**
+     * OpenAlex rejected the request or returned invalid data.
+     */
+    502: ErrorResponse;
+    /**
+     * OpenAlex is unreachable, rate limited, or unavailable.
+     */
+    503: ErrorResponse;
+};
+
+export type DiscoverPapersApiV1DiscoveryPapersPostError = DiscoverPapersApiV1DiscoveryPapersPostErrors[keyof DiscoverPapersApiV1DiscoveryPapersPostErrors];
+
+export type DiscoverPapersApiV1DiscoveryPapersPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PaperDiscoveryResponse;
+};
+
+export type DiscoverPapersApiV1DiscoveryPapersPostResponse = DiscoverPapersApiV1DiscoveryPapersPostResponses[keyof DiscoverPapersApiV1DiscoveryPapersPostResponses];
 
 export type ReadHealthApiV1HealthGetData = {
     body?: never;

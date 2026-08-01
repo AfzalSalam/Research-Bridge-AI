@@ -10,11 +10,14 @@ from sqlalchemy import (
     CheckConstraint,
     Date,
     DateTime,
+    Float,
     ForeignKey,
+    ForeignKeyConstraint,
     SmallInteger,
     String,
     Text,
     UniqueConstraint,
+    false,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -56,6 +59,9 @@ class Institution(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     country_code: Mapped[str | None] = mapped_column(String(2), nullable=True)
     city: Mapped[str | None] = mapped_column(String(120), nullable=True)
     ror_id: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True)
+    openalex_id: Mapped[str | None] = mapped_column(
+        String(64), nullable=True, unique=True
+    )
     homepage_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
     source_url: Mapped[str] = mapped_column(String(2048), nullable=False)
     last_verified_at: Mapped[datetime] = mapped_column(
@@ -63,6 +69,9 @@ class Institution(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
 
     authors: Mapped[list[Author]] = relationship(back_populates="institution")
+    authorship_links: Mapped[list[PaperAuthorInstitution]] = relationship(
+        back_populates="institution"
+    )
 
 
 class Author(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -121,6 +130,11 @@ class Paper(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         SmallInteger, nullable=False, index=True
     )
     publication_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    work_type: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    language: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    is_retracted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=false()
+    )
     venue: Mapped[str | None] = mapped_column(String(240), nullable=True)
     abstract: Mapped[str | None] = mapped_column(Text, nullable=True)
     doi: Mapped[str | None] = mapped_column(String(255), nullable=True, unique=True)
@@ -171,6 +185,36 @@ class PaperAuthor(Base):
 
     paper: Mapped[Paper] = relationship(back_populates="author_links")
     author: Mapped[Author] = relationship(back_populates="paper_links")
+    institution_links: Mapped[list[PaperAuthorInstitution]] = relationship(
+        back_populates="paper_author",
+        cascade="all, delete-orphan",
+        order_by="PaperAuthorInstitution.position",
+    )
+
+
+class PaperAuthorInstitution(Base):
+    """One institution listed for an author on a specific paper."""
+
+    __tablename__ = "paper_author_institutions"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["paper_id", "author_id"],
+            ["paper_authors.paper_id", "paper_authors.author_id"],
+            ondelete="CASCADE",
+        ),
+        CheckConstraint("position >= 0", name="position_non_negative"),
+        UniqueConstraint("paper_id", "author_id", "position"),
+    )
+
+    paper_id: Mapped[UUID] = mapped_column(primary_key=True)
+    author_id: Mapped[UUID] = mapped_column(primary_key=True)
+    institution_id: Mapped[UUID] = mapped_column(
+        ForeignKey("institutions.id", ondelete="RESTRICT"), primary_key=True
+    )
+    position: Mapped[int] = mapped_column(SmallInteger, nullable=False)
+
+    paper_author: Mapped[PaperAuthor] = relationship(back_populates="institution_links")
+    institution: Mapped[Institution] = relationship(back_populates="authorship_links")
 
 
 class PaperTopic(UUIDPrimaryKeyMixin, Base):
@@ -178,7 +222,12 @@ class PaperTopic(UUIDPrimaryKeyMixin, Base):
     __table_args__ = (
         CheckConstraint("position >= 0", name="position_non_negative"),
         UniqueConstraint("paper_id", "normalized_topic"),
+        UniqueConstraint("paper_id", "openalex_topic_id"),
         UniqueConstraint("paper_id", "position"),
+        CheckConstraint(
+            "score IS NULL OR (score >= 0 AND score <= 1)",
+            name="score_range",
+        ),
     )
 
     paper_id: Mapped[UUID] = mapped_column(
@@ -186,6 +235,8 @@ class PaperTopic(UUIDPrimaryKeyMixin, Base):
     )
     topic: Mapped[str] = mapped_column(String(160), nullable=False)
     normalized_topic: Mapped[str] = mapped_column(String(160), nullable=False)
+    openalex_topic_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    score: Mapped[float | None] = mapped_column(Float, nullable=True)
     position: Mapped[int] = mapped_column(SmallInteger, nullable=False)
 
     paper: Mapped[Paper] = relationship(back_populates="topics")

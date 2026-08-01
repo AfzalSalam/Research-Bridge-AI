@@ -2,17 +2,18 @@
 
 Research Bridge AI is an evidence-first academic discovery and research-
 opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the completed Phase 5 persistence boundary: a
+full-stack foundation and the completed Phase 6 OpenAlex discovery slice: a
 responsive Next.js journey, a modular FastAPI backend, generated TypeScript API
-types, SQLAlchemy repositories, Alembic migrations, and local PostgreSQL with
-pgvector available for later phases.
+types, typed and bounded academic retrieval, SQLAlchemy repositories, Alembic
+migrations, and local PostgreSQL with pgvector available for later phases.
 
-The browser demo includes an editable fictional profile, transparent search
-states, paper-backed fictional researcher records, deterministic custom
-outreach, fictional opportunities, and an application tracker. Its profile is
-durable through PostgreSQL; catalog, discovery, and draft behavior still use
-explicit deterministic fixtures. No academic API, LLM, email provider, or
-authentication is connected yet.
+The discovery workspace now retrieves real publication evidence from OpenAlex
+by topic, DOI, or OpenAlex Work ID. It validates and normalizes provider data,
+preserves source links and unknowns, persists papers and provenance, and labels
+the results as provider order rather than a Research Bridge ranking. The
+adjacent recruiter demo remains deterministic and fictional so the mentor,
+outreach, opportunity, and tracker journey is always reviewable. No LLM, email
+provider, authentication, or professor-ranking workflow is connected yet.
 
 ## Architecture
 
@@ -22,7 +23,11 @@ Browser
       -> responsive root shell + project-owned design system
       -> TanStack Query server-state boundary
           -> same-origin /backend rewrite
-              -> FastAPI /api/v1/demo
+              -> FastAPI /api/v1
+                  -> /discovery/papers
+                      -> discovery service -> bounded cache
+                      -> typed OpenAlex provider -> async HTTPX2 client
+                      -> academic repository -> normalized PostgreSQL catalog
                   -> route -> service -> repository -> SQLAlchemy/PostgreSQL
                       -> durable fictional student profile
                   -> DemoService protocol -> MockDemoService
@@ -103,6 +108,7 @@ Useful URLs:
 - Health: <http://localhost:8000/api/v1/health>
 - OpenAPI UI: <http://localhost:8000/docs>
 - OpenAPI JSON: <http://localhost:8000/openapi.json>
+- Live paper discovery: `POST http://localhost:8000/api/v1/discovery/papers`
 - Demo bootstrap: <http://localhost:8000/api/v1/demo/bootstrap>
 - Durable demo profile: <http://localhost:8000/api/v1/demo/profile>
 
@@ -124,19 +130,21 @@ Useful frontend routes:
 - `/design-system`: internal tokens, primitives, form patterns, and data-state
   gallery;
 - `/profile`: validated fictional student context;
-- `/discover`: transparent complete, partial, empty, error, and loading fixture
-  scenarios;
+- `/discover`: real OpenAlex paper search plus transparent complete, partial,
+  empty, error, and loading states; the recruiter demo remains a second tab;
 - `/mentors`: responsive master-detail evidence and editable deterministic
   outreach;
 - `/opportunities`: source-linked fictional listings, unknown fields, filters,
   and save actions;
 - `/applications`: explicit status, notes, follow-up, and event history.
 
-Every person, paper, institution, and opportunity is fictional and uses inert
-`example.org` evidence URLs. Profile saves survive reloads through the database;
-drafts, saved opportunities, and tracker edits remain in the current browser
-tab. Use **Reset demo** to clear local workflow state while retaining the last
-database-saved profile.
+Every record in the **Recruiter demo** tab and its later workflow pages is
+fictional and uses inert `example.org` evidence URLs. The **Live OpenAlex
+papers** tab displays normalized real-provider metadata and clearly separates
+it from the fictional mentor journey. Profile saves survive reloads through the
+database; drafts, saved opportunities, and tracker edits remain in the current
+browser tab. Use **Reset demo** to clear local workflow state while retaining
+the last database-saved profile.
 
 ## Quality checks
 
@@ -152,10 +160,12 @@ npm.cmd run test:e2e
 npm.cmd audit --omit=dev --audit-level=high
 ```
 
-`test:e2e` creates a temporary migrated SQLite database, builds Next.js for an
-isolated API port, owns both test servers, verifies profile persistence plus the
-recruiter journey, failure, mobile, and responsive states, then removes only its
-temporary data.
+`test:e2e` creates a temporary migrated SQLite database, starts an owned
+loopback OpenAlex fixture server, builds Next.js for an isolated API port, owns
+all test processes, verifies live evidence and cache behavior plus profile
+persistence, the recruiter journey, failure, mobile, and responsive states,
+then removes only its temporary data. Automated tests never spend OpenAlex API
+allowance.
 
 Backend:
 
@@ -187,6 +197,12 @@ docker compose --env-file .env.example config
 | `DATABASE_URL` | FastAPI/Alembic | Async SQLAlchemy URL; local PostgreSQL uses the `postgresql+asyncpg` dialect. |
 | `DATABASE_ECHO` | FastAPI | Opt-in SQL logging for local debugging; keep disabled around private data. |
 | `DEMO_OWNER_ID` | FastAPI | Server-only UUID ownership anchor for the fictional profile. |
+| `OPENALEX_API_KEY` | FastAPI | Optional server-only OpenAlex key; never expose it through `NEXT_PUBLIC_*`. |
+| `OPENALEX_BASE_URL` | FastAPI | Official OpenAlex HTTPS origin; loopback HTTP is accepted only in test/E2E. |
+| `OPENALEX_*_TIMEOUT_SECONDS` | FastAPI | Explicit connect, read, write, and pool-wait bounds. |
+| `OPENALEX_MAX_*_CONNECTIONS` | FastAPI | Application-scoped upstream connection-pool bounds. |
+| `OPENALEX_MAX_ATTEMPTS` / `OPENALEX_BACKOFF_*` | FastAPI | Bounded idempotent retry budget and capped backoff. |
+| `DISCOVERY_CACHE_*` | FastAPI | Process-local TTL and entry bounds for normalized provider responses. |
 | `POSTGRES_*` | Docker Compose | Local database name, user, password, and host port. |
 
 `API_BASE_URL` is intentionally server-only. Do not move secrets into a
@@ -215,6 +231,18 @@ Start PostgreSQL and apply migrations with `uv run alembic upgrade head`. The
 health route checks the API process; product routes intentionally fail safely if
 their database is unavailable or behind the current migration head.
 
+### OpenAlex search is unavailable or rate limited
+
+Confirm FastAPI can reach `https://api.openalex.org`, then inspect the safe
+error code and request ID shown by the UI. Anonymous requests have a very small
+daily allowance; create a free OpenAlex API key for development and place it in
+`apps/api/.env` as `OPENALEX_API_KEY`. Restart FastAPI after changing it. The
+key belongs only on the server and must never use a `NEXT_PUBLIC_*` name.
+
+Repeated identical searches may say **Provider cache hit**. This cache is
+bounded and process-local, so it clears when FastAPI restarts and is not a
+distributed production cache.
+
 ### Port 5432 reaches a different PostgreSQL service
 
 Set `POSTGRES_PORT=55432` before `docker compose up -d db` and update the port in
@@ -223,8 +251,9 @@ live Phase 5 smoke test deliberately used 55432.
 
 ### Some demo changes disappeared
 
-Only the fictional profile is durable in Phase 5. Drafts, saves, and tracker
-changes use `sessionStorage`, so they are scoped to the current browser tab.
+The fictional profile and normalized OpenAlex academic catalog are durable.
+Drafts, saves, and tracker changes use `sessionStorage`, so they are scoped to
+the current browser tab.
 
 ### uv selects Python 3.14
 
@@ -259,4 +288,5 @@ tradeoff with a forced install.
 - Phase 3 plan: `docs/plans/phase-03-typed-mock-product-journey.md`
 - Phase 4 plan: `docs/plans/phase-04-backend-contracts.md`
 - Phase 5 plan: `docs/plans/phase-05-database-and-profile.md`
+- Phase 6 plan: `docs/plans/phase-06-openalex-discovery-and-normalization.md`
 - Learning log: `docs/LEARNING_LOG.md`

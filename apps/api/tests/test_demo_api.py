@@ -231,4 +231,5 @@ def test_openapi_documents_product_routes_and_error_schema() -> None:
     assert "/api/v1/demo/discovery" in schema["paths"]
     assert "/api/v1/demo/outreach-drafts" in schema["paths"]
     assert "/api/v1/demo/profile" in schema["paths"]
+    assert "/api/v1/discovery/papers" in schema["paths"]
     assert "ErrorResponse" in schema["components"]["schemas"]

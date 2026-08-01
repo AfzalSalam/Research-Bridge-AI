@@ -11,15 +11,20 @@ from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import REQUEST_ID_HEADER, request_context_middleware
 from app.db.session import Database, create_database
+from app.runtime import DiscoveryRuntime, create_discovery_runtime
 
 
 @asynccontextmanager
 async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
-    """Release pooled database connections during process shutdown."""
+    """Release pooled database and provider connections during shutdown."""
 
-    yield
-    database = cast(Database, application.state.database)
-    await database.engine.dispose()
+    try:
+        yield
+    finally:
+        runtime = cast(DiscoveryRuntime, application.state.discovery_runtime)
+        database = cast(Database, application.state.database)
+        await runtime.http_client.aclose()
+        await database.engine.dispose()
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -31,8 +36,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         title=app_settings.app_name,
         version=app_settings.app_version,
         description=(
-            "Evidence-first academic discovery API. Phase 5 persists the fictional "
-            "student profile while discovery remains deterministic demo data."
+            "Evidence-first academic discovery API. Phase 6 adds real, normalized "
+            "OpenAlex paper retrieval while mentor ranking remains deferred."
         ),
         lifespan=application_lifespan,
         openapi_tags=[
@@ -41,11 +46,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "name": "demo",
                 "description": "Fictional contracts for the recruiter demo.",
             },
+            {
+                "name": "discovery",
+                "description": "Real paper evidence from bounded academic providers.",
+            },
         ],
     )
     application.state.settings = app_settings
     application.state.database = create_database(app_settings)
+    application.state.discovery_runtime = create_discovery_runtime(app_settings)
     application.state.demo_service_override = None
+    application.state.paper_provider_override = None
     register_exception_handlers(application)
     application.middleware("http")(request_context_middleware)
 

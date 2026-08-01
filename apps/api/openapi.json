@@ -76,6 +76,150 @@
         "title": "DemoBootstrapResponse",
         "type": "object"
       },
+      "DiscoveredPaper": {
+        "additionalProperties": false,
+        "properties": {
+          "abstractExcerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Abstractexcerpt"
+          },
+          "authors": {
+            "items": {
+              "$ref": "#/components/schemas/PaperAuthor"
+            },
+            "title": "Authors",
+            "type": "array"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "evidenceStrength": {
+            "enum": [
+              "full-abstract",
+              "title-only"
+            ],
+            "title": "Evidencestrength",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "lastVerifiedAt": {
+            "format": "date-time",
+            "title": "Lastverifiedat",
+            "type": "string"
+          },
+          "openalexId": {
+            "title": "Openalexid",
+            "type": "string"
+          },
+          "publicationDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publicationdate"
+          },
+          "publicationYear": {
+            "maximum": 2100.0,
+            "minimum": 1000.0,
+            "title": "Publicationyear",
+            "type": "integer"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/PaperTopic"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue"
+          },
+          "workType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worktype"
+          }
+        },
+        "required": [
+          "id",
+          "openalexId",
+          "doi",
+          "title",
+          "publicationYear",
+          "publicationDate",
+          "workType",
+          "language",
+          "venue",
+          "abstractExcerpt",
+          "evidenceStrength",
+          "sourceUrl",
+          "lastVerifiedAt",
+          "authors",
+          "topics"
+        ],
+        "title": "DiscoveredPaper",
+        "type": "object"
+      },
       "DiscoveryRequest": {
         "additionalProperties": false,
         "description": "Bounded input for deterministic demo discovery behavior.",
@@ -141,6 +285,77 @@
           "mentorIds"
         ],
         "title": "DiscoveryResponse",
+        "type": "object"
+      },
+      "DiscoverySource": {
+        "additionalProperties": false,
+        "properties": {
+          "accessMode": {
+            "enum": [
+              "api-key",
+              "limited-anonymous"
+            ],
+            "title": "Accessmode",
+            "type": "string"
+          },
+          "cacheStatus": {
+            "enum": [
+              "hit",
+              "miss"
+            ],
+            "title": "Cachestatus",
+            "type": "string"
+          },
+          "name": {
+            "const": "OpenAlex",
+            "default": "OpenAlex",
+            "title": "Name",
+            "type": "string"
+          },
+          "rateLimitRemaining": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratelimitremaining"
+          },
+          "rateLimitResetSeconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratelimitresetseconds"
+          },
+          "retrievedAt": {
+            "format": "date-time",
+            "title": "Retrievedat",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "default": "https://openalex.org/",
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "retrievedAt",
+          "accessMode",
+          "cacheStatus"
+        ],
+        "title": "DiscoverySource",
         "type": "object"
       },
       "ErrorBody": {
@@ -594,6 +809,186 @@
         "title": "OutreachDraftRequest",
         "type": "object"
       },
+      "PaperAuthor": {
+        "additionalProperties": false,
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "institutions": {
+            "items": {
+              "$ref": "#/components/schemas/PaperInstitution"
+            },
+            "title": "Institutions",
+            "type": "array"
+          },
+          "isCorresponding": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iscorresponding"
+          },
+          "openalexId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openalexid"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orcid"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "openalexId",
+          "orcid",
+          "displayName",
+          "isCorresponding",
+          "sourceUrl",
+          "institutions"
+        ],
+        "title": "PaperAuthor",
+        "type": "object"
+      },
+      "PaperDiscoveryRequest": {
+        "additionalProperties": false,
+        "description": "Bounded paper query for the real OpenAlex discovery boundary.",
+        "properties": {
+          "limit": {
+            "default": 12,
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "PaperDiscoveryRequest",
+        "type": "object"
+      },
+      "PaperDiscoveryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "ordering": {
+            "const": "openalex-provider",
+            "default": "openalex-provider",
+            "title": "Ordering",
+            "type": "string"
+          },
+          "papers": {
+            "items": {
+              "$ref": "#/components/schemas/DiscoveredPaper"
+            },
+            "title": "Papers",
+            "type": "array"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "queryKind": {
+            "enum": [
+              "text",
+              "doi",
+              "openalex-id"
+            ],
+            "title": "Querykind",
+            "type": "string"
+          },
+          "returnedCount": {
+            "minimum": 0.0,
+            "title": "Returnedcount",
+            "type": "integer"
+          },
+          "skippedCount": {
+            "minimum": 0.0,
+            "title": "Skippedcount",
+            "type": "integer"
+          },
+          "source": {
+            "$ref": "#/components/schemas/DiscoverySource"
+          },
+          "status": {
+            "enum": [
+              "complete",
+              "partial",
+              "empty"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "totalProviderResults": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalproviderresults"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "query",
+          "queryKind",
+          "returnedCount",
+          "skippedCount",
+          "warnings",
+          "source",
+          "papers"
+        ],
+        "title": "PaperDiscoveryResponse",
+        "type": "object"
+      },
       "PaperEvidence": {
         "additionalProperties": false,
         "description": "Fictional publication evidence with an explicit evidence boundary.",
@@ -674,6 +1069,127 @@
           "sourceUrl"
         ],
         "title": "PaperEvidence",
+        "type": "object"
+      },
+      "PaperInstitution": {
+        "additionalProperties": false,
+        "properties": {
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "countryCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Countrycode"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "openalexId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openalexid"
+          },
+          "rorId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rorid"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "openalexId",
+          "rorId",
+          "displayName",
+          "countryCode",
+          "city",
+          "sourceUrl"
+        ],
+        "title": "PaperInstitution",
+        "type": "object"
+      },
+      "PaperTopic": {
+        "additionalProperties": false,
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "openalexId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openalexid"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "id",
+          "openalexId",
+          "displayName"
+        ],
+        "title": "PaperTopic",
         "type": "object"
       },
       "StudentProfile": {
@@ -770,7 +1286,7 @@
     }
   },
   "info": {
-    "description": "Evidence-first academic discovery API. Phase 5 persists the fictional student profile while discovery remains deterministic demo data.",
+    "description": "Evidence-first academic discovery API. Phase 6 adds real, normalized OpenAlex paper retrieval while mentor ranking remains deferred.",
     "title": "Research Bridge API",
     "version": "0.1.0"
   },
@@ -1029,6 +1545,77 @@
         ]
       }
     },
+    "/api/v1/discovery/papers": {
+      "post": {
+        "operationId": "discover_papers_api_v1_discovery_papers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperDiscoveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaperDiscoveryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The paper query could not be validated or classified."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The normalized paper catalog could not be persisted."
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "OpenAlex rejected the request or returned invalid data."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "OpenAlex is unreachable, rate limited, or unavailable."
+          }
+        },
+        "summary": "Discover and persist normalized OpenAlex papers",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "description": "Report that the API process and typed contract are available.",
@@ -1060,6 +1647,10 @@
     {
       "description": "Fictional contracts for the recruiter demo.",
       "name": "demo"
+    },
+    {
+      "description": "Real paper evidence from bounded academic providers.",
+      "name": "discovery"
     }
   ]
 }
