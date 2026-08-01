@@ -1,0 +1,27 @@
+{
+  "evaluationYear": 2026,
+  "fixtureMetrics": {
+    "authorAppearances": 4,
+    "candidateRetrievalSuccessRate": 0.6667,
+    "casesWithCandidates": 2,
+    "duplicateCollapseRate": 0.25,
+    "meanEvidenceCoverage": 0.5417,
+    "queryCases": 3,
+    "uniqueCandidates": 3,
+    "unsupportedClaimRate": 0.0
+  },
+  "fixtureVersion": "mentor-relevance-fixture-v1",
+  "limitations": [
+    "The fixture is intentionally tiny and cannot support Recall, MRR, or nDCG.",
+    "Lexical overlap does not prove semantic or supervisory suitability.",
+    "Professor title, current institution, contact, and availability are not evaluated."
+  ],
+  "policyVersion": "placement-relevance-v1",
+  "purePolicyLatencyMs": {
+    "note": "Local process timing excludes provider, database, and HTTP time.",
+    "p50": 0.0651,
+    "p95": 0.1996,
+    "samples": 300
+  },
+  "scope": "Deterministic local fixtures; not a real-world ranking benchmark."
+}

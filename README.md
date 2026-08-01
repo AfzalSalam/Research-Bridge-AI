@@ -2,18 +2,19 @@
 
 Research Bridge AI is an evidence-first academic discovery and research-
 opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the completed Phase 6 OpenAlex discovery slice: a
+full-stack foundation and the completed Phase 7 researcher-evidence slice: a
 responsive Next.js journey, a modular FastAPI backend, generated TypeScript API
 types, typed and bounded academic retrieval, SQLAlchemy repositories, Alembic
 migrations, and local PostgreSQL with pgvector available for later phases.
 
-The discovery workspace now retrieves real publication evidence from OpenAlex
-by topic, DOI, or OpenAlex Work ID. It validates and normalizes provider data,
-preserves source links and unknowns, persists papers and provenance, and labels
-the results as provider order rather than a Research Bridge ranking. The
-adjacent recruiter demo remains deterministic and fictional so the mentor,
-outreach, opportunity, and tracker journey is always reviewable. No LLM, email
-provider, authentication, or professor-ranking workflow is connected yet.
+The discovery workspace retrieves real publication evidence from OpenAlex by
+topic, DOI, or OpenAlex Work ID. It can now consolidate paper authors into
+researcher candidates and order them with a versioned deterministic evidence
+policy. Every feature contribution, supporting paper, publication-time
+affiliation, source, and uncertainty is inspectable; no overall fit percentage
+or professor claim is invented. The adjacent recruiter demo remains
+deterministic and fictional. No LLM, email provider, authentication, or
+advanced ranking model is connected yet.
 
 ## Architecture
 
@@ -28,6 +29,10 @@ Browser
                       -> discovery service -> bounded cache
                       -> typed OpenAlex provider -> async HTTPX2 client
                       -> academic repository -> normalized PostgreSQL catalog
+                  -> /discovery/mentors
+                      -> profile + paper discovery services
+                      -> deterministic candidate derivation
+                      -> evidence bands + feature contributions
                   -> route -> service -> repository -> SQLAlchemy/PostgreSQL
                       -> durable fictional student profile
                   -> DemoService protocol -> MockDemoService
@@ -109,6 +114,7 @@ Useful URLs:
 - OpenAPI UI: <http://localhost:8000/docs>
 - OpenAPI JSON: <http://localhost:8000/openapi.json>
 - Live paper discovery: `POST http://localhost:8000/api/v1/discovery/papers`
+- Live researcher discovery: `POST http://localhost:8000/api/v1/discovery/mentors`
 - Demo bootstrap: <http://localhost:8000/api/v1/demo/bootstrap>
 - Durable demo profile: <http://localhost:8000/api/v1/demo/profile>
 
@@ -132,19 +138,19 @@ Useful frontend routes:
 - `/profile`: validated fictional student context;
 - `/discover`: real OpenAlex paper search plus transparent complete, partial,
   empty, error, and loading states; the recruiter demo remains a second tab;
-- `/mentors`: responsive master-detail evidence and editable deterministic
-  outreach;
+- `/mentors`: live paper-backed researcher evidence with transparent policy
+  contributions, plus the separate fictional outreach demo;
 - `/opportunities`: source-linked fictional listings, unknown fields, filters,
   and save actions;
 - `/applications`: explicit status, notes, follow-up, and event history.
 
 Every record in the **Recruiter demo** tab and its later workflow pages is
-fictional and uses inert `example.org` evidence URLs. The **Live OpenAlex
-papers** tab displays normalized real-provider metadata and clearly separates
-it from the fictional mentor journey. Profile saves survive reloads through the
-database; drafts, saved opportunities, and tracker edits remain in the current
-browser tab. Use **Reset demo** to clear local workflow state while retaining
-the last database-saved profile.
+fictional and uses inert `example.org` evidence URLs. The live tabs display
+normalized real-provider papers and paper-backed researcher candidates while
+clearly separating them from the fictional mentor journey. Profile saves
+survive reloads through the database; drafts, saved opportunities, and tracker
+edits remain in the current browser tab. Use **Reset demo** to clear local
+workflow state while retaining the last database-saved profile.
 
 ## Quality checks
 
@@ -176,6 +182,7 @@ uv run ruff format --check .
 uv run mypy app scripts
 uv run pytest
 uv run python -m scripts.export_openapi --check
+uv run python -m scripts.evaluate_mentor_relevance --check
 ```
 
 Compose configuration does not require the daemon:
@@ -203,6 +210,7 @@ docker compose --env-file .env.example config
 | `OPENALEX_MAX_*_CONNECTIONS` | FastAPI | Application-scoped upstream connection-pool bounds. |
 | `OPENALEX_MAX_ATTEMPTS` / `OPENALEX_BACKOFF_*` | FastAPI | Bounded idempotent retry budget and capped backoff. |
 | `DISCOVERY_CACHE_*` | FastAPI | Process-local TTL and entry bounds for normalized provider responses. |
+| `MENTOR_*_WEIGHT` | FastAPI | Five public Phase 7 evidence-policy weights; values must total exactly 1.0. |
 | `POSTGRES_*` | Docker Compose | Local database name, user, password, and host port. |
 
 `API_BASE_URL` is intentionally server-only. Do not move secrets into a
@@ -242,6 +250,13 @@ key belongs only on the server and must never use a `NEXT_PUBLIC_*` name.
 Repeated identical searches may say **Provider cache hit**. This cache is
 bounded and process-local, so it clears when FastAPI restarts and is not a
 distributed production cache.
+
+### A researcher has no professor title or current institution
+
+That is intentional. OpenAlex paper authorship verifies a publication identity
+and historical affiliations for that paper; it does not prove a current job,
+title, contact address, or student opening. Phase 7 keeps those facts unknown
+until a future official source verifies them.
 
 ### Port 5432 reaches a different PostgreSQL service
 
@@ -289,4 +304,5 @@ tradeoff with a forced install.
 - Phase 4 plan: `docs/plans/phase-04-backend-contracts.md`
 - Phase 5 plan: `docs/plans/phase-05-database-and-profile.md`
 - Phase 6 plan: `docs/plans/phase-06-openalex-discovery-and-normalization.md`
+- Phase 7 plan: `docs/plans/phase-07-basic-relevance-and-evidence.md`
 - Learning log: `docs/LEARNING_LOG.md`

@@ -86,10 +86,34 @@ test("discovery modes implement keyboard tab navigation", async ({ page }) => {
 test("mentor list becomes a focused detail flow on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/mentors");
+  await page.getByRole("tab", { name: "Recruiter demo + outreach" }).click();
   await page.getByRole("button", { name: /Dr. Mira Sen/ }).click();
   await expect(page.getByRole("button", { name: "Back to candidates" })).toBeVisible();
   await page.getByRole("button", { name: "Back to candidates" }).click();
   await expect(page.getByRole("heading", { name: "Fictional researcher candidates" })).toBeVisible();
+});
+
+test("live papers lead to grouped researcher evidence without professor claims", async ({
+  page,
+}) => {
+  await page.goto("/discover");
+  await page.getByRole("button", { name: "Search OpenAlex" }).click();
+  await page.getByRole("link", { name: "Find researchers" }).click();
+  await expect(page).toHaveURL(/\/mentors\?query=/);
+  await expect(page.getByLabel("Research topic, DOI, or OpenAlex Work ID")).toHaveValue(
+    "interpretable machine learning for clinical decision support",
+  );
+
+  await page.getByRole("button", { name: "Find researchers" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Reviewable researcher evidence" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Mira Sen" })).toBeVisible();
+  await expect(page.getByText("Affiliations at publication").first()).toBeVisible();
+  await expect(page.getByText(/historical paper evidence/)).toBeVisible();
+  await expect(page.getByText(/placement-relevance-v1/)).toBeVisible();
+  await expect(page.getByText("Academic title", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /send/i })).toHaveCount(0);
 });
 
 test("mock API discovery keeps partial, empty, and source failures explicit", async ({

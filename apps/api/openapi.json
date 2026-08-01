@@ -37,7 +37,7 @@
           },
           "mentors": {
             "items": {
-              "$ref": "#/components/schemas/MentorCandidate"
+              "$ref": "#/components/schemas/app__schemas__demo__MentorCandidate"
             },
             "minItems": 1,
             "title": "Mentors",
@@ -429,6 +429,14 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EvidenceConfidence": {
+        "enum": [
+          "high",
+          "moderate",
+          "limited"
+        ],
+        "type": "string"
+      },
       "HealthResponse": {
         "description": "Public contract returned by the process health endpoint.",
         "properties": {
@@ -459,77 +467,386 @@
         "title": "HealthResponse",
         "type": "object"
       },
-      "MentorCandidate": {
+      "MentorAuthorship": {
         "additionalProperties": false,
-        "description": "Fictional researcher candidate supported by publication evidence.",
         "properties": {
-          "department": {
-            "maxLength": 120,
-            "minLength": 2,
-            "title": "Department",
-            "type": "string"
-          },
-          "fitRationale": {
+          "affiliationsAtPublication": {
             "items": {
-              "maxLength": 240,
-              "minLength": 10,
-              "type": "string"
+              "$ref": "#/components/schemas/PaperInstitution"
             },
-            "minItems": 1,
-            "title": "Fitrationale",
+            "title": "Affiliationsatpublication",
             "type": "array"
           },
+          "isCorresponding": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iscorresponding"
+          },
+          "position": {
+            "minimum": 1.0,
+            "title": "Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "position",
+          "isCorresponding",
+          "affiliationsAtPublication"
+        ],
+        "title": "MentorAuthorship",
+        "type": "object"
+      },
+      "MentorDerivationQuality": {
+        "additionalProperties": false,
+        "properties": {
+          "authorAppearances": {
+            "minimum": 0.0,
+            "title": "Authorappearances",
+            "type": "integer"
+          },
+          "duplicateCollapseRate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Duplicatecollapserate",
+            "type": "number"
+          },
+          "meanEvidenceCoverage": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Meanevidencecoverage",
+            "type": "number"
+          },
+          "uniqueCandidates": {
+            "minimum": 0.0,
+            "title": "Uniquecandidates",
+            "type": "integer"
+          },
+          "unsupportedClaimRate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Unsupportedclaimrate",
+            "type": "number"
+          }
+        },
+        "required": [
+          "authorAppearances",
+          "uniqueCandidates",
+          "duplicateCollapseRate",
+          "meanEvidenceCoverage",
+          "unsupportedClaimRate"
+        ],
+        "title": "MentorDerivationQuality",
+        "type": "object"
+      },
+      "MentorDiscoveryRequest": {
+        "additionalProperties": false,
+        "description": "Bounded request for paper-backed candidate derivation.",
+        "properties": {
+          "candidateLimit": {
+            "default": 12,
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Candidatelimit",
+            "type": "integer"
+          },
+          "paperLimit": {
+            "default": 20,
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Paperlimit",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "MentorDiscoveryRequest",
+        "type": "object"
+      },
+      "MentorDiscoveryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "authorAppearanceCount": {
+            "minimum": 0.0,
+            "title": "Authorappearancecount",
+            "type": "integer"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/app__schemas__mentor_discovery__MentorCandidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "derivedCandidateCount": {
+            "minimum": 0.0,
+            "title": "Derivedcandidatecount",
+            "type": "integer"
+          },
+          "ordering": {
+            "const": "deterministic-evidence-policy",
+            "default": "deterministic-evidence-policy",
+            "title": "Ordering",
+            "type": "string"
+          },
+          "paperCount": {
+            "minimum": 0.0,
+            "title": "Papercount",
+            "type": "integer"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/RelevancePolicy"
+          },
+          "profileInputs": {
+            "$ref": "#/components/schemas/ProfileRelevanceInputs"
+          },
+          "profileMode": {
+            "const": "saved-or-fictional-fallback",
+            "default": "saved-or-fictional-fallback",
+            "title": "Profilemode",
+            "type": "string"
+          },
+          "quality": {
+            "$ref": "#/components/schemas/MentorDerivationQuality"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "queryKind": {
+            "enum": [
+              "text",
+              "doi",
+              "openalex-id"
+            ],
+            "title": "Querykind",
+            "type": "string"
+          },
+          "returnedCount": {
+            "minimum": 0.0,
+            "title": "Returnedcount",
+            "type": "integer"
+          },
+          "source": {
+            "$ref": "#/components/schemas/DiscoverySource"
+          },
+          "status": {
+            "enum": [
+              "complete",
+              "partial",
+              "empty"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "timing": {
+            "$ref": "#/components/schemas/MentorDiscoveryTiming"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "query",
+          "queryKind",
+          "profileInputs",
+          "policy",
+          "source",
+          "paperCount",
+          "authorAppearanceCount",
+          "derivedCandidateCount",
+          "returnedCount",
+          "warnings",
+          "quality",
+          "timing",
+          "candidates"
+        ],
+        "title": "MentorDiscoveryResponse",
+        "type": "object"
+      },
+      "MentorDiscoveryTiming": {
+        "additionalProperties": false,
+        "properties": {
+          "heuristicMs": {
+            "minimum": 0.0,
+            "title": "Heuristicms",
+            "type": "integer"
+          },
+          "retrievalAndPersistenceMs": {
+            "minimum": 0.0,
+            "title": "Retrievalandpersistencems",
+            "type": "integer"
+          },
+          "totalMs": {
+            "minimum": 0.0,
+            "title": "Totalms",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "retrievalAndPersistenceMs",
+          "heuristicMs",
+          "totalMs"
+        ],
+        "title": "MentorDiscoveryTiming",
+        "type": "object"
+      },
+      "MentorFeatureContribution": {
+        "additionalProperties": false,
+        "properties": {
+          "contribution": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Contribution",
+            "type": "number"
+          },
+          "evidencePaperIds": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Evidencepaperids",
+            "type": "array"
+          },
+          "explanation": {
+            "maxLength": 260,
+            "minLength": 10,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "feature": {
+            "$ref": "#/components/schemas/PolicyFeature"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "matchedTerms": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Matchedterms",
+            "type": "array"
+          },
+          "value": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value",
+            "type": "number"
+          },
+          "weight": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "value",
+          "weight",
+          "contribution",
+          "explanation",
+          "matchedTerms",
+          "evidencePaperIds"
+        ],
+        "title": "MentorFeatureContribution",
+        "type": "object"
+      },
+      "MentorSupportingPaper": {
+        "additionalProperties": false,
+        "properties": {
+          "abstractExcerpt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Abstractexcerpt"
+          },
+          "authorship": {
+            "$ref": "#/components/schemas/MentorAuthorship"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "evidenceStrength": {
+            "enum": [
+              "full-abstract",
+              "title-only"
+            ],
+            "title": "Evidencestrength",
+            "type": "string"
+          },
           "id": {
+            "format": "uuid",
             "title": "Id",
             "type": "string"
           },
-          "identityNote": {
-            "maxLength": 240,
-            "minLength": 10,
-            "title": "Identitynote",
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "lastVerifiedAt": {
+            "format": "date-time",
+            "title": "Lastverifiedat",
             "type": "string"
           },
-          "institution": {
-            "maxLength": 120,
-            "minLength": 2,
-            "title": "Institution",
+          "openalexId": {
+            "title": "Openalexid",
             "type": "string"
           },
-          "location": {
-            "maxLength": 120,
-            "minLength": 2,
-            "title": "Location",
-            "type": "string"
+          "publicationDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publicationdate"
           },
-          "name": {
-            "maxLength": 120,
-            "minLength": 2,
-            "title": "Name",
-            "type": "string"
-          },
-          "papers": {
-            "items": {
-              "$ref": "#/components/schemas/PaperEvidence"
-            },
-            "minItems": 1,
-            "title": "Papers",
-            "type": "array"
-          },
-          "researchThemes": {
-            "items": {
-              "maxLength": 120,
-              "minLength": 2,
-              "type": "string"
-            },
-            "minItems": 1,
-            "title": "Researchthemes",
-            "type": "array"
-          },
-          "role": {
-            "maxLength": 120,
-            "minLength": 2,
-            "title": "Role",
-            "type": "string"
+          "publicationYear": {
+            "title": "Publicationyear",
+            "type": "integer"
           },
           "sourceUrl": {
             "format": "uri",
@@ -537,22 +854,59 @@
             "minLength": 1,
             "title": "Sourceurl",
             "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "$ref": "#/components/schemas/PaperTopic"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "venue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Venue"
+          },
+          "workType": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worktype"
           }
         },
         "required": [
           "id",
-          "name",
-          "role",
-          "department",
-          "institution",
-          "location",
-          "researchThemes",
-          "fitRationale",
-          "identityNote",
+          "openalexId",
+          "doi",
+          "title",
+          "publicationYear",
+          "publicationDate",
+          "workType",
+          "language",
+          "venue",
+          "abstractExcerpt",
+          "evidenceStrength",
           "sourceUrl",
-          "papers"
+          "lastVerifiedAt",
+          "authorship",
+          "topics"
         ],
-        "title": "MentorCandidate",
+        "title": "MentorSupportingPaper",
         "type": "object"
       },
       "Opportunity": {
@@ -1192,6 +1546,115 @@
         "title": "PaperTopic",
         "type": "object"
       },
+      "PolicyFeature": {
+        "enum": [
+          "query-evidence",
+          "profile-alignment",
+          "supporting-depth",
+          "recent-activity",
+          "evidence-completeness"
+        ],
+        "type": "string"
+      },
+      "PolicyWeight": {
+        "additionalProperties": false,
+        "properties": {
+          "feature": {
+            "$ref": "#/components/schemas/PolicyFeature"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "weight": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "weight"
+        ],
+        "title": "PolicyWeight",
+        "type": "object"
+      },
+      "ProfileRelevanceInputs": {
+        "additionalProperties": false,
+        "description": "Non-private profile labels returned so the user can audit matching.",
+        "properties": {
+          "projectTitle": {
+            "title": "Projecttitle",
+            "type": "string"
+          },
+          "researchInterests": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Researchinterests",
+            "type": "array"
+          },
+          "skills": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Skills",
+            "type": "array"
+          }
+        },
+        "required": [
+          "researchInterests",
+          "skills",
+          "projectTitle"
+        ],
+        "title": "ProfileRelevanceInputs",
+        "type": "object"
+      },
+      "RelevanceBand": {
+        "enum": [
+          "strong",
+          "promising",
+          "exploratory"
+        ],
+        "type": "string"
+      },
+      "RelevancePolicy": {
+        "additionalProperties": false,
+        "properties": {
+          "ordering": {
+            "const": "deterministic-evidence-policy",
+            "default": "deterministic-evidence-policy",
+            "title": "Ordering",
+            "type": "string"
+          },
+          "scoreVisibility": {
+            "const": "bands-and-contributions-only",
+            "default": "bands-and-contributions-only",
+            "title": "Scorevisibility",
+            "type": "string"
+          },
+          "version": {
+            "const": "placement-relevance-v1",
+            "title": "Version",
+            "type": "string"
+          },
+          "weights": {
+            "items": {
+              "$ref": "#/components/schemas/PolicyWeight"
+            },
+            "title": "Weights",
+            "type": "array"
+          }
+        },
+        "required": [
+          "version",
+          "weights"
+        ],
+        "title": "RelevancePolicy",
+        "type": "object"
+      },
       "StudentProfile": {
         "additionalProperties": false,
         "description": "Verified student facts allowed to influence a demo draft.",
@@ -1282,11 +1745,233 @@
         ],
         "title": "StudentProfile",
         "type": "object"
+      },
+      "app__schemas__demo__MentorCandidate": {
+        "additionalProperties": false,
+        "description": "Fictional researcher candidate supported by publication evidence.",
+        "properties": {
+          "department": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Department",
+            "type": "string"
+          },
+          "fitRationale": {
+            "items": {
+              "maxLength": 240,
+              "minLength": 10,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Fitrationale",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "identityNote": {
+            "maxLength": 240,
+            "minLength": 10,
+            "title": "Identitynote",
+            "type": "string"
+          },
+          "institution": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Institution",
+            "type": "string"
+          },
+          "location": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Location",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "papers": {
+            "items": {
+              "$ref": "#/components/schemas/PaperEvidence"
+            },
+            "minItems": 1,
+            "title": "Papers",
+            "type": "array"
+          },
+          "researchThemes": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Researchthemes",
+            "type": "array"
+          },
+          "role": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Role",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "department",
+          "institution",
+          "location",
+          "researchThemes",
+          "fitRationale",
+          "identityNote",
+          "sourceUrl",
+          "papers"
+        ],
+        "title": "MentorCandidate",
+        "type": "object"
+      },
+      "app__schemas__mentor_discovery__MentorCandidate": {
+        "additionalProperties": false,
+        "description": "Candidate facts and evidence, with unsupported employment fields absent.",
+        "properties": {
+          "academicTitle": {
+            "title": "Academictitle",
+            "type": "null"
+          },
+          "availability": {
+            "const": "unknown",
+            "default": "unknown",
+            "title": "Availability",
+            "type": "string"
+          },
+          "contributions": {
+            "items": {
+              "$ref": "#/components/schemas/MentorFeatureContribution"
+            },
+            "title": "Contributions",
+            "type": "array"
+          },
+          "currentInstitution": {
+            "title": "Currentinstitution",
+            "type": "null"
+          },
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "evidenceCompleteness": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Evidencecompleteness",
+            "type": "number"
+          },
+          "evidenceConfidence": {
+            "$ref": "#/components/schemas/EvidenceConfidence"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lastVerifiedAt": {
+            "format": "date-time",
+            "title": "Lastverifiedat",
+            "type": "string"
+          },
+          "openalexId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openalexid"
+          },
+          "orcid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orcid"
+          },
+          "relevanceBand": {
+            "$ref": "#/components/schemas/RelevanceBand"
+          },
+          "researchThemes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Researchthemes",
+            "type": "array"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "supportingPaperCount": {
+            "minimum": 1.0,
+            "title": "Supportingpapercount",
+            "type": "integer"
+          },
+          "supportingPapers": {
+            "items": {
+              "$ref": "#/components/schemas/MentorSupportingPaper"
+            },
+            "title": "Supportingpapers",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "openalexId",
+          "orcid",
+          "sourceUrl",
+          "lastVerifiedAt",
+          "researchThemes",
+          "supportingPaperCount",
+          "supportingPapers",
+          "relevanceBand",
+          "evidenceConfidence",
+          "evidenceCompleteness",
+          "contributions",
+          "warnings"
+        ],
+        "title": "MentorCandidate",
+        "type": "object"
       }
     }
   },
   "info": {
-    "description": "Evidence-first academic discovery API. Phase 6 adds real, normalized OpenAlex paper retrieval while mentor ranking remains deferred.",
+    "description": "Evidence-first academic discovery API. Phase 7 derives explainable researcher candidates from normalized OpenAlex paper evidence.",
     "title": "Research Bridge API",
     "version": "0.1.0"
   },
@@ -1542,6 +2227,77 @@
         "summary": "Save the fictional demo profile",
         "tags": [
           "demo"
+        ]
+      }
+    },
+    "/api/v1/discovery/mentors": {
+      "post": {
+        "operationId": "discover_mentors_api_v1_discovery_mentors_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MentorDiscoveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MentorDiscoveryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The paper query could not be validated or classified."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The normalized paper catalog could not be persisted."
+          },
+          "502": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "OpenAlex rejected the request or returned invalid data."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "OpenAlex is unreachable, rate limited, or unavailable."
+          }
+        },
+        "summary": "Derive explainable professor candidates from paper evidence",
+        "tags": [
+          "discovery"
         ]
       }
     },

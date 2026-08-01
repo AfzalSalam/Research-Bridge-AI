@@ -2,28 +2,34 @@ import type { Metadata } from "next";
 
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
-import { DemoNotice } from "@/features/demo/components/demo-notice";
 import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
-import { MentorExperience } from "@/features/mentors/mentor-experience";
+import { MentorModeExperience } from "@/features/mentors/mentor-mode-experience";
 
 export const metadata: Metadata = {
   title: "Research Mentors",
-  description: "The future professor evidence and matching workspace.",
+  description: "Explainable, paper-backed researcher discovery.",
 };
 
-export default function MentorsPage() {
+export default async function MentorsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mode?: string; query?: string }>;
+}) {
+  const { mode, query } = await searchParams;
   return (
     <main id="main-content">
       <Container className="py-10 sm:py-14 lg:py-16">
         <PageHeader
-          description="Inspect exactly why a fictional researcher appears, choose specific papers, and create a cautious outreach draft that remains yours to edit."
+          description="Derive real researcher candidates from OpenAlex papers, inspect every relevance contribution, and keep unverifiable employment or availability claims explicitly unknown."
           eyebrow="Step 3 · Evidence"
-          title="Understand the researcher before the match"
+          title="Understand the evidence behind every connection"
         />
         <WorkflowSteps current="Evidence" />
-        <DemoNotice className="mt-8" />
         <div className="mt-8">
-          <MentorExperience />
+          <MentorModeExperience
+            initialMode={mode === "demo" ? "demo" : "live"}
+            initialQuery={query}
+          />
         </div>
       </Container>
     </main>

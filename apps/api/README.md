@@ -17,6 +17,8 @@ uv run uvicorn app.main:app --reload --port 8000
 - `GET /api/v1/health`: typed process health;
 - `POST /api/v1/discovery/papers`: real OpenAlex paper retrieval by text, DOI,
   or OpenAlex Work ID with normalized evidence and provenance;
+- `POST /api/v1/discovery/mentors`: derive paper-backed researcher candidates
+  with a versioned deterministic evidence policy and explicit unknowns;
 - `GET /api/v1/demo/bootstrap`: fictional catalog and canonical profile;
 - `POST /api/v1/demo/discovery`: deterministic complete/partial/empty/error
   scenarios;
@@ -38,6 +40,13 @@ typed OpenAlex provider for raw records, normalizes and deduplicates them, and
 persists papers, ordered authorships, paper-specific affiliations, topics, and
 provenance in one transaction. Valid records survive malformed siblings as a
 `partial` response; total provider failures use safe structured errors.
+
+Mentor discovery composes the existing profile and paper-discovery protocols,
+then calls a pure relevance module. It groups repeated author IDs, retains each
+paper-specific affiliation, calculates five bounded feature contributions, and
+uses deterministic tie-breaking. The internal total controls review order and
+evidence bands but is not returned as a misleading public fit score. Academic
+title, current institution, contact, and availability remain unknown.
 
 `OPENALEX_API_KEY` is optional but recommended for development because the
 anonymous allowance is very small. Keep it only in `apps/api/.env`; it is held
@@ -70,6 +79,7 @@ uv run ruff format --check .
 uv run mypy app scripts
 uv run pytest
 uv run python -m scripts.export_openapi --check
+uv run python -m scripts.evaluate_mentor_relevance --check
 ```
 
 After an intentional Pydantic or route change, export the reviewed contract:

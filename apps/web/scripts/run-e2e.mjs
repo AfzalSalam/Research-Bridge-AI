@@ -90,6 +90,7 @@ async function stopServer(server) {
 async function startOpenAlexStub() {
   const fixture = JSON.parse(await readFile(openAlexFixturePath, "utf8"));
   const records = fixture.results.slice(0, 2);
+  records[1].authorships.push(structuredClone(records[0].authorships[0]));
   const server = createServer((request, response) => {
     const url = new URL(request.url ?? "/", "http://127.0.0.1");
     response.setHeader("Content-Type", "application/json");

@@ -113,7 +113,7 @@ function DemoDiscoveryWorkspace() {
 
   function inspectMentor(mentorId: string) {
     dispatch({ type: "select-mentor", mentorId });
-    router.push("/mentors");
+    router.push("/mentors?mode=demo");
   }
 
   const visibleMentors = state.discovery.mentorIds

@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     openalex_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
     discovery_cache_ttl_seconds: int = Field(default=600, ge=30, le=3600)
     discovery_cache_max_entries: int = Field(default=128, ge=1, le=1000)
+    mentor_query_evidence_weight: float = Field(default=0.35, ge=0, le=1)
+    mentor_profile_alignment_weight: float = Field(default=0.25, ge=0, le=1)
+    mentor_supporting_depth_weight: float = Field(default=0.15, ge=0, le=1)
+    mentor_recent_activity_weight: float = Field(default=0.15, ge=0, le=1)
+    mentor_evidence_completeness_weight: float = Field(default=0.10, ge=0, le=1)
 
     @model_validator(mode="after")
     def validate_openalex_origin(self) -> "Settings":
@@ -73,6 +78,23 @@ class Settings(BaseSettings):
                 "loopback HTTP is allowed only in test or e2e"
             )
         self.openalex_base_url = self.openalex_base_url.rstrip("/")
+        return self
+
+    @model_validator(mode="after")
+    def validate_mentor_relevance_weights(self) -> "Settings":
+        """Prevent configuration drift from silently changing total policy weight."""
+
+        total = sum(
+            (
+                self.mentor_query_evidence_weight,
+                self.mentor_profile_alignment_weight,
+                self.mentor_supporting_depth_weight,
+                self.mentor_recent_activity_weight,
+                self.mentor_evidence_completeness_weight,
+            )
+        )
+        if abs(total - 1) > 1e-9:
+            raise ValueError("mentor relevance weights must total one")
         return self
 
     @property

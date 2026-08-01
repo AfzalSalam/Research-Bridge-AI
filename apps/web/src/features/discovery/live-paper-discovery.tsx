@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { BookOpen, Database, FileSearch, RefreshCw, Search, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -268,6 +269,11 @@ export function LivePaperDiscovery() {
                 <div className="flex flex-wrap gap-2">
                   <StatusBadge tone="evidence">{result.returnedCount} papers</StatusBadge>
                   <StatusBadge>{result.source.cacheStatus === "hit" ? "Provider cache hit" : "Fresh provider response"}</StatusBadge>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/mentors?query=${encodeURIComponent(result.query)}`}>
+                      Find researchers
+                    </Link>
+                  </Button>
                 </div>
               </div>
               <div className="divide-y divide-border border-b border-border">

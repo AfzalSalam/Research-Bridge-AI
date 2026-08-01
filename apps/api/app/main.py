@@ -36,8 +36,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         title=app_settings.app_name,
         version=app_settings.app_version,
         description=(
-            "Evidence-first academic discovery API. Phase 6 adds real, normalized "
-            "OpenAlex paper retrieval while mentor ranking remains deferred."
+            "Evidence-first academic discovery API. Phase 7 derives explainable "
+            "researcher candidates from normalized OpenAlex paper evidence."
         ),
         lifespan=application_lifespan,
         openapi_tags=[

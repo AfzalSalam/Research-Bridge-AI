@@ -1,0 +1,130 @@
+{
+  "fixtureVersion": "mentor-relevance-fixture-v1",
+  "evaluationYear": 2026,
+  "cases": [
+    {
+      "query": "human-centred clinical decision support",
+      "queryKind": "text",
+      "papers": [
+        {
+          "id": "10000000-0000-4000-8000-000000000001",
+          "openalexId": "W1000000001",
+          "doi": "10.1234/rbai.1",
+          "title": "Human-centred AI for clinical decision support",
+          "publicationYear": 2026,
+          "publicationDate": "2026-04-12",
+          "workType": "article",
+          "language": "en",
+          "venue": "Journal of Responsible Health AI",
+          "abstractExcerpt": "Human-centred AI supports clinical decisions and exposes uncertainty.",
+          "evidenceStrength": "full-abstract",
+          "sourceUrl": "https://openalex.org/W1000000001",
+          "lastVerifiedAt": "2026-08-01T16:00:00Z",
+          "authors": [
+            {
+              "id": "10000000-0000-4000-8000-000000000011",
+              "openalexId": "A1000000001",
+              "orcid": "https://orcid.org/0000-0001-2345-678X",
+              "displayName": "Mira Sen",
+              "isCorresponding": true,
+              "sourceUrl": "https://openalex.org/A1000000001",
+              "institutions": [
+                {
+                  "id": "10000000-0000-4000-8000-000000000021",
+                  "openalexId": "I1000000001",
+                  "rorId": "https://ror.org/03yrm5c26",
+                  "displayName": "Institute for Human-Centred Computing",
+                  "countryCode": "IN",
+                  "city": "Bengaluru",
+                  "sourceUrl": "https://openalex.org/I1000000001"
+                }
+              ]
+            },
+            {
+              "id": "10000000-0000-4000-8000-000000000012",
+              "openalexId": "A1000000002",
+              "orcid": null,
+              "displayName": "Jose Alvarez",
+              "isCorresponding": false,
+              "sourceUrl": "https://openalex.org/A1000000002",
+              "institutions": []
+            }
+          ],
+          "topics": [
+            {
+              "id": "10000000-0000-4000-8000-000000000031",
+              "openalexId": "T1000000001",
+              "displayName": "Clinical Decision Support Systems",
+              "score": 0.94
+            }
+          ]
+        },
+        {
+          "id": "10000000-0000-4000-8000-000000000002",
+          "openalexId": "W1000000002",
+          "doi": null,
+          "title": "Feedback under distribution shift",
+          "publicationYear": 2025,
+          "publicationDate": null,
+          "workType": "preprint",
+          "language": "en",
+          "venue": null,
+          "abstractExcerpt": null,
+          "evidenceStrength": "title-only",
+          "sourceUrl": "https://openalex.org/W1000000002",
+          "lastVerifiedAt": "2026-08-01T16:00:00Z",
+          "authors": [
+            {
+              "id": "10000000-0000-4000-8000-000000000011",
+              "openalexId": "A1000000001",
+              "orcid": "https://orcid.org/0000-0001-2345-678X",
+              "displayName": "Mira Sen",
+              "isCorresponding": null,
+              "sourceUrl": "https://openalex.org/A1000000001",
+              "institutions": []
+            }
+          ],
+          "topics": []
+        }
+      ]
+    },
+    {
+      "query": "low-resource machine learning",
+      "queryKind": "text",
+      "papers": [
+        {
+          "id": "10000000-0000-4000-8000-000000000003",
+          "openalexId": "W1000000003",
+          "doi": null,
+          "title": "Low-resource models for community clinics",
+          "publicationYear": 2019,
+          "publicationDate": null,
+          "workType": "article",
+          "language": "en",
+          "venue": null,
+          "abstractExcerpt": null,
+          "evidenceStrength": "title-only",
+          "sourceUrl": "https://openalex.org/W1000000003",
+          "lastVerifiedAt": "2026-08-01T16:00:00Z",
+          "authors": [
+            {
+              "id": "10000000-0000-4000-8000-000000000013",
+              "openalexId": "A1000000003",
+              "orcid": null,
+              "displayName": "Li Ming",
+              "isCorresponding": null,
+              "sourceUrl": "https://openalex.org/A1000000003",
+              "institutions": []
+            }
+          ],
+          "topics": []
+        }
+      ]
+    },
+    {
+      "query": "10.9999/no-fixture-result",
+      "queryKind": "doi",
+      "papers": []
+    }
+  ]
+}

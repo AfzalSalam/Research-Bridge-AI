@@ -33,7 +33,7 @@ export type DemoBootstrapResponse = {
     /**
      * Mentors
      */
-    mentors: Array<MentorCandidate>;
+    mentors: Array<AppSchemasDemoMentorCandidate>;
     /**
      * Mode
      */
@@ -238,6 +238,8 @@ export type ErrorResponse = {
     error: ErrorBody;
 };
 
+export type EvidenceConfidence = 'high' | 'moderate' | 'limited';
+
 /**
  * HealthResponse
  *
@@ -263,55 +265,238 @@ export type HealthResponse = {
 };
 
 /**
- * MentorCandidate
- *
- * Fictional researcher candidate supported by publication evidence.
+ * MentorAuthorship
  */
-export type MentorCandidate = {
+export type MentorAuthorship = {
     /**
-     * Department
+     * Affiliationsatpublication
      */
-    department: string;
+    affiliationsAtPublication: Array<PaperInstitution>;
     /**
-     * Fitrationale
+     * Iscorresponding
      */
-    fitRationale: Array<string>;
+    isCorresponding: boolean | null;
+    /**
+     * Position
+     */
+    position: number;
+};
+
+/**
+ * MentorDerivationQuality
+ */
+export type MentorDerivationQuality = {
+    /**
+     * Authorappearances
+     */
+    authorAppearances: number;
+    /**
+     * Duplicatecollapserate
+     */
+    duplicateCollapseRate: number;
+    /**
+     * Meanevidencecoverage
+     */
+    meanEvidenceCoverage: number;
+    /**
+     * Uniquecandidates
+     */
+    uniqueCandidates: number;
+    /**
+     * Unsupportedclaimrate
+     */
+    unsupportedClaimRate: number;
+};
+
+/**
+ * MentorDiscoveryRequest
+ *
+ * Bounded request for paper-backed candidate derivation.
+ */
+export type MentorDiscoveryRequest = {
+    /**
+     * Candidatelimit
+     */
+    candidateLimit?: number;
+    /**
+     * Paperlimit
+     */
+    paperLimit?: number;
+    /**
+     * Query
+     */
+    query: string;
+};
+
+/**
+ * MentorDiscoveryResponse
+ */
+export type MentorDiscoveryResponse = {
+    /**
+     * Authorappearancecount
+     */
+    authorAppearanceCount: number;
+    /**
+     * Candidates
+     */
+    candidates: Array<AppSchemasMentorDiscoveryMentorCandidate>;
+    /**
+     * Derivedcandidatecount
+     */
+    derivedCandidateCount: number;
+    /**
+     * Ordering
+     */
+    ordering?: 'deterministic-evidence-policy';
+    /**
+     * Papercount
+     */
+    paperCount: number;
+    policy: RelevancePolicy;
+    profileInputs: ProfileRelevanceInputs;
+    /**
+     * Profilemode
+     */
+    profileMode?: 'saved-or-fictional-fallback';
+    quality: MentorDerivationQuality;
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Querykind
+     */
+    queryKind: 'text' | 'doi' | 'openalex-id';
+    /**
+     * Returnedcount
+     */
+    returnedCount: number;
+    source: DiscoverySource;
+    /**
+     * Status
+     */
+    status: 'complete' | 'partial' | 'empty';
+    timing: MentorDiscoveryTiming;
+    /**
+     * Warnings
+     */
+    warnings: Array<string>;
+};
+
+/**
+ * MentorDiscoveryTiming
+ */
+export type MentorDiscoveryTiming = {
+    /**
+     * Heuristicms
+     */
+    heuristicMs: number;
+    /**
+     * Retrievalandpersistencems
+     */
+    retrievalAndPersistenceMs: number;
+    /**
+     * Totalms
+     */
+    totalMs: number;
+};
+
+/**
+ * MentorFeatureContribution
+ */
+export type MentorFeatureContribution = {
+    /**
+     * Contribution
+     */
+    contribution: number;
+    /**
+     * Evidencepaperids
+     */
+    evidencePaperIds: Array<string>;
+    /**
+     * Explanation
+     */
+    explanation: string;
+    feature: PolicyFeature;
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Matchedterms
+     */
+    matchedTerms: Array<string>;
+    /**
+     * Value
+     */
+    value: number;
+    /**
+     * Weight
+     */
+    weight: number;
+};
+
+/**
+ * MentorSupportingPaper
+ */
+export type MentorSupportingPaper = {
+    /**
+     * Abstractexcerpt
+     */
+    abstractExcerpt: string | null;
+    authorship: MentorAuthorship;
+    /**
+     * Doi
+     */
+    doi: string | null;
+    /**
+     * Evidencestrength
+     */
+    evidenceStrength: 'full-abstract' | 'title-only';
     /**
      * Id
      */
     id: string;
     /**
-     * Identitynote
+     * Language
      */
-    identityNote: string;
+    language: string | null;
     /**
-     * Institution
+     * Lastverifiedat
      */
-    institution: string;
+    lastVerifiedAt: string;
     /**
-     * Location
+     * Openalexid
      */
-    location: string;
+    openalexId: string;
     /**
-     * Name
+     * Publicationdate
      */
-    name: string;
+    publicationDate: string | null;
     /**
-     * Papers
+     * Publicationyear
      */
-    papers: Array<PaperEvidence>;
-    /**
-     * Researchthemes
-     */
-    researchThemes: Array<string>;
-    /**
-     * Role
-     */
-    role: string;
+    publicationYear: number;
     /**
      * Sourceurl
      */
     sourceUrl: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Topics
+     */
+    topics: Array<PaperTopic>;
+    /**
+     * Venue
+     */
+    venue: string | null;
+    /**
+     * Worktype
+     */
+    workType: string | null;
 };
 
 /**
@@ -644,6 +829,67 @@ export type PaperTopic = {
     score?: number | null;
 };
 
+export type PolicyFeature = 'query-evidence' | 'profile-alignment' | 'supporting-depth' | 'recent-activity' | 'evidence-completeness';
+
+/**
+ * PolicyWeight
+ */
+export type PolicyWeight = {
+    feature: PolicyFeature;
+    /**
+     * Label
+     */
+    label: string;
+    /**
+     * Weight
+     */
+    weight: number;
+};
+
+/**
+ * ProfileRelevanceInputs
+ *
+ * Non-private profile labels returned so the user can audit matching.
+ */
+export type ProfileRelevanceInputs = {
+    /**
+     * Projecttitle
+     */
+    projectTitle: string;
+    /**
+     * Researchinterests
+     */
+    researchInterests: Array<string>;
+    /**
+     * Skills
+     */
+    skills: Array<string>;
+};
+
+export type RelevanceBand = 'strong' | 'promising' | 'exploratory';
+
+/**
+ * RelevancePolicy
+ */
+export type RelevancePolicy = {
+    /**
+     * Ordering
+     */
+    ordering?: 'deterministic-evidence-policy';
+    /**
+     * Scorevisibility
+     */
+    scoreVisibility?: 'bands-and-contributions-only';
+    /**
+     * Version
+     */
+    version: 'placement-relevance-v1';
+    /**
+     * Weights
+     */
+    weights: Array<PolicyWeight>;
+};
+
 /**
  * StudentProfile
  *
@@ -690,6 +936,128 @@ export type StudentProfile = {
      * Weeklyavailability
      */
     weeklyAvailability: '5-10 hours' | '10-15 hours' | '15+ hours';
+};
+
+/**
+ * MentorCandidate
+ *
+ * Fictional researcher candidate supported by publication evidence.
+ */
+export type AppSchemasDemoMentorCandidate = {
+    /**
+     * Department
+     */
+    department: string;
+    /**
+     * Fitrationale
+     */
+    fitRationale: Array<string>;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Identitynote
+     */
+    identityNote: string;
+    /**
+     * Institution
+     */
+    institution: string;
+    /**
+     * Location
+     */
+    location: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Papers
+     */
+    papers: Array<PaperEvidence>;
+    /**
+     * Researchthemes
+     */
+    researchThemes: Array<string>;
+    /**
+     * Role
+     */
+    role: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+};
+
+/**
+ * MentorCandidate
+ *
+ * Candidate facts and evidence, with unsupported employment fields absent.
+ */
+export type AppSchemasMentorDiscoveryMentorCandidate = {
+    /**
+     * Academictitle
+     */
+    academicTitle?: null;
+    /**
+     * Availability
+     */
+    availability?: 'unknown';
+    /**
+     * Contributions
+     */
+    contributions: Array<MentorFeatureContribution>;
+    /**
+     * Currentinstitution
+     */
+    currentInstitution?: null;
+    /**
+     * Displayname
+     */
+    displayName: string;
+    /**
+     * Evidencecompleteness
+     */
+    evidenceCompleteness: number;
+    evidenceConfidence: EvidenceConfidence;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Lastverifiedat
+     */
+    lastVerifiedAt: string;
+    /**
+     * Openalexid
+     */
+    openalexId: string | null;
+    /**
+     * Orcid
+     */
+    orcid: string | null;
+    relevanceBand: RelevanceBand;
+    /**
+     * Researchthemes
+     */
+    researchThemes: Array<string>;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    /**
+     * Supportingpapercount
+     */
+    supportingPaperCount: number;
+    /**
+     * Supportingpapers
+     */
+    supportingPapers: Array<MentorSupportingPaper>;
+    /**
+     * Warnings
+     */
+    warnings: Array<string>;
 };
 
 export type ReadDemoBootstrapApiV1DemoBootstrapGetData = {
@@ -844,6 +1212,43 @@ export type UpdateDemoProfileApiV1DemoProfilePutResponses = {
 };
 
 export type UpdateDemoProfileApiV1DemoProfilePutResponse = UpdateDemoProfileApiV1DemoProfilePutResponses[keyof UpdateDemoProfileApiV1DemoProfilePutResponses];
+
+export type DiscoverMentorsApiV1DiscoveryMentorsPostData = {
+    body: MentorDiscoveryRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/discovery/mentors';
+};
+
+export type DiscoverMentorsApiV1DiscoveryMentorsPostErrors = {
+    /**
+     * The paper query could not be validated or classified.
+     */
+    422: ErrorResponse;
+    /**
+     * The normalized paper catalog could not be persisted.
+     */
+    500: ErrorResponse;
+    /**
+     * OpenAlex rejected the request or returned invalid data.
+     */
+    502: ErrorResponse;
+    /**
+     * OpenAlex is unreachable, rate limited, or unavailable.
+     */
+    503: ErrorResponse;
+};
+
+export type DiscoverMentorsApiV1DiscoveryMentorsPostError = DiscoverMentorsApiV1DiscoveryMentorsPostErrors[keyof DiscoverMentorsApiV1DiscoveryMentorsPostErrors];
+
+export type DiscoverMentorsApiV1DiscoveryMentorsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: MentorDiscoveryResponse;
+};
+
+export type DiscoverMentorsApiV1DiscoveryMentorsPostResponse = DiscoverMentorsApiV1DiscoveryMentorsPostResponses[keyof DiscoverMentorsApiV1DiscoveryMentorsPostResponses];
 
 export type DiscoverPapersApiV1DiscoveryPapersPostData = {
     body: PaperDiscoveryRequest;

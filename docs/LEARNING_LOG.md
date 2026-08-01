@@ -1211,3 +1211,239 @@ transparent placement-release relevance heuristic with feature contributions,
 evidence completeness, uncertainty, and evaluation measurements. It must keep
 provider metadata separate from Research Bridge relevance and must not claim
 research-grade ranking quality.
+
+---
+
+## 2026-08-01 — Phase 07: Basic relevance and evidence
+
+### What was built
+
+Research Bridge can now turn live OpenAlex paper results into reviewable
+researcher candidates. `POST /api/v1/discovery/mentors` reuses the existing
+paper-discovery service and saved-profile reader, groups repeated authors by
+their stable internal author ID, retains every supporting paper, and applies
+the versioned `placement-relevance-v1` policy.
+
+The public response includes an evidence band, evidence confidence, five
+individual feature contributions, matched terms, supporting paper IDs,
+paper-specific affiliations, source URLs, verification time, request quality
+metrics, and separate retrieval/heuristic timing. It does not expose the
+internal total as a compatibility score. Academic title, current institution,
+contact information, and availability stay unknown.
+
+The `/mentors` page now opens in live mode with a teal-and-indigo responsive
+master-detail workspace. It has accessible live/demo tabs, validated query
+form, loading/empty/partial/error/complete states, evidence bars, source links,
+historical-affiliation labels, mobile back/focus behavior, and query prefill
+from `/discover`. The existing fictional mentor and outreach journey remains a
+separate recruiter-demo mode.
+
+An offline evaluator and checked-in baseline measure duplicate collapse,
+candidate retrieval success, mean evidence coverage, unsupported positive
+contributions, and pure-policy latency against tiny deterministic fixtures. No
+new dependency was required.
+
+### Why it exists
+
+Paper retrieval alone leaves a student to inspect every author manually. A
+review order helps, but an opaque “AI fit score” would be difficult to defend
+and easy to overstate in an interview. This phase adds only the minimum
+deterministic prioritization needed for the placement release while keeping
+advanced ranking research deferred.
+
+The important product boundary is that an author of a relevant paper is only a
+researcher candidate. OpenAlex authorship does not prove that the person is a
+professor, currently works at a historical affiliation, accepts students, or
+has a reachable email address. Showing those facts as unknown is a correctness
+feature, not missing polish.
+
+### Concepts introduced
+
+- **Candidate generation versus ranking:** candidate generation decides who is
+  eligible—the authors of validated supporting papers. The Phase 7 policy then
+  creates a review order. It is not a learned ranking model or a prediction of
+  supervision suitability.
+- **Entity grouping:** the same author can appear on several papers. Grouping by
+  the conservative internal UUID collapses repeated appearances while keeping
+  distinct UUIDs separate even when names match.
+- **Historical relationship:** an affiliation belongs to one
+  paper-author-institution relationship. Copying it into `currentInstitution`
+  would turn historical evidence into an unsupported current-employment claim.
+- **Feature normalization:** each observed signal is converted into the range
+  zero to one so unlike quantities can be combined predictably.
+- **Weight and contribution:** a weight states policy importance. A
+  contribution is `normalized value × weight`. We expose these parts so the
+  order can be reconstructed and challenged.
+- **Evidence band:** the internal contribution total maps to strong, promising,
+  or exploratory. A band avoids false numeric precision while still helping a
+  student decide what to inspect first.
+- **Deterministic tie-breaking:** equal totals fall back to supporting-paper
+  count, Unicode-normalized display name, and UUID. The same inputs, weights,
+  and evaluation year therefore produce the same order.
+- **Lexical overlap:** the tokenizer uses Unicode NFKC normalization, case
+  folding, token extraction, and a small stopword set. Overlap is observable
+  text evidence, not proof of semantic expertise; embeddings and reranking
+  remain Phase 14 research.
+- **Evidence completeness versus confidence:** completeness measures available
+  publication metadata. Confidence summarizes the stability and depth of that
+  evidence. Neither claims that the researcher is a good supervisor.
+- **Claim-support audit:** every positive policy contribution must carry at
+  least one supporting paper ID. The unsupported-claim rate makes this
+  structural invariant measurable.
+- **Request versus offline metrics:** a live response describes one request.
+  The evaluator repeats pure fixture derivation to establish a reproducible
+  baseline. Neither replaces labelled relevance evaluation.
+- **Dependency inversion:** `MentorDiscoveryService` depends on
+  `PaperDiscoveryReader` and `ProfileReader`, so it composes tested services
+  instead of duplicating provider or persistence code.
+- **Live versus demo state:** live results are TanStack Query server state. The
+  fictional outreach catalog and selections remain isolated session/demo state;
+  the two contracts are never cast into each other.
+
+### Data flow
+
+```text
+Live mentor form
+  -> React Hook Form + Zod
+  -> generated POST /api/v1/discovery/mentors client
+  -> FastAPI mentor route
+  -> MentorDiscoveryService
+      -> ProfileReader
+          -> saved fictional profile or safe fixture fallback
+      -> PaperDiscoveryReader
+          -> OpenAlex cache/provider/normalizer/repository
+      -> pure CandidateDeriver
+          -> group author UUIDs across papers
+          -> tokenize query and profile evidence
+          -> calculate 5 normalized feature values
+          -> multiply by validated policy weights
+          -> assign evidence band and confidence
+          -> attach evidence IDs and audit claims
+          -> deterministic tie-break
+  -> strict response + generated TypeScript + runtime Zod
+  -> responsive candidate list and evidence detail
+
+Live paper result
+  -> “Find researchers”
+  -> /mentors?query=<encoded normalized query>
+  -> prefilled form; user explicitly starts derivation
+```
+
+### Important files
+
+- `apps/api/app/relevance/mentor.py`: pure tokenizer, grouping, five features,
+  banding, confidence, tie-breaking, and request quality metrics.
+- `apps/api/app/services/mentor_discovery.py`: profile/paper composition,
+  timing, and public evidence mapping.
+- `apps/api/app/schemas/mentor_discovery.py`: strict request, policy,
+  candidate, supporting-paper, quality, and timing contracts.
+- `apps/api/app/dependencies/mentor_discovery.py`: request-scoped service
+  composition and injected evaluation year/weights.
+- `apps/api/scripts/evaluate_mentor_relevance.py`: deterministic offline
+  baseline generator and drift check.
+- `apps/api/evaluation/mentor-relevance-v1.json`: tiny reviewed evaluation
+  fixture.
+- `apps/api/reports/phase-07-relevance-baseline.json`: checked-in honest
+  baseline and limitations.
+- `apps/web/src/features/mentors/live-mentor-discovery.tsx`: live responsive
+  form, states, candidate master-detail, contributions, and evidence.
+- `apps/web/src/features/mentors/mentor-mode-experience.tsx`: accessible live
+  and recruiter-demo mode boundary.
+- `apps/web/src/lib/api/mentors.ts`: generated-client adapter with runtime Zod
+  validation.
+- `docs/plans/phase-07-basic-relevance-and-evidence.md`: approved scope,
+  formulas, risks, and completion evidence.
+
+### How to run and test it
+
+Start PostgreSQL, migrate, and run FastAPI:
+
+```powershell
+docker compose --env-file .env up -d db
+Set-Location apps/api
+uv sync --all-groups
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+Run Next.js from a second root terminal:
+
+```powershell
+npm.cmd run dev
+```
+
+Open `http://localhost:3000/discover`, retrieve papers, and choose **Find
+researchers**, or open `/mentors` directly. The form does not call OpenAlex
+until the user submits it.
+
+Phase 7 completion passed 56 backend tests, 26 frontend tests, and eight
+isolated Playwright tests. Ruff, formatting, strict mypy, OpenAPI drift,
+generated-client drift, ESLint, strict TypeScript, production build, evaluator
+drift, responsive overflow, reduced motion, and manual desktop/390px browser QA
+passed. A uniquely named disposable PostgreSQL database and role also passed
+migration head, zero-drift, and two fresh-process endpoint runs before both
+temporary targets and the test container were removed.
+
+```powershell
+Set-Location apps/api
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app scripts
+uv run pytest
+uv run python -m scripts.export_openapi --check
+uv run python -m scripts.evaluate_mentor_relevance --check
+
+Set-Location ../..
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd --workspace @research-bridge/web run api:check
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+```
+
+### Common errors and debugging
+
+- **No candidates appear:** confirm the paper query returns validated works with
+  authors. Broaden a narrow topic or validate the DOI/OpenAlex ID first.
+- **`mentor relevance weights must total one`:** all five `MENTOR_*_WEIGHT`
+  values are bounded and must add to exactly 1.0. Restart FastAPI after editing
+  `.env`.
+- **A researcher has no institution or title:** inspect the paper-specific
+  affiliations. Current employment and title intentionally remain unknown.
+- **A repeated author appears twice:** inspect OpenAlex/internal author IDs. The
+  policy groups stable IDs, not display names, because name-only merging can
+  combine different people.
+- **A result seems lexically weak:** inspect its matched terms, feature values,
+  paper depth, and completeness. Phase 7 deliberately has no synonyms,
+  stemming, embeddings, or semantic reranker.
+- **The checked baseline is stale:** run `uv run python -m
+  scripts.evaluate_mentor_relevance`, review the stable metric change, then run
+  it again with `--check`. Timing is machine-local and excluded from stable
+  drift comparison.
+- **`uv` cannot initialize its global cache:** use the existing `.venv`
+  executables or set `UV_CACHE_DIR=.uv-cache`; the workspace cache is ignored.
+
+### Limitations
+
+- Only OpenAlex is live; current-role verification through ORCID/ROR or an
+  official university directory is future work.
+- The server uses the saved fictional profile or a fictional fallback until
+  authentication and private-user isolation exist.
+- Lexical matching can miss synonyms and cannot judge methodological fit.
+- Default weights are policy choices, not trained or tuned parameters.
+- The fixture baseline is too small and unlabelled for Recall@5/10, MRR,
+  nDCG@10, or a claim of general search quality.
+- A paper author is not automatically a professor or available supervisor.
+- Live evidence cannot create outreach yet. The existing draft flow remains a
+  fictional deterministic demo until Phase 8 safely connects real evidence.
+- No email is sent automatically, and no contact address is inferred.
+
+### Next step
+
+Phase 8 adds evidence-grounded outreach for live candidates. The user must
+select one researcher and specific supporting papers, review the generated
+draft, and approve any external use. Prompts will be versioned, outputs will be
+structurally validated, claims will map to verified profile/paper evidence, and
+a deterministic fallback will remain available. The product still will not
+mass-send or automatically send email.

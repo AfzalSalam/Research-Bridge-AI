@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses } from './types.gen';
+import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -105,6 +105,20 @@ export class Sdk extends HeyApiClient {
     public updateDemoProfileApiV1DemoProfilePut<ThrowOnError extends boolean = false>(options: Options<UpdateDemoProfileApiV1DemoProfilePutData, ThrowOnError>) {
         return (options.client ?? this.client).put<UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateDemoProfileApiV1DemoProfilePutErrors, ThrowOnError>({
             url: '/api/v1/demo/profile',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Derive explainable professor candidates from paper evidence
+     */
+    public discoverMentorsApiV1DiscoveryMentorsPost<ThrowOnError extends boolean = false>(options: Options<DiscoverMentorsApiV1DiscoveryMentorsPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, ThrowOnError>({
+            url: '/api/v1/discovery/mentors',
             ...options,
             headers: {
                 'Content-Type': 'application/json',

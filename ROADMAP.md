@@ -79,6 +79,8 @@ contributions, evidence completeness, uncertainty, source links, and tests.
 Measure retrieval success, duplicate rate, evidence coverage, unsupported-claim
 rate, and latency without claiming research-grade ranking quality.
 
+**Status:** Complete.
+
 ## Phase 8 — Evidence-grounded outreach
 
 Generate only after mentor and paper selection. Add versioned prompts,
