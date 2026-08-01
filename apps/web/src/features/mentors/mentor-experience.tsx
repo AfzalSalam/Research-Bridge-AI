@@ -1,5 +1,6 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DemoDataBoundary } from "@/features/demo/components/demo-data-boundary";
 import { EvidenceLink } from "@/features/demo/components/evidence-link";
 import { FactRow } from "@/features/demo/components/fact-row";
 import {
@@ -26,15 +28,16 @@ import {
   outreachDraftSchema,
   type MentorCandidate,
 } from "@/features/demo/contracts";
-import { useDemoStore } from "@/features/demo/demo-store";
-import { buildEvidenceGroundedDraft } from "@/features/demo/draft-template";
-import { demoMentors, findDemoMentor } from "@/features/demo/fixtures";
+import { useReadyDemoStore } from "@/features/demo/demo-store";
+import { createDemoOutreachDraft, DemoApiError } from "@/lib/api/demo";
 import { cn } from "@/lib/utils";
 
 function MentorList({
+  mentors,
   onSelect,
   selectedMentorId,
 }: {
+  mentors: MentorCandidate[];
   onSelect: (mentorId: string) => void;
   selectedMentorId: string | null;
 }) {
@@ -49,7 +52,7 @@ function MentorList({
         </h2>
       </div>
       <div className="divide-y divide-border border-b border-border">
-        {demoMentors.map((mentor) => {
+        {mentors.map((mentor) => {
           const selected = mentor.id === selectedMentorId;
           return (
             <button
@@ -85,7 +88,7 @@ function MentorList({
 }
 
 function DraftWorkspace({ mentor }: { mentor: MentorCandidate }) {
-  const { dispatch, state } = useDemoStore();
+  const { dispatch, state } = useReadyDemoStore();
   const selectedPaperIds = state.selectedPaperIds[mentor.id] ?? [];
   const savedDraft = state.drafts.find((draft) => draft.mentorId === mentor.id);
   const isTracked = state.applications.some(
@@ -95,26 +98,51 @@ function DraftWorkspace({ mentor }: { mentor: MentorCandidate }) {
   const [subject, setSubject] = useState(savedDraft?.subject ?? "");
   const [body, setBody] = useState(savedDraft?.body ?? "");
   const [announcement, setAnnouncement] = useState("");
+  const draftMutation = useMutation({
+    mutationFn: createDemoOutreachDraft,
+    onSuccess: (draft) => {
+      dispatch({ type: "save-draft", draft });
+      setSubject(draft.subject);
+      setBody(draft.body);
+      setAnnouncement(
+        "Editable deterministic draft created by the mock API from the selected evidence.",
+      );
+    },
+    onError: (error) => {
+      const apiError =
+        error instanceof DemoApiError
+          ? error
+          : new DemoApiError({
+              code: "unexpected_client_error",
+              message: "The draft request could not be completed.",
+            });
+      const requestReference = apiError.requestId
+        ? ` Request reference: ${apiError.requestId}.`
+        : "";
+      setAnnouncement(`${apiError.message}${requestReference}`);
+    },
+  });
 
   const selectedPapers = mentor.papers.filter((paper) =>
     selectedPaperIds.includes(paper.id),
   );
 
   function createDraft() {
-    const draft = buildEvidenceGroundedDraft({
-      mentor,
-      papers: selectedPapers,
+    draftMutation.mutate({
+      mentorId: mentor.id,
+      paperIds: selectedPapers.map((paper) => paper.id),
       profile: state.profile,
     });
-    dispatch({ type: "save-draft", draft });
-    setSubject(draft.subject);
-    setBody(draft.body);
-    setAnnouncement("Editable deterministic draft created from the selected evidence.");
   }
 
   function saveDraft() {
     if (!savedDraft) return;
-    const result = outreachDraftSchema.safeParse({ ...savedDraft, subject, body });
+    const result = outreachDraftSchema.safeParse({
+      ...savedDraft,
+      body,
+      subject,
+      updatedAt: new Date().toISOString(),
+    });
     if (!result.success) {
       setAnnouncement(
         "Keep a subject of 5-160 characters and an email body of at least 80 characters.",
@@ -166,8 +194,9 @@ function DraftWorkspace({ mentor }: { mentor: MentorCandidate }) {
             Custom outreach draft
           </h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Select at least one paper. The local template uses only profile facts and
-            the selected evidence; it does not infer an email address or send anything.
+            Select at least one paper. The mock API template uses only profile facts
+            and the selected evidence; it does not infer an email address or send
+            anything.
           </p>
         </div>
         <StatusBadge tone={savedDraft ? "evidence" : "neutral"}>
@@ -211,9 +240,17 @@ function DraftWorkspace({ mentor }: { mentor: MentorCandidate }) {
       </fieldset>
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
-        <Button disabled={selectedPapers.length === 0} onClick={createDraft} variant="evidence">
+        <Button
+          disabled={selectedPapers.length === 0 || draftMutation.isPending}
+          onClick={createDraft}
+          variant="evidence"
+        >
           <Mail aria-hidden="true" />
-          {savedDraft ? "Rebuild from selected evidence" : "Create editable draft"}
+          {draftMutation.isPending
+            ? "Creating draft…"
+            : savedDraft
+              ? "Rebuild from selected evidence"
+              : "Create editable draft"}
         </Button>
         {selectedPapers.some((paper) => paper.evidenceStrength === "title-only") ? (
           <p className="flex max-w-xl gap-2 text-sm leading-6 text-warning-foreground">
@@ -252,6 +289,11 @@ function DraftWorkspace({ mentor }: { mentor: MentorCandidate }) {
               Mode: deterministic demo · Template: {savedDraft.templateVersion} · No LLM
               or email provider was called.
             </p>
+            <ul className="mt-3 space-y-1 text-sm leading-6 text-warning-foreground">
+              {savedDraft.uncertaintyWarnings.map((warning) => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
             <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
               {savedDraft.evidenceLinks.map((link, index) => (
                 <EvidenceLink href={link} key={link}>
@@ -364,19 +406,11 @@ function MentorDetail({ mentor, onBack }: { mentor: MentorCandidate; onBack: () 
   );
 }
 
-export function MentorExperience() {
-  const { dispatch, hydrated, state } = useDemoStore();
-  const selectedMentor = findDemoMentor(state.selectedMentorId);
-
-  if (!hydrated) {
-    return (
-      <DataState
-        description="Restoring the validated fictional demo state from this browser session."
-        kind="loading"
-        title="Loading mentor evidence"
-      />
-    );
-  }
+function MentorWorkspace() {
+  const { catalog, dispatch, state } = useReadyDemoStore();
+  const selectedMentor = catalog.mentors.find(
+    (mentor) => mentor.id === state.selectedMentorId,
+  );
 
   function selectMentor(mentorId: string) {
     dispatch({ type: "select-mentor", mentorId });
@@ -385,7 +419,11 @@ export function MentorExperience() {
   return (
     <div className="grid gap-8 lg:grid-cols-[21rem_minmax(0,1fr)] lg:items-start lg:gap-10">
       <div className={cn(selectedMentor && "hidden lg:block", "lg:sticky lg:top-24")}>
-        <MentorList onSelect={selectMentor} selectedMentorId={state.selectedMentorId} />
+        <MentorList
+          mentors={catalog.mentors}
+          onSelect={selectMentor}
+          selectedMentorId={state.selectedMentorId}
+        />
       </div>
 
       <div className={cn(!selectedMentor && "hidden lg:block")}>
@@ -404,5 +442,16 @@ export function MentorExperience() {
         )}
       </div>
     </div>
+  );
+}
+
+export function MentorExperience() {
+  return (
+    <DemoDataBoundary
+      loadingDescription="Loading fictional mentor and paper evidence from FastAPI, then restoring compatible selections."
+      loadingTitle="Loading mentor evidence"
+    >
+      <MentorWorkspace />
+    </DemoDataBoundary>
   );
 }

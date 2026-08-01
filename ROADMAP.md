@@ -49,6 +49,8 @@ logging, versioned request/response schemas, service interfaces, mock services,
 OpenAPI export, and a generated or contract-checked TypeScript API client.
 Replace frontend fixture access with the mock backend without changing behavior.
 
+**Status:** Complete.
+
 ## Phase 5 — Database and profile
 
 Add SQLAlchemy 2, Alembic, profiles, interests, skills, projects, preferences,

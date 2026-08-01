@@ -1,0 +1,985 @@
+{
+  "components": {
+    "schemas": {
+      "ClaimEvidence": {
+        "additionalProperties": false,
+        "description": "Explains which selected records support a draft passage.",
+        "properties": {
+          "claim": {
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidenceIds": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Evidenceids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidenceIds"
+        ],
+        "title": "ClaimEvidence",
+        "type": "object"
+      },
+      "DemoBootstrapResponse": {
+        "additionalProperties": false,
+        "description": "Canonical catalog needed to initialize the stateless demo journey.",
+        "properties": {
+          "defaultQuery": {
+            "maxLength": 180,
+            "minLength": 12,
+            "title": "Defaultquery",
+            "type": "string"
+          },
+          "mentors": {
+            "items": {
+              "$ref": "#/components/schemas/MentorCandidate"
+            },
+            "minItems": 1,
+            "title": "Mentors",
+            "type": "array"
+          },
+          "mode": {
+            "const": "fictional-demo",
+            "default": "fictional-demo",
+            "title": "Mode",
+            "type": "string"
+          },
+          "opportunities": {
+            "items": {
+              "$ref": "#/components/schemas/Opportunity"
+            },
+            "minItems": 1,
+            "title": "Opportunities",
+            "type": "array"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/StudentProfile"
+          },
+          "schemaVersion": {
+            "const": 1,
+            "default": 1,
+            "title": "Schemaversion",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "defaultQuery",
+          "profile",
+          "mentors",
+          "opportunities"
+        ],
+        "title": "DemoBootstrapResponse",
+        "type": "object"
+      },
+      "DiscoveryRequest": {
+        "additionalProperties": false,
+        "description": "Bounded input for deterministic demo discovery behavior.",
+        "properties": {
+          "query": {
+            "maxLength": 180,
+            "minLength": 12,
+            "title": "Query",
+            "type": "string"
+          },
+          "scenario": {
+            "enum": [
+              "complete",
+              "partial",
+              "empty",
+              "error"
+            ],
+            "title": "Scenario",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query",
+          "scenario"
+        ],
+        "title": "DiscoveryRequest",
+        "type": "object"
+      },
+      "DiscoveryResponse": {
+        "additionalProperties": false,
+        "description": "Final mock discovery outcome; no score or provider claim is included.",
+        "properties": {
+          "mentorIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Mentorids",
+            "type": "array"
+          },
+          "sourceWarning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourcewarning"
+          },
+          "status": {
+            "enum": [
+              "complete",
+              "partial",
+              "empty"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "mentorIds"
+        ],
+        "title": "DiscoveryResponse",
+        "type": "object"
+      },
+      "ErrorBody": {
+        "additionalProperties": false,
+        "description": "Stable error information returned by every API failure.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "details": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "title": "Details",
+            "type": "array"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "requestId": {
+            "title": "Requestid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "requestId"
+        ],
+        "title": "ErrorBody",
+        "type": "object"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "description": "One safe, machine-readable explanation of an invalid input field.",
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "message",
+          "type"
+        ],
+        "title": "ErrorDetail",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "description": "Top-level error envelope shared across routes and status codes.",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "description": "Public contract returned by the process health endpoint.",
+        "properties": {
+          "environment": {
+            "title": "Environment",
+            "type": "string"
+          },
+          "service": {
+            "title": "Service",
+            "type": "string"
+          },
+          "status": {
+            "const": "ok",
+            "default": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "service",
+          "version",
+          "environment"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "MentorCandidate": {
+        "additionalProperties": false,
+        "description": "Fictional researcher candidate supported by publication evidence.",
+        "properties": {
+          "department": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Department",
+            "type": "string"
+          },
+          "fitRationale": {
+            "items": {
+              "maxLength": 240,
+              "minLength": 10,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Fitrationale",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "identityNote": {
+            "maxLength": 240,
+            "minLength": 10,
+            "title": "Identitynote",
+            "type": "string"
+          },
+          "institution": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Institution",
+            "type": "string"
+          },
+          "location": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Location",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "papers": {
+            "items": {
+              "$ref": "#/components/schemas/PaperEvidence"
+            },
+            "minItems": 1,
+            "title": "Papers",
+            "type": "array"
+          },
+          "researchThemes": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Researchthemes",
+            "type": "array"
+          },
+          "role": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Role",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "department",
+          "institution",
+          "location",
+          "researchThemes",
+          "fitRationale",
+          "identityNote",
+          "sourceUrl",
+          "papers"
+        ],
+        "title": "MentorCandidate",
+        "type": "object"
+      },
+      "Opportunity": {
+        "additionalProperties": false,
+        "description": "Fictional research opportunity with unknown values kept explicit.",
+        "properties": {
+          "availability": {
+            "enum": [
+              "Open",
+              "Closed",
+              "Unknown"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "deadline": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 20,
+            "title": "Description",
+            "type": "string"
+          },
+          "funding": {
+            "enum": [
+              "Funded",
+              "Unfunded",
+              "Unknown"
+            ],
+            "title": "Funding",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lastVerifiedAt": {
+            "format": "date-time",
+            "title": "Lastverifiedat",
+            "type": "string"
+          },
+          "location": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Location",
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "On-site",
+              "Hybrid",
+              "Remote",
+              "Unknown"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "organisation": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Organisation",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Title",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Topics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "organisation",
+          "location",
+          "mode",
+          "funding",
+          "availability",
+          "deadline",
+          "description",
+          "topics",
+          "sourceUrl",
+          "lastVerifiedAt"
+        ],
+        "title": "Opportunity",
+        "type": "object"
+      },
+      "OutreachDraft": {
+        "additionalProperties": false,
+        "description": "Editable deterministic draft plus its complete provenance.",
+        "properties": {
+          "body": {
+            "maxLength": 5000,
+            "minLength": 80,
+            "title": "Body",
+            "type": "string"
+          },
+          "claimEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimEvidence"
+            },
+            "minItems": 1,
+            "title": "Claimevidence",
+            "type": "array"
+          },
+          "draftVersion": {
+            "const": 1,
+            "default": 1,
+            "title": "Draftversion",
+            "type": "integer"
+          },
+          "evidenceLinks": {
+            "items": {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            "minItems": 2,
+            "title": "Evidencelinks",
+            "type": "array"
+          },
+          "generatedAt": {
+            "format": "date-time",
+            "title": "Generatedat",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mentorId": {
+            "title": "Mentorid",
+            "type": "string"
+          },
+          "mode": {
+            "const": "deterministic-demo",
+            "default": "deterministic-demo",
+            "title": "Mode",
+            "type": "string"
+          },
+          "paperIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Paperids",
+            "type": "array"
+          },
+          "selectedStudentFacts": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Selectedstudentfacts",
+            "type": "array"
+          },
+          "subject": {
+            "maxLength": 160,
+            "minLength": 5,
+            "title": "Subject",
+            "type": "string"
+          },
+          "templateVersion": {
+            "const": "phase-04.v1",
+            "default": "phase-04.v1",
+            "title": "Templateversion",
+            "type": "string"
+          },
+          "uncertaintyWarnings": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Uncertaintywarnings",
+            "type": "array"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "mentorId",
+          "paperIds",
+          "subject",
+          "body",
+          "selectedStudentFacts",
+          "claimEvidence",
+          "uncertaintyWarnings",
+          "generatedAt",
+          "updatedAt",
+          "evidenceLinks"
+        ],
+        "title": "OutreachDraft",
+        "type": "object"
+      },
+      "OutreachDraftRequest": {
+        "additionalProperties": false,
+        "description": "Evidence selected by a human before draft creation is allowed.",
+        "properties": {
+          "mentorId": {
+            "title": "Mentorid",
+            "type": "string"
+          },
+          "paperIds": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Paperids",
+            "type": "array"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/StudentProfile"
+          }
+        },
+        "required": [
+          "profile",
+          "mentorId",
+          "paperIds"
+        ],
+        "title": "OutreachDraftRequest",
+        "type": "object"
+      },
+      "PaperEvidence": {
+        "additionalProperties": false,
+        "description": "Fictional publication evidence with an explicit evidence boundary.",
+        "properties": {
+          "authors": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Authors",
+            "type": "array"
+          },
+          "evidenceStrength": {
+            "enum": [
+              "full-abstract",
+              "title-only"
+            ],
+            "title": "Evidencestrength",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "summary": {
+            "maxLength": 600,
+            "minLength": 20,
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Title",
+            "type": "string"
+          },
+          "topics": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Topics",
+            "type": "array"
+          },
+          "venue": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Venue",
+            "type": "string"
+          },
+          "year": {
+            "maximum": 2100.0,
+            "minimum": 2000.0,
+            "title": "Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "authors",
+          "year",
+          "venue",
+          "summary",
+          "topics",
+          "evidenceStrength",
+          "sourceUrl"
+        ],
+        "title": "PaperEvidence",
+        "type": "object"
+      },
+      "StudentProfile": {
+        "additionalProperties": false,
+        "description": "Verified student facts allowed to influence a demo draft.",
+        "properties": {
+          "graduationYear": {
+            "pattern": "^20\\d{2}$",
+            "title": "Graduationyear",
+            "type": "string"
+          },
+          "id": {
+            "const": "demo-student",
+            "title": "Id",
+            "type": "string"
+          },
+          "institution": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Institution",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 60,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "program": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Program",
+            "type": "string"
+          },
+          "projectSummary": {
+            "maxLength": 500,
+            "minLength": 40,
+            "title": "Projectsummary",
+            "type": "string"
+          },
+          "projectTitle": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Projecttitle",
+            "type": "string"
+          },
+          "researchInterests": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Researchinterests",
+            "type": "array"
+          },
+          "skills": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Skills",
+            "type": "array"
+          },
+          "weeklyAvailability": {
+            "enum": [
+              "5-10 hours",
+              "10-15 hours",
+              "15+ hours"
+            ],
+            "title": "Weeklyavailability",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "program",
+          "institution",
+          "graduationYear",
+          "researchInterests",
+          "skills",
+          "projectTitle",
+          "projectSummary",
+          "weeklyAvailability"
+        ],
+        "title": "StudentProfile",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Evidence-first academic discovery API. Phase 4 product routes expose only a visibly fictional, deterministic demo implementation.",
+    "title": "Research Bridge API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/demo/bootstrap": {
+      "get": {
+        "operationId": "read_demo_bootstrap_api_v1_demo_bootstrap_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemoBootstrapResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The server could not complete the request."
+          }
+        },
+        "summary": "Load the fictional demo catalog",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
+    "/api/v1/demo/discovery": {
+      "post": {
+        "operationId": "run_demo_discovery_api_v1_demo_discovery_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Requested demo evidence was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request or evidence selection is invalid."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The server could not complete the request."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The selected fictional source failed."
+          }
+        },
+        "summary": "Run a deterministic discovery scenario",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
+    "/api/v1/demo/outreach-drafts": {
+      "post": {
+        "operationId": "create_demo_outreach_draft_api_v1_demo_outreach_drafts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutreachDraftRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutreachDraft"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Requested demo evidence was not found."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Request or evidence selection is invalid."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The server could not complete the request."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The selected fictional source failed."
+          }
+        },
+        "summary": "Create an editable evidence-grounded demo draft",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "description": "Report that the API process and typed contract are available.",
+        "operationId": "read_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Read Health",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "description": "Process health and diagnostics.",
+      "name": "system"
+    },
+    {
+      "description": "Stateless fictional contracts for the recruiter demo.",
+      "name": "demo"
+    }
+  ]
+}

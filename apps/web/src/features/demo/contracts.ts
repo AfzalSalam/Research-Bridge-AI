@@ -95,13 +95,25 @@ export const discoveryStateSchema = z.object({
 export const outreachDraftSchema = z.object({
   id: z.string().min(1),
   mentorId: z.string().min(1),
-  paperIds: z.array(z.string()).min(1),
+  paperIds: z.array(z.string()).min(1).max(2),
   subject: z.string().trim().min(5).max(160),
   body: z.string().trim().min(80).max(5000),
+  selectedStudentFacts: z.array(z.string().min(1)).min(1),
+  claimEvidence: z
+    .array(
+      z.object({
+        claim: z.string().min(1),
+        evidenceIds: z.array(z.string().min(1)).min(1),
+      }),
+    )
+    .min(1),
+  uncertaintyWarnings: z.array(z.string().min(1)).min(1),
   generatedAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   mode: z.literal("deterministic-demo"),
-  templateVersion: z.literal("phase-03.v1"),
-  evidenceLinks: z.array(sourceUrl).min(1),
+  templateVersion: z.literal("phase-04.v1"),
+  draftVersion: z.literal(1),
+  evidenceLinks: z.array(sourceUrl).min(2),
 });
 
 export const opportunitySchema = z.object({
@@ -157,10 +169,43 @@ export const demoStateSchema = z.object({
   applications: z.array(applicationSchema),
 });
 
+export const demoBootstrapSchema = z.object({
+  schemaVersion: z.literal(1),
+  mode: z.literal("fictional-demo"),
+  defaultQuery: z.string().trim().min(12).max(180),
+  profile: studentProfileSchema,
+  mentors: z.array(mentorCandidateSchema).min(1),
+  opportunities: z.array(opportunitySchema).min(1),
+});
+
+export const discoveryResponseSchema = z.object({
+  status: z.enum(["complete", "partial", "empty"]),
+  mentorIds: z.array(z.string().min(1)),
+  sourceWarning: z.string().min(1).nullable(),
+});
+
+export const apiErrorResponseSchema = z.object({
+  error: z.object({
+    code: z.string().min(1),
+    message: z.string().min(1),
+    requestId: z.string().min(1),
+    details: z.array(
+      z.object({
+        field: z.string(),
+        message: z.string().min(1),
+        type: z.string().min(1),
+      }),
+    ),
+  }),
+});
+
 export type Application = z.infer<typeof applicationSchema>;
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
+export type ApiErrorResponse = z.infer<typeof apiErrorResponseSchema>;
+export type DemoBootstrap = z.infer<typeof demoBootstrapSchema>;
 export type DemoState = z.infer<typeof demoStateSchema>;
 export type DiscoveryScenario = z.infer<typeof discoveryScenarioSchema>;
+export type DiscoveryResponse = z.infer<typeof discoveryResponseSchema>;
 export type MentorCandidate = z.infer<typeof mentorCandidateSchema>;
 export type Opportunity = z.infer<typeof opportunitySchema>;
 export type OutreachDraft = z.infer<typeof outreachDraftSchema>;

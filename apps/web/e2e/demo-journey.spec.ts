@@ -10,7 +10,7 @@ test("student can move from fictional profile to evidence-grounded outreach", as
   await expect
     .poll(() =>
       page.evaluate(() =>
-        window.sessionStorage.getItem("research-bridge.demo.phase-03.v1"),
+        window.sessionStorage.getItem("research-bridge.demo.phase-04.v1"),
       ),
     )
     .toContain("Riya Demo");
@@ -49,6 +49,26 @@ test("mentor list becomes a focused detail flow on mobile", async ({ page }) => 
   await expect(page.getByRole("button", { name: "Back to candidates" })).toBeVisible();
   await page.getByRole("button", { name: "Back to candidates" }).click();
   await expect(page.getByRole("heading", { name: "Fictional researcher candidates" })).toBeVisible();
+});
+
+test("mock API discovery keeps partial, empty, and source failures explicit", async ({
+  page,
+}) => {
+  await page.goto("/discover");
+
+  await page.getByLabel("Demo response").selectOption("partial");
+  await page.getByRole("button", { name: "Run demo search" }).click();
+  await expect(page.getByRole("heading", { name: "Two of three fixture records are available" })).toBeVisible();
+  await expect(page.getByText("2 reviewable")).toBeVisible();
+
+  await page.getByLabel("Demo response").selectOption("empty");
+  await page.getByRole("button", { name: "Run demo search" }).click();
+  await expect(page.getByRole("heading", { name: "No paper evidence matched this demo query" })).toBeVisible();
+
+  await page.getByLabel("Demo response").selectOption("error");
+  await page.getByRole("button", { name: "Run demo search" }).click();
+  await expect(page.getByRole("heading", { name: "The source could not be reached" })).toBeVisible();
+  await expect(page.getByText(/Request reference:/)).toBeVisible();
 });
 
 test("product routes do not create page-level horizontal overflow", async ({ page }) => {

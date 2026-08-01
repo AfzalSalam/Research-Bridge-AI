@@ -6,9 +6,9 @@ import type {
   OutreachDraft,
   StudentProfile,
 } from "@/features/demo/contracts";
-import { createInitialDemoState } from "@/features/demo/fixtures";
 
 export type DemoAction =
+  | { type: "initialize"; profile: StudentProfile }
   | { type: "hydrate"; state: DemoState }
   | { type: "save-profile"; profile: StudentProfile }
   | { type: "start-discovery"; query: string; scenario: DiscoveryScenario }
@@ -32,12 +32,43 @@ export type DemoAction =
       followUpDate: string | null;
       changedAt: string;
     }
-  | { type: "reset" };
+  | { type: "reset"; profile: StudentProfile };
 
-export function demoReducer(state: DemoState, action: DemoAction): DemoState {
+export function createInitialDemoState(profile: StudentProfile): DemoState {
+  return {
+    schemaVersion: 1,
+    profile,
+    discovery: {
+      query: "",
+      scenario: "complete",
+      status: "idle",
+      stage: 0,
+      mentorIds: [],
+      errorMessage: null,
+    },
+    selectedMentorId: null,
+    selectedPaperIds: {},
+    drafts: [],
+    savedOpportunityIds: [],
+    applications: [],
+  };
+}
+
+export function demoReducer(
+  state: DemoState | null,
+  action: DemoAction,
+): DemoState | null {
+  if (action.type === "initialize") {
+    return createInitialDemoState(action.profile);
+  }
+  if (action.type === "hydrate") {
+    return action.state;
+  }
+  if (state === null) {
+    return null;
+  }
+
   switch (action.type) {
-    case "hydrate":
-      return action.state;
     case "save-profile":
       return { ...state, profile: action.profile };
     case "start-discovery":
@@ -120,6 +151,6 @@ export function demoReducer(state: DemoState, action: DemoAction): DemoState {
         }),
       };
     case "reset":
-      return createInitialDemoState();
+      return createInitialDemoState(action.profile);
   }
 }

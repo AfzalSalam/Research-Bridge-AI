@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, FileSearch, Search, SlidersHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,11 +18,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { DemoDataBoundary } from "@/features/demo/components/demo-data-boundary";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import { ProgressStages } from "@/features/demo/components/progress-stages";
 import { discoveryScenarioSchema } from "@/features/demo/contracts";
-import { useDemoStore } from "@/features/demo/demo-store";
-import { DEMO_DISCOVERY_QUERY, demoMentors } from "@/features/demo/fixtures";
+import { useReadyDemoStore } from "@/features/demo/demo-store";
+import { DemoApiError, runDemoDiscovery } from "@/lib/api/demo";
 
 const discoveryFormSchema = z.object({
   query: z.string().trim().min(12, "Describe a focused topic using at least 12 characters.").max(180),
@@ -30,23 +32,16 @@ const discoveryFormSchema = z.object({
 
 type DiscoveryFormValues = z.infer<typeof discoveryFormSchema>;
 
-const outcomeByScenario = {
-  complete: {
-    status: "complete" as const,
-    mentorIds: demoMentors.map((mentor) => mentor.id),
-  },
-  partial: {
-    status: "partial" as const,
-    mentorIds: demoMentors.slice(0, 2).map((mentor) => mentor.id),
-  },
-  empty: { status: "empty" as const, mentorIds: [] },
-  error: { status: "error" as const, mentorIds: [] },
-};
+function pause(milliseconds: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+}
 
 function DiscoveryWorkspace() {
-  const { dispatch, hydrated, state } = useDemoStore();
+  const { catalog, dispatch, state } = useReadyDemoStore();
   const router = useRouter();
-  const timers = useRef<number[]>([]);
+  const discoveryMutation = useMutation({
+    mutationFn: runDemoDiscovery,
+  });
   const {
     formState: { errors },
     handleSubmit,
@@ -54,51 +49,64 @@ function DiscoveryWorkspace() {
     reset,
   } = useForm<DiscoveryFormValues>({
     defaultValues: {
-      query: state.discovery.query || DEMO_DISCOVERY_QUERY,
+      query: state.discovery.query || catalog.defaultQuery,
       scenario: state.discovery.scenario,
     },
     resolver: zodResolver(discoveryFormSchema),
   });
 
   useEffect(() => {
-    if (!hydrated) return;
     reset({
-      query: state.discovery.query || DEMO_DISCOVERY_QUERY,
+      query: state.discovery.query || catalog.defaultQuery,
       scenario: state.discovery.scenario,
     });
-  }, [hydrated, reset, state.discovery.query, state.discovery.scenario]);
+  }, [catalog.defaultQuery, reset, state.discovery.query, state.discovery.scenario]);
 
-  useEffect(() => {
-    if (state.discovery.status !== "searching") return;
-
-    timers.current.forEach((timer) => window.clearTimeout(timer));
-    timers.current = [];
-    timers.current.push(
-      window.setTimeout(() => dispatch({ type: "advance-discovery", stage: 1 }), 300),
-      window.setTimeout(() => dispatch({ type: "advance-discovery", stage: 2 }), 600),
-      window.setTimeout(() => {
-        dispatch({ type: "advance-discovery", stage: 3 });
-        const outcome = outcomeByScenario[state.discovery.scenario];
-        dispatch({
-          type: "finish-discovery",
-          status: outcome.status,
-          mentorIds: outcome.mentorIds,
-          errorMessage:
-            state.discovery.scenario === "error"
-              ? "The fictional OpenAlex adapter timed out. No cached result was substituted."
-              : undefined,
-        });
-      }, 900),
-    );
-
-    return () => {
-      timers.current.forEach((timer) => window.clearTimeout(timer));
-      timers.current = [];
-    };
-  }, [dispatch, state.discovery.scenario, state.discovery.status]);
-
-  function runDiscovery(values: DiscoveryFormValues) {
+  async function submitDiscovery(values: DiscoveryFormValues) {
     dispatch({ type: "start-discovery", query: values.query, scenario: values.scenario });
+    try {
+      const outcomePromise = discoveryMutation
+        .mutateAsync({
+          query: values.query,
+          scenario: values.scenario,
+        })
+        .then(
+          (outcome) => ({ outcome, succeeded: true as const }),
+          (error: unknown) => ({ error, succeeded: false as const }),
+        );
+      await pause(250);
+      dispatch({ type: "advance-discovery", stage: 1 });
+      const outcomeResult = await outcomePromise;
+      if (!outcomeResult.succeeded) {
+        throw outcomeResult.error;
+      }
+      const { outcome } = outcomeResult;
+      dispatch({ type: "advance-discovery", stage: 2 });
+      await pause(250);
+      dispatch({
+        type: "finish-discovery",
+        status: outcome.status,
+        mentorIds: outcome.mentorIds,
+        errorMessage: outcome.sourceWarning ?? undefined,
+      });
+    } catch (error) {
+      const apiError =
+        error instanceof DemoApiError
+          ? error
+          : new DemoApiError({
+              code: "unexpected_client_error",
+              message: "The discovery request could not be completed.",
+            });
+      const requestReference = apiError.requestId
+        ? ` Request reference: ${apiError.requestId}.`
+        : "";
+      dispatch({
+        type: "finish-discovery",
+        status: "error",
+        mentorIds: [],
+        errorMessage: `${apiError.message}${requestReference}`,
+      });
+    }
   }
 
   function inspectMentor(mentorId: string) {
@@ -107,7 +115,7 @@ function DiscoveryWorkspace() {
   }
 
   const visibleMentors = state.discovery.mentorIds
-    .map((id) => demoMentors.find((mentor) => mentor.id === id))
+    .map((id) => catalog.mentors.find((mentor) => mentor.id === id))
     .filter((mentor) => mentor !== undefined);
 
   return (
@@ -116,7 +124,7 @@ function DiscoveryWorkspace() {
         <form
           className="border border-border bg-surface p-5 sm:p-7"
           noValidate
-          onSubmit={handleSubmit(runDiscovery)}
+          onSubmit={handleSubmit(submitDiscovery)}
         >
           <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_13rem_auto] md:items-end">
             <Field data-invalid={Boolean(errors.query)}>
@@ -139,7 +147,7 @@ function DiscoveryWorkspace() {
               </NativeSelect>
               <FieldError errors={[errors.scenario]} />
             </Field>
-            <Button disabled={state.discovery.status === "searching"} type="submit" variant="evidence">
+            <Button disabled={discoveryMutation.isPending} type="submit" variant="evidence">
               <Search aria-hidden="true" />
               Run demo search
             </Button>
@@ -153,7 +161,7 @@ function DiscoveryWorkspace() {
         <div className="mt-8" aria-live="polite">
           {state.discovery.status === "idle" ? (
             <DataState
-              description="Use the prefilled fictional topic or edit it. The query is validated locally before the fixture pipeline runs."
+              description="Use the prefilled fictional topic or edit it. The query is validated before the typed mock API runs."
               kind="empty"
               title="Ready for an evidence-led search"
             />
@@ -164,8 +172,8 @@ function DiscoveryWorkspace() {
               <StatusBadge>Fixture pipeline running</StatusBadge>
               <h2 className="mt-4 text-2xl font-medium">Building a reviewable paper trail</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                This progress is simulated with local records. It demonstrates honest
-                workflow states, not real API activity.
+                The named stages make the mock API request observable. This remains a
+                fictional adapter, not live academic-provider retrieval.
               </p>
               <div className="mt-6">
                 <ProgressStages activeStage={state.discovery.stage} />
@@ -176,7 +184,7 @@ function DiscoveryWorkspace() {
           {state.discovery.status === "empty" ? (
             <DataState
               action={
-                <Button onClick={() => reset({ query: DEMO_DISCOVERY_QUERY, scenario: "complete" })} variant="outline">
+                <Button onClick={() => reset({ query: catalog.defaultQuery, scenario: "complete" })} variant="outline">
                   Restore example query
                 </Button>
               }
@@ -197,7 +205,7 @@ function DiscoveryWorkspace() {
           {state.discovery.status === "partial" ? (
             <DataState
               className="mb-6 min-h-0"
-              description="One fictional source timed out. Two candidates remain visible with their available evidence; nothing was silently filled in."
+              description={state.discovery.errorMessage ?? "One fictional source timed out. Two candidates remain visible with their available evidence; nothing was silently filled in."}
               kind="partial"
               title="Two of three fixture records are available"
             />
@@ -270,17 +278,12 @@ function DiscoveryWorkspace() {
 }
 
 export function DiscoveryExperience() {
-  const { hydrated } = useDemoStore();
-
-  if (!hydrated) {
-    return (
-      <DataState
-        description="Restoring the validated fictional discovery state from this browser session."
-        kind="loading"
-        title="Loading the discovery workspace"
-      />
-    );
-  }
-
-  return <DiscoveryWorkspace />;
+  return (
+    <DemoDataBoundary
+      loadingDescription="Loading the fictional evidence catalog from FastAPI, then restoring compatible discovery state from this browser session."
+      loadingTitle="Loading the discovery workspace"
+    >
+      <DiscoveryWorkspace />
+    </DemoDataBoundary>
+  );
 }

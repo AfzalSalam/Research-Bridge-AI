@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { DataState } from "@/components/states/data-state";
 import {
   Field,
   FieldDescription,
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DemoDataBoundary } from "@/features/demo/components/demo-data-boundary";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import {
   profileFormSchema,
@@ -23,7 +23,7 @@ import {
   type ProfileFormValues,
   type StudentProfile,
 } from "@/features/demo/contracts";
-import { useDemoStore } from "@/features/demo/demo-store";
+import { useReadyDemoStore } from "@/features/demo/demo-store";
 
 function toFormValues(profile: StudentProfile): ProfileFormValues {
   return {
@@ -47,7 +47,7 @@ function commaSeparatedValues(value: string): string[] {
 }
 
 function ProfileForm() {
-  const { dispatch, hydrated, state } = useDemoStore();
+  const { dispatch, state } = useReadyDemoStore();
   const [savedMessage, setSavedMessage] = useState("");
   const {
     formState: { errors, isDirty, isSubmitting },
@@ -60,8 +60,8 @@ function ProfileForm() {
   });
 
   useEffect(() => {
-    if (hydrated) reset(toFormValues(state.profile));
-  }, [hydrated, reset, state.profile]);
+    reset(toFormValues(state.profile));
+  }, [reset, state.profile]);
 
   function saveProfile(values: ProfileFormValues) {
     const profile = studentProfileSchema.parse({
@@ -220,17 +220,12 @@ function ProfileForm() {
 }
 
 export function ProfileExperience() {
-  const { hydrated } = useDemoStore();
-
-  if (!hydrated) {
-    return (
-      <DataState
-        description="Restoring the validated fictional profile from this browser session."
-        kind="loading"
-        title="Loading the demo profile"
-      />
-    );
-  }
-
-  return <ProfileForm />;
+  return (
+    <DemoDataBoundary
+      loadingDescription="Loading the validated fictional profile from the mock API, then restoring compatible browser-session edits."
+      loadingTitle="Loading the demo profile"
+    >
+      <ProfileForm />
+    </DemoDataBoundary>
+  );
 }

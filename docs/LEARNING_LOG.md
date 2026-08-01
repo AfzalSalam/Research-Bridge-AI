@@ -596,22 +596,190 @@ changing the approved journey or introducing real academic retrieval yet.
 
 ---
 
-## YYYY-MM-DD — Phase name
+## 2026-08-01 — Phase 04: Backend contracts
 
 ### What was built
 
+The Phase 3 fictional journey now crosses a production-shaped HTTP boundary:
+
+- FastAPI exposes versioned bootstrap, discovery, and outreach-draft routes;
+- Pydantic validates strict camelCase request and response contracts;
+- a `DemoService` protocol separates routes from the deterministic mock;
+- fictional records and deterministic drafting moved from frontend runtime code
+  to the backend fixture/service layer;
+- one structured error envelope covers domain, validation, HTTP, and unexpected
+  failures;
+- request IDs, timing, and privacy-safe JSON logs make requests traceable;
+- OpenAPI is exported, reviewed, and checked for drift;
+- a TypeScript 6-compatible generator creates the Fetch SDK and types;
+- Zod still validates network bytes because TypeScript disappears at runtime;
+- TanStack Query owns bootstrap and mutation state; and
+- Playwright starts both applications and tests real product requests.
+
 ### Why it exists
+
+Phase 3 proved the interaction design, but all records and drafting behavior
+lived in the browser bundle. That did not demonstrate backend layering, API
+failure semantics, observability, or contract governance.
+
+This phase creates that seam before database and provider complexity arrives. A
+mock service behind the same interface is easy to test today and can later be
+replaced by repository-backed and provider-backed implementations without
+moving business logic into routes or rebuilding the UI.
 
 ### Concepts introduced
 
+- **Transport versus business logic:** a route translates HTTP input/output;
+  the service decides the deterministic outcome.
+- **Protocol/interface:** `DemoService` describes behavior without requiring
+  routes to know the concrete implementation class.
+- **Dependency provider:** FastAPI resolves the service through one function,
+  so tests and future environments can substitute implementations.
+- **Application error:** an expected failure with a stable code, safe message,
+  status, and optional field details.
+- **Request ID:** an opaque identifier that connects a UI error, response
+  header, and log record without logging private content.
+- **Structured logging:** JSON fields such as path, status, duration, and
+  request ID are machine-readable; profile and draft bodies are absent.
+- **OpenAPI contract generation:** Pydantic and route definitions produce one
+  reviewable API document, which generates frontend SDK types.
+- **Compile-time versus runtime safety:** generated TypeScript prevents
+  incorrect calls during development; Zod protects against malformed bytes.
+- **Server state versus client state:** TanStack Query fetches/caches remote
+  catalog state, while the reducer owns unsaved edits and workflow transitions.
+- **Same-origin proxy:** browser code calls `/backend`; Next.js resolves the
+  server-only API origin instead of exposing deployment configuration.
+
 ### Data flow
+
+```text
+product route mounts
+  -> TanStack Query calls generated Fetch SDK
+  -> Next.js /backend rewrite
+  -> FastAPI request-ID middleware
+  -> versioned route
+  -> DemoService protocol
+  -> MockDemoService + fictional backend fixtures
+  -> Pydantic response validation
+  -> generated TypeScript response type
+  -> Zod runtime validation
+  -> DemoProvider initializes reducer
+  -> compatible sessionStorage edits are hydrated
+  -> feature renders loading | error/retry | ready state
+
+mentor + one/two papers + edited profile
+  -> POST /api/v1/demo/outreach-drafts
+  -> verify mentor/paper relationship
+  -> deterministic evidence-bounded template
+  -> provenance + uncertainty warnings
+  -> editable local draft
+  -> human may save/copy/track; no send action exists
+```
 
 ### Important files
 
+- `apps/api/app/schemas/demo.py`: product contracts and evidence constraints.
+- `apps/api/app/services/demo.py`: service protocol.
+- `apps/api/app/services/mock_demo.py`: deterministic discovery and drafting.
+- `apps/api/app/fixtures/demo.py`: canonical fictional records.
+- `apps/api/app/api/v1/routes/demo.py`: thin versioned transports.
+- `apps/api/app/core/exception_handlers.py`: shared error mapping.
+- `apps/api/app/core/middleware.py`: request identity and timing.
+- `apps/api/openapi.json`: checked-in public contract.
+- `apps/api/scripts/export_openapi.py`: deterministic export/drift command.
+- `apps/web/scripts/generate-api.mjs`: generated-client and drift workflow.
+- `apps/web/src/lib/api/generated/`: generated types, SDK, and Fetch transport;
+  never hand-edit these files.
+- `apps/web/src/lib/api/demo.ts`: runtime-validating API adapter.
+- `apps/web/src/app/app-providers.tsx`: TanStack Query and demo-state roots.
+- `apps/web/src/features/demo/demo-store.tsx`: bootstrap, compatibility checks,
+  session hydration, retry, and local state.
+- `apps/web/scripts/run-e2e.mjs`: owns FastAPI and Next.js test processes.
+- `docs/plans/phase-04-backend-contracts.md`: decisions, risks, and evidence.
+
 ### How to run and test it
+
+First create/sync the backend environment:
+
+```powershell
+Set-Location apps/api
+uv sync --all-groups
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+In another terminal from the repository root:
+
+```powershell
+npm.cmd run dev
+```
+
+The complete Phase 4 gates are:
+
+```powershell
+Set-Location apps/api
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app scripts
+uv run pytest
+uv run python -m scripts.export_openapi --check
+
+Set-Location ../web
+npm.cmd run api:check
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+```
+
+After an intentional backend contract change, export OpenAPI first, review it,
+then generate and review the TypeScript SDK diff.
+
+Verification completed with 11 backend tests, 17 frontend tests, and five
+full-stack Playwright tests. The production build, strict typing, linting,
+formatting, generated-contract checks, and manual 390px/desktop browser review
+also pass. The intentional source-error scenario is fully handled and leaves no
+browser console error.
 
 ### Common errors and debugging
 
+- **Product routes show “Demo API unavailable”:** start FastAPI on port 8000,
+  confirm `API_BASE_URL`, restart Next.js, and use the request ID to correlate
+  the failure.
+- **`openapi.json is stale`:** run `uv run python -m
+  scripts.export_openapi`, inspect the diff, then regenerate the frontend SDK.
+- **Generated client check fails:** never edit generated files. Run `npm.cmd run
+  api:generate` after the backend export and review why the contract moved.
+- **A saved session is discarded:** Phase 4 uses
+  `research-bridge.demo.phase-04.v1` and verifies IDs against the API catalog.
+- **`uv` cannot initialize its global cache in a restricted environment:** set
+  `UV_CACHE_DIR` to a writable temporary directory for that command. This does
+  not change the project virtual environment.
+- **E2E cannot find Python:** run `uv sync --all-groups` in `apps/api`. The runner
+  launches `.venv` Python directly so Windows cleanup owns the real process.
+- **A UI error lacks a request ID:** expected server failures have one. A pure
+  network failure has no server response and therefore cannot have one.
+
 ### Limitations
 
+- The backend is stateless; profile edits, edited drafts, saves, and tracker
+  history are still tab-scoped browser data.
+- Every record and provider failure is fictional. OpenAlex is not contacted.
+- Discovery outcomes are deterministic scenarios, not ranking or retrieval.
+- Drafts use a deterministic fallback template, not an LLM, and cannot be sent.
+- The bootstrap response bundles a small demo catalog; live records will require
+  independently paginated endpoints.
+- Authentication, PostgreSQL models, migrations, repositories, and ownership
+  isolation have not been implemented.
+- Production npm dependencies audit with zero known vulnerabilities. The pinned
+  `@hey-api/openapi-ts` 0.97.0 generator has one moderate development-only
+  template advisory and reads only trusted `apps/api/openapi.json`. Versions
+  that fix it currently introduce a high-severity YAML parser advisory, so an
+  upgrade must be retested instead of forced.
+
 ### Next step
+
+Phase 5 — Database and profile introduces PostgreSQL persistence: SQLAlchemy 2
+models, Alembic migrations, repositories, constraints, indexes, and durable
+storage for the approved entities. It must preserve the Phase 4 route/service
+boundary and must not introduce ranking or real academic retrieval early.

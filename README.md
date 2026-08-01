@@ -2,16 +2,16 @@
 
 Research Bridge AI is an evidence-first academic discovery and research-
 opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the completed Phase 3 product demo: a responsive
-Next.js journey, a FastAPI backend, and local PostgreSQL with pgvector available
-for later phases.
+full-stack foundation and the completed Phase 4 contract-backed demo: a
+responsive Next.js journey, a modular FastAPI backend, generated TypeScript API
+types, and local PostgreSQL with pgvector available for later phases.
 
-The browser demo includes an editable fictional profile, transparent fixture
-search states, paper-backed fictional researcher records, deterministic custom
-outreach, fictional opportunities, and an application tracker. It is visibly
-mocked: no academic API, LLM, email provider, authentication, or durable
-database is connected yet. See `PROJECT_SPEC.md`, `ROADMAP.md`, and the active
-plan under `docs/plans/` for the approved sequence.
+The browser demo includes an editable fictional profile, transparent search
+states, paper-backed fictional researcher records, deterministic custom
+outreach, fictional opportunities, and an application tracker. Its catalog,
+discovery outcomes, and initial draft now cross a real typed HTTP boundary. It
+is still visibly mocked: no academic API, LLM, email provider, authentication,
+or durable database is connected yet.
 
 ## Architecture
 
@@ -19,10 +19,13 @@ plan under `docs/plans/` for the approved sequence.
 Browser
   -> Next.js App Router (apps/web, port 3000)
       -> responsive root shell + project-owned design system
-      -> validated DemoProvider state (tab-scoped sessionStorage)
-          -> typed fictional fixtures
-          -> deterministic evidence-grounded draft template
-          -> profile, discovery, mentors, opportunities, applications
+      -> TanStack Query server-state boundary
+          -> same-origin /backend rewrite
+              -> FastAPI /api/v1/demo
+                  -> route -> DemoService protocol -> MockDemoService
+                      -> typed fictional catalog + deterministic draft
+      -> validated reducer state (tab-scoped sessionStorage)
+          -> profile edits, selections, saved drafts, tracker transitions
       -> typed server-side health client
           -> FastAPI (apps/api, port 8000)
               -> /api/v1/health
@@ -31,9 +34,8 @@ Docker Compose
   -> PostgreSQL 17 + pgvector (port 5432)
 ```
 
-The Phase 3 journey is deliberately local and works without FastAPI. The
-landing-page health endpoint still confirms the typed frontend/backend boundary
-and deliberately does not depend on PostgreSQL.
+FastAPI is required for the Phase 4 product routes. PostgreSQL is still outside
+the runtime path until Phase 5.
 
 ## Prerequisites
 
@@ -92,6 +94,8 @@ Useful URLs:
 
 - Health: <http://localhost:8000/api/v1/health>
 - OpenAPI UI: <http://localhost:8000/docs>
+- OpenAPI JSON: <http://localhost:8000/openapi.json>
+- Demo bootstrap: <http://localhost:8000/api/v1/demo/bootstrap>
 
 ### 3. Frontend
 
@@ -101,9 +105,9 @@ Open another PowerShell window at the repository root:
 npm.cmd run dev
 ```
 
-Open <http://localhost:3000> and choose **Launch the product demo**. FastAPI and
-PostgreSQL are optional for the Phase 3 fictional journey; start them when you
-want the landing page to show a healthy full-stack boundary.
+Open <http://localhost:3000> and choose **Launch the product demo**. Keep FastAPI
+running because the product catalog and mock operations now use its typed
+contracts. PostgreSQL remains optional.
 
 Useful frontend routes:
 
@@ -120,7 +124,8 @@ Useful frontend routes:
 
 Every person, paper, institution, and opportunity is fictional and uses inert
 `example.org` evidence URLs. Changes remain in the current browser tab. Use
-**Reset demo** on any product route to restore the canonical fixture state.
+**Reset demo** on any product route to restore the canonical API profile and
+clear browser-session edits.
 
 ## Quality checks
 
@@ -129,15 +134,16 @@ Frontend, from the repository root:
 ```powershell
 npm.cmd run lint
 npm.cmd run typecheck
+npm.cmd --workspace @research-bridge/web run api:check
 npm.cmd run test
 npm.cmd run build
 npm.cmd run test:e2e
 npm.cmd audit --omit=dev --audit-level=high
 ```
 
-`test:e2e` creates a production build, starts an isolated local server, runs the
-desktop recruiter journey plus mobile and responsive-matrix checks, and then
-stops the server.
+`test:e2e` creates a production build, starts the project virtual environment's
+FastAPI process and an isolated Next.js server, runs the recruiter journey plus
+API failure, mobile, and responsive-matrix checks, and then stops both servers.
 
 Backend:
 
@@ -145,8 +151,9 @@ Backend:
 Set-Location apps/api
 uv run ruff check .
 uv run ruff format --check .
-uv run mypy app
+uv run mypy app scripts
 uv run pytest
+uv run python -m scripts.export_openapi --check
 ```
 
 Compose configuration does not require the daemon:
@@ -159,11 +166,12 @@ docker compose --env-file .env.example config
 
 | Variable | Application | Purpose |
 | --- | --- | --- |
-| `API_BASE_URL` | Next.js server | FastAPI origin used by the server-side health client. |
+| `API_BASE_URL` | Next.js server | FastAPI origin used by health requests and the same-origin `/backend` rewrite. |
 | `APP_NAME` | FastAPI | Human-readable service name. |
 | `APP_VERSION` | FastAPI | Version returned by the health contract. |
 | `APP_ENVIRONMENT` | FastAPI | Environment label such as `development`. |
 | `BACKEND_CORS_ORIGINS` | FastAPI | Comma-separated browser origins allowed during local development. |
+| `LOG_LEVEL` | FastAPI | Standard structured-log level such as `INFO`. |
 | `POSTGRES_*` | Docker Compose | Local database name, user, password, and host port. |
 
 `API_BASE_URL` is intentionally server-only. Do not move secrets into a
@@ -184,11 +192,11 @@ API_BASE_URL=http://localhost:8000
 ```
 
 Restart the Next.js development server after changing environment variables.
-The Phase 3 demo routes still work because they are intentionally local.
+Phase 4 product routes show an explicit retryable error if FastAPI is absent.
 
 ### Demo changes disappeared
 
-Phase 3 uses `sessionStorage`, so data is scoped to the current browser tab.
+Phase 4 uses `sessionStorage`, so editable data is scoped to the current browser tab.
 Closing the tab or choosing **Reset demo** returns to the canonical fictional
 fixtures. Durable persistence arrives in a later database phase.
 
@@ -206,14 +214,14 @@ uv run python --version
 Start Docker Desktop and wait until its engine reports ready. `docker compose
 config` can still validate the YAML without starting a container.
 
-### A complete npm audit reports the lint glob advisory
+### A complete npm audit reports a generator advisory
 
-The deployable production graph audits clean. The current Next.js ESLint
-toolchain still uses legacy Minimatch/Brace Expansion for repository-controlled
-lint patterns. Forcing the patched major breaks that API, and forcing ESLint 10
-breaks the current React lint plugin. Keep lint patterns trusted and use the
-documented production audit until the upstream lint stack becomes compatible;
-the decision and retest evidence are recorded in the Phase 1 plan.
+The deployable production graph audits clean. The pinned OpenAPI generator has
+one moderate development-only template advisory; it processes only the
+repository-owned `apps/api/openapi.json`. Newer generator versions remove that
+advisory but currently pull a high-severity YAML parser advisory. The pin and
+upgrade condition are recorded in the Phase 4 plan instead of hiding the
+tradeoff with a forced install.
 
 ## Documentation
 
@@ -223,4 +231,5 @@ the decision and retest evidence are recorded in the Phase 1 plan.
 - Phase 1 plan: `docs/plans/phase-01-foundation.md`
 - Phase 2 plan: `docs/plans/phase-02-design-system-and-responsive-shell.md`
 - Phase 3 plan: `docs/plans/phase-03-typed-mock-product-journey.md`
+- Phase 4 plan: `docs/plans/phase-04-backend-contracts.md`
 - Learning log: `docs/LEARNING_LOG.md`

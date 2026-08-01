@@ -8,8 +8,8 @@ const stages = [
     description: "Check the topic and selected fixture scenario.",
   },
   {
-    title: "Load paper fixtures",
-    description: "Read local fictional records; no academic API is called.",
+    title: "Request mock evidence",
+    description: "Call the typed fictional API; no academic provider is contacted.",
   },
   {
     title: "Connect authors to evidence",

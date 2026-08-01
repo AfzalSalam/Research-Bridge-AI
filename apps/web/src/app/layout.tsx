@@ -4,8 +4,8 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/source-serif-4";
 import "./globals.css";
 
+import { AppProviders } from "@/app/app-providers";
 import { SiteHeader } from "@/components/navigation/site-header";
-import { DemoProvider } from "@/features/demo/demo-store";
 
 export const metadata: Metadata = {
   title: {
@@ -26,10 +26,10 @@ export default function RootLayout({
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>
-        <DemoProvider>
+        <AppProviders>
           <SiteHeader />
           {children}
-        </DemoProvider>
+        </AppProviders>
       </body>
     </html>
   );

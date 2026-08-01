@@ -13,13 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DemoDataBoundary } from "@/features/demo/components/demo-data-boundary";
 import { EvidenceLink } from "@/features/demo/components/evidence-link";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import {
   applicationStatusSchema,
   type Application,
 } from "@/features/demo/contracts";
-import { useDemoStore } from "@/features/demo/demo-store";
+import { useReadyDemoStore } from "@/features/demo/demo-store";
 
 const trackerFormSchema = z.object({
   status: applicationStatusSchema,
@@ -40,7 +41,7 @@ function formatDateTime(value: string) {
 }
 
 function TrackerCard({ application }: { application: Application }) {
-  const { dispatch } = useDemoStore();
+  const { dispatch } = useReadyDemoStore();
   const [announcement, setAnnouncement] = useState("");
   const {
     formState: { errors, isDirty },
@@ -162,18 +163,8 @@ function TrackerCard({ application }: { application: Application }) {
   );
 }
 
-export function ApplicationsExperience() {
-  const { hydrated, state } = useDemoStore();
-
-  if (!hydrated) {
-    return (
-      <DataState
-        description="Restoring validated fictional application records from this browser session."
-        kind="loading"
-        title="Loading the application tracker"
-      />
-    );
-  }
+function ApplicationsWorkspace() {
+  const { state } = useReadyDemoStore();
 
   if (state.applications.length === 0) {
     return (
@@ -213,5 +204,16 @@ export function ApplicationsExperience() {
         </ul>
       </aside>
     </div>
+  );
+}
+
+export function ApplicationsExperience() {
+  return (
+    <DemoDataBoundary
+      loadingDescription="Loading the fictional catalog from FastAPI, then restoring validated application records from this browser session."
+      loadingTitle="Loading the application tracker"
+    >
+      <ApplicationsWorkspace />
+    </DemoDataBoundary>
   );
 }

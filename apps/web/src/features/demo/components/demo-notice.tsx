@@ -8,11 +8,15 @@ import { useDemoStore } from "@/features/demo/demo-store";
 import { cn } from "@/lib/utils";
 
 export function DemoNotice({ className }: { className?: string }) {
-  const { dispatch, storageWarning } = useDemoStore();
+  const {
+    bootstrapStatus,
+    resetDemo: resetDemoState,
+    storageWarning,
+  } = useDemoStore();
   const [announcement, setAnnouncement] = useState("");
 
   function resetDemo() {
-    dispatch({ type: "reset" });
+    resetDemoState();
     setAnnouncement("The fictional demo has been restored to its starting state.");
   }
 
@@ -42,7 +46,13 @@ export function DemoNotice({ className }: { className?: string }) {
           ) : null}
         </div>
       </div>
-      <Button className="shrink-0" onClick={resetDemo} size="sm" variant="outline">
+      <Button
+        className="shrink-0"
+        disabled={bootstrapStatus !== "ready"}
+        onClick={resetDemo}
+        size="sm"
+        variant="outline"
+      >
         <RotateCcw aria-hidden="true" />
         Reset demo
       </Button>

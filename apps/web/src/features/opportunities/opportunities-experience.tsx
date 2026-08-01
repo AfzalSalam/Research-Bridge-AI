@@ -8,11 +8,11 @@ import { StatusBadge } from "@/components/status/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DemoDataBoundary } from "@/features/demo/components/demo-data-boundary";
 import { EvidenceLink } from "@/features/demo/components/evidence-link";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import { applicationSchema } from "@/features/demo/contracts";
-import { useDemoStore } from "@/features/demo/demo-store";
-import { demoOpportunities } from "@/features/demo/fixtures";
+import { useReadyDemoStore } from "@/features/demo/demo-store";
 
 type FixtureMode = "complete" | "partial" | "error";
 
@@ -26,7 +26,7 @@ function formatDate(value: string) {
 }
 
 function OpportunitiesWorkspace() {
-  const { dispatch, state } = useDemoStore();
+  const { catalog, dispatch, state } = useReadyDemoStore();
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState("All");
   const [fixtureMode, setFixtureMode] = useState<FixtureMode>("complete");
@@ -44,7 +44,9 @@ function OpportunitiesWorkspace() {
   }, [fixtureMode, loading]);
 
   const availableFixtures =
-    loadedMode === "partial" ? demoOpportunities.slice(0, 2) : demoOpportunities;
+    loadedMode === "partial"
+      ? catalog.opportunities.slice(0, 2)
+      : catalog.opportunities;
 
   const visibleOpportunities = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -72,7 +74,9 @@ function OpportunitiesWorkspace() {
   }
 
   function trackOpportunity(opportunityId: string) {
-    const opportunity = demoOpportunities.find((item) => item.id === opportunityId);
+    const opportunity = catalog.opportunities.find(
+      (item) => item.id === opportunityId,
+    );
     if (!opportunity) return;
     const changedAt = new Date().toISOString();
     dispatch({
@@ -145,7 +149,7 @@ function OpportunitiesWorkspace() {
       <div className="mt-8">
         {loading ? (
           <DataState
-            description="Loading local fictional opportunity records. No university site is being scraped in this phase."
+            description="Reading fictional opportunity records already returned by the typed mock API. No university site is being scraped in this phase."
             kind="loading"
             title="Checking the fixture source"
           />
@@ -248,17 +252,12 @@ function OpportunitiesWorkspace() {
 }
 
 export function OpportunitiesExperience() {
-  const { hydrated } = useDemoStore();
-
-  if (!hydrated) {
-    return (
-      <DataState
-        description="Restoring saved fictional opportunities from this browser session."
-        kind="loading"
-        title="Loading opportunity fixtures"
-      />
-    );
-  }
-
-  return <OpportunitiesWorkspace />;
+  return (
+    <DemoDataBoundary
+      loadingDescription="Loading fictional opportunities from FastAPI, then restoring compatible saved items from this browser session."
+      loadingTitle="Loading opportunity records"
+    >
+      <OpportunitiesWorkspace />
+    </DemoDataBoundary>
+  );
 }

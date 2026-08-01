@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     app_name: str = "Research Bridge API"
     app_version: str = "0.1.0"
     app_environment: str = "development"
+    log_level: str = "INFO"
     api_v1_prefix: str = "/api/v1"
     backend_cors_origins: str = "http://localhost:3000"
 
