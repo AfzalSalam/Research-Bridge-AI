@@ -6,14 +6,10 @@ test("student can move from fictional profile to evidence-grounded outreach", as
   await page.goto("/profile");
   await page.getByLabel("Name").fill("Riya Demo");
   await page.getByRole("button", { name: "Save demo profile" }).click();
-  await expect(page.getByText("Fictional profile saved in this browser session.")).toBeVisible();
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        window.sessionStorage.getItem("research-bridge.demo.phase-04.v1"),
-      ),
-    )
-    .toContain("Riya Demo");
+  await expect(page.getByText("Fictional profile saved to the demo database.")).toBeVisible();
+  await page.evaluate(() => window.sessionStorage.clear());
+  await page.reload();
+  await expect(page.getByLabel("Name")).toHaveValue("Riya Demo");
 
   await page.goto("/discover");
   await page.getByRole("button", { name: "Run demo search" }).click();

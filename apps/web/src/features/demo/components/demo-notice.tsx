@@ -17,7 +17,9 @@ export function DemoNotice({ className }: { className?: string }) {
 
   function resetDemo() {
     resetDemoState();
-    setAnnouncement("The fictional demo has been restored to its starting state.");
+    setAnnouncement(
+      "The local demo workflow was reset; the database-saved profile was retained.",
+    );
   }
 
   return (
@@ -36,8 +38,9 @@ export function DemoNotice({ className }: { className?: string }) {
         <div>
           <p className="text-sm font-bold text-foreground">Fictional recruiter demo</p>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            Every person, paper, institution, and opportunity is invented. Changes stay
-            only in this browser session; do not enter private or real personal data.
+            Every person, paper, institution, and opportunity is invented. The profile
+            is saved to the demo database; other changes stay in this browser session.
+            Do not enter private or real personal data.
           </p>
           {storageWarning ? (
             <p className="mt-2 text-sm font-semibold leading-6 text-warning-foreground">

@@ -1,7 +1,9 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workspaceRoot = path.resolve(webRoot, "../..");
@@ -14,29 +16,33 @@ const playwrightCli = path.join(
   "test",
   "cli.js",
 );
+const pythonExecutable =
+  process.platform === "win32"
+    ? path.join(apiRoot, ".venv", "Scripts", "python.exe")
+    : path.join(apiRoot, ".venv", "bin", "python");
 const webBaseUrl = "http://127.0.0.1:3100";
-const apiHealthUrl = "http://127.0.0.1:8000/api/v1/health";
+const apiBaseUrl = "http://127.0.0.1:8100";
+const apiHealthUrl = `${apiBaseUrl}/api/v1/health`;
 
 function forwardOutput(stream, destination) {
   stream.on("data", (chunk) => destination.write(chunk));
 }
 
-async function isHealthyApi() {
-  try {
-    const response = await fetch(apiHealthUrl);
-    if (!response.ok) return false;
-    const payload = await response.json();
-    return payload.status === "ok" && payload.service === "research-bridge-api";
-  } catch {
-    return false;
+async function runCommand(command, args, options) {
+  const child = spawn(command, args, { ...options, stdio: "inherit" });
+  const exitCode = await new Promise((resolve) =>
+    child.once("exit", (code) => resolve(code ?? 1)),
+  );
+  if (exitCode !== 0) {
+    throw new Error(`${path.basename(command)} exited with code ${exitCode}.`);
   }
 }
 
-async function waitForUrl({ process, url, label, validate }) {
-  const deadline = Date.now() + 30_000;
+async function waitForUrl({ process: child, url, label, validate }) {
+  const deadline = Date.now() + 60_000;
   while (Date.now() < deadline) {
-    if (process?.exitCode !== null && process?.exitCode !== undefined) {
-      throw new Error(`${label} exited before startup with code ${process.exitCode}.`);
+    if (child?.exitCode !== null && child?.exitCode !== undefined) {
+      throw new Error(`${label} exited before startup with code ${child.exitCode}.`);
     }
     try {
       const response = await fetch(url);
@@ -51,67 +57,80 @@ async function waitForUrl({ process, url, label, validate }) {
 
 async function stopServer(server) {
   if (!server || server.exitCode !== null) return;
+  const exitPromise = new Promise((resolve) =>
+    server.once("exit", () => resolve(true)),
+  );
   server.kill();
   const exited = await Promise.race([
-    new Promise((resolve) => server.once("exit", () => resolve(true))),
+    exitPromise,
     new Promise((resolve) => setTimeout(() => resolve(false), 2_000)),
   ]);
   if (!exited) {
     server.kill("SIGKILL");
+    const forceExited = await Promise.race([
+      exitPromise,
+      new Promise((resolve) => setTimeout(() => resolve(false), 5_000)),
+    ]);
+    if (!forceExited) {
+      throw new Error(`Server process ${server.pid} did not stop during cleanup.`);
+    }
   }
   server.stdout?.destroy();
   server.stderr?.destroy();
 }
 
+if (!existsSync(pythonExecutable)) {
+  throw new Error(
+    `Backend environment not found at ${pythonExecutable}. Run "uv sync --all-groups" in apps/api first.`,
+  );
+}
+
+const temporaryRoot = await mkdtemp(path.join(tmpdir(), "research-bridge-e2e-"));
+const databasePath = path.join(temporaryRoot, "e2e.sqlite3").replaceAll("\\", "/");
+const databaseUrl = `sqlite+aiosqlite:///${databasePath}`;
+const apiEnvironment = {
+  ...process.env,
+  APP_ENVIRONMENT: "e2e",
+  DATABASE_URL: databaseUrl,
+  LOG_LEVEL: "WARNING",
+};
+const webEnvironment = { ...process.env, API_BASE_URL: apiBaseUrl };
+
 let apiServer = null;
 let webServer = null;
 let exitCode = 1;
 try {
-  if (!(await isHealthyApi())) {
-    const pythonExecutable =
-      process.platform === "win32"
-        ? path.join(apiRoot, ".venv", "Scripts", "python.exe")
-        : path.join(apiRoot, ".venv", "bin", "python");
-    if (!existsSync(pythonExecutable)) {
-      throw new Error(
-        `Backend environment not found at ${pythonExecutable}. Run "uv sync --all-groups" in apps/api first.`,
-      );
-    }
-    apiServer = spawn(
-      pythonExecutable,
-      [
-        "-m",
-        "uvicorn",
-        "app.main:app",
-        "--host",
-        "127.0.0.1",
-        "--port",
-        "8000",
-      ],
-      {
-        cwd: apiRoot,
-        env: {
-          ...process.env,
-          APP_ENVIRONMENT: "e2e",
-          LOG_LEVEL: "WARNING",
-        },
-        stdio: ["ignore", "pipe", "pipe"],
-      },
-    );
-    forwardOutput(apiServer.stdout, process.stdout);
-    forwardOutput(apiServer.stderr, process.stderr);
-    await waitForUrl({
-      process: apiServer,
-      url: apiHealthUrl,
-      label: "FastAPI E2E server",
-      validate: async (response) => (await response.json()).status === "ok",
-    });
-  }
+  await runCommand(pythonExecutable, ["-m", "alembic", "upgrade", "head"], {
+    cwd: apiRoot,
+    env: apiEnvironment,
+  });
+  await runCommand(process.execPath, [nextCli, "build"], {
+    cwd: webRoot,
+    env: webEnvironment,
+  });
+
+  apiServer = spawn(
+    pythonExecutable,
+    ["-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8100"],
+    {
+      cwd: apiRoot,
+      env: apiEnvironment,
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
+  forwardOutput(apiServer.stdout, process.stdout);
+  forwardOutput(apiServer.stderr, process.stderr);
+  await waitForUrl({
+    process: apiServer,
+    url: apiHealthUrl,
+    label: "isolated FastAPI E2E server",
+    validate: async (response) => (await response.json()).status === "ok",
+  });
 
   webServer = spawn(
     process.execPath,
     [nextCli, "start", "--hostname", "127.0.0.1", "--port", "3100"],
-    { cwd: webRoot, env: process.env, stdio: ["ignore", "pipe", "pipe"] },
+    { cwd: webRoot, env: webEnvironment, stdio: ["ignore", "pipe", "pipe"] },
   );
   forwardOutput(webServer.stdout, process.stdout);
   forwardOutput(webServer.stderr, process.stderr);
@@ -120,6 +139,7 @@ try {
     url: webBaseUrl,
     label: "Next.js E2E server",
   });
+
   const tests = spawn(process.execPath, [playwrightCli, "test"], {
     cwd: webRoot,
     env: { ...process.env, PLAYWRIGHT_EXTERNAL_SERVER: "1" },
@@ -129,8 +149,20 @@ try {
     tests.once("exit", (code) => resolve(code ?? 1)),
   );
 } finally {
-  await stopServer(webServer);
-  await stopServer(apiServer);
+  const shutdownResults = await Promise.allSettled([
+    stopServer(webServer),
+    stopServer(apiServer),
+  ]);
+  await rm(temporaryRoot, {
+    force: true,
+    maxRetries: 5,
+    recursive: true,
+    retryDelay: 200,
+  });
+  const shutdownFailure = shutdownResults.find(
+    (result) => result.status === "rejected",
+  );
+  if (shutdownFailure?.status === "rejected") throw shutdownFailure.reason;
 }
 
 process.exit(exitCode);

@@ -4,6 +4,7 @@ import {
   type DemoBootstrapResponse as GeneratedDemoBootstrapResponse,
   type DiscoveryRequest as GeneratedDiscoveryRequest,
   type OutreachDraftRequest as GeneratedOutreachDraftRequest,
+  type StudentProfile as GeneratedStudentProfile,
   Sdk,
 } from "@/lib/api/generated";
 import { client } from "@/lib/api/generated/client.gen";
@@ -12,6 +13,7 @@ import {
   demoBootstrapSchema,
   discoveryResponseSchema,
   outreachDraftSchema,
+  studentProfileSchema,
   type DemoBootstrap,
   type DiscoveryResponse,
   type DiscoveryScenario,
@@ -98,6 +100,15 @@ export async function getDemoBootstrap(signal?: AbortSignal): Promise<DemoBootst
   const result = await sdk.readDemoBootstrapApiV1DemoBootstrapGet({ signal });
   const bootstrap = parseData(result, demoBootstrapSchema);
   return bootstrap satisfies GeneratedDemoBootstrapResponse;
+}
+
+export async function updateDemoProfile(
+  profile: StudentProfile,
+  signal?: AbortSignal,
+): Promise<StudentProfile> {
+  const body = profile satisfies GeneratedStudentProfile;
+  const result = await sdk.updateDemoProfileApiV1DemoProfilePut({ body, signal });
+  return parseData(result, studentProfileSchema);
 }
 
 export async function runDemoDiscovery({

@@ -4,6 +4,7 @@ const generated = vi.hoisted(() => ({
   bootstrap: vi.fn(),
   discovery: vi.fn(),
   draft: vi.fn(),
+  updateProfile: vi.fn(),
   setConfig: vi.fn(),
 }));
 
@@ -16,6 +17,7 @@ vi.mock("@/lib/api/generated", () => ({
     readDemoBootstrapApiV1DemoBootstrapGet = generated.bootstrap;
     runDemoDiscoveryApiV1DemoDiscoveryPost = generated.discovery;
     createDemoOutreachDraftApiV1DemoOutreachDraftsPost = generated.draft;
+    updateDemoProfileApiV1DemoProfilePut = generated.updateProfile;
   },
 }));
 
@@ -24,6 +26,7 @@ import {
   DemoApiError,
   getDemoBootstrap,
   runDemoDiscovery,
+  updateDemoProfile,
 } from "@/lib/api/demo";
 
 const profile = {
@@ -103,6 +106,21 @@ describe("typed demo API adapter", () => {
     });
 
     await expect(getDemoBootstrap()).resolves.toEqual(bootstrap);
+  });
+
+  it("saves a profile through the generated client and validates the response", async () => {
+    const updated = { ...profile, name: "Riya Demo" };
+    generated.updateProfile.mockResolvedValue({
+      data: updated,
+      error: undefined,
+      response: new Response(null, { status: 200 }),
+    });
+
+    await expect(updateDemoProfile(updated)).resolves.toEqual(updated);
+    expect(generated.updateProfile).toHaveBeenCalledWith({
+      body: updated,
+      signal: undefined,
+    });
   });
 
   it("preserves structured API failures and request references", async () => {

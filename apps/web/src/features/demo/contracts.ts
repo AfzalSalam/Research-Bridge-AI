@@ -3,6 +3,11 @@ import { z } from "zod";
 const shortText = z.string().trim().min(2).max(120);
 const sourceUrl = z.string().url().startsWith("https://example.org/");
 
+function hasUniqueTerms(values: string[]): boolean {
+  const normalized = values.map((value) => value.trim().toLocaleLowerCase());
+  return normalized.length === new Set(normalized).size;
+}
+
 function commaList(maxItems: number, label: string) {
   return z
     .string()
@@ -20,6 +25,10 @@ function commaList(maxItems: number, label: string) {
           .filter((item) => item.trim())
           .every((item) => item.trim().length >= 2),
       `Each ${label.replace(/s$/, "")} must contain at least 2 characters.`,
+    )
+    .refine(
+      (value) => hasUniqueTerms(value.split(",").filter((item) => item.trim())),
+      `Remove duplicate ${label}.`,
     );
 }
 
@@ -31,8 +40,16 @@ export const studentProfileSchema = z.object({
   graduationYear: z
     .string()
     .regex(/^20\d{2}$/, "Use a four-digit year, for example 2027."),
-  researchInterests: z.array(shortText).min(1).max(6),
-  skills: z.array(shortText).min(1).max(8),
+  researchInterests: z
+    .array(shortText)
+    .min(1)
+    .max(6)
+    .refine(hasUniqueTerms, "Research interests must be unique."),
+  skills: z
+    .array(shortText)
+    .min(1)
+    .max(8)
+    .refine(hasUniqueTerms, "Skills must be unique."),
   projectTitle: shortText,
   projectSummary: z.string().trim().min(40).max(500),
   weeklyAvailability: z.enum(["5-10 hours", "10-15 hours", "15+ hours"]),

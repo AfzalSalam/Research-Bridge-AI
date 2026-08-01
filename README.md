@@ -2,16 +2,17 @@
 
 Research Bridge AI is an evidence-first academic discovery and research-
 opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the completed Phase 4 contract-backed demo: a
+full-stack foundation and the completed Phase 5 persistence boundary: a
 responsive Next.js journey, a modular FastAPI backend, generated TypeScript API
-types, and local PostgreSQL with pgvector available for later phases.
+types, SQLAlchemy repositories, Alembic migrations, and local PostgreSQL with
+pgvector available for later phases.
 
 The browser demo includes an editable fictional profile, transparent search
 states, paper-backed fictional researcher records, deterministic custom
-outreach, fictional opportunities, and an application tracker. Its catalog,
-discovery outcomes, and initial draft now cross a real typed HTTP boundary. It
-is still visibly mocked: no academic API, LLM, email provider, authentication,
-or durable database is connected yet.
+outreach, fictional opportunities, and an application tracker. Its profile is
+durable through PostgreSQL; catalog, discovery, and draft behavior still use
+explicit deterministic fixtures. No academic API, LLM, email provider, or
+authentication is connected yet.
 
 ## Architecture
 
@@ -22,20 +23,23 @@ Browser
       -> TanStack Query server-state boundary
           -> same-origin /backend rewrite
               -> FastAPI /api/v1/demo
-                  -> route -> DemoService protocol -> MockDemoService
+                  -> route -> service -> repository -> SQLAlchemy/PostgreSQL
+                      -> durable fictional student profile
+                  -> DemoService protocol -> MockDemoService
                       -> typed fictional catalog + deterministic draft
       -> validated reducer state (tab-scoped sessionStorage)
-          -> profile edits, selections, saved drafts, tracker transitions
+          -> selections, saved drafts, and tracker transitions
       -> typed server-side health client
           -> FastAPI (apps/api, port 8000)
               -> /api/v1/health
 
 Docker Compose
   -> PostgreSQL 17 + pgvector (port 5432)
+      -> Alembic-owned 18-table initial schema
 ```
 
-FastAPI is required for the Phase 4 product routes. PostgreSQL is still outside
-the runtime path until Phase 5.
+FastAPI and PostgreSQL are required for the product routes. Health remains
+available independently so process and database failures stay distinguishable.
 
 ## Prerequisites
 
@@ -76,10 +80,14 @@ Start Docker Desktop, then from the repository root:
 ```powershell
 docker compose --env-file .env up -d db
 docker compose ps
+
+Set-Location apps/api
+uv run alembic upgrade head
+Set-Location ../..
 ```
 
-The image includes pgvector, but no application schema or vector query is added
-until a later phase.
+Alembic creates the application schema; application startup never mutates it.
+The image includes pgvector, but vector columns and queries remain deferred.
 
 ### 2. Backend
 
@@ -96,6 +104,7 @@ Useful URLs:
 - OpenAPI UI: <http://localhost:8000/docs>
 - OpenAPI JSON: <http://localhost:8000/openapi.json>
 - Demo bootstrap: <http://localhost:8000/api/v1/demo/bootstrap>
+- Durable demo profile: <http://localhost:8000/api/v1/demo/profile>
 
 ### 3. Frontend
 
@@ -107,7 +116,8 @@ npm.cmd run dev
 
 Open <http://localhost:3000> and choose **Launch the product demo**. Keep FastAPI
 running because the product catalog and mock operations now use its typed
-contracts. PostgreSQL remains optional.
+contracts, and keep PostgreSQL running because bootstrap reads the durable demo
+profile.
 
 Useful frontend routes:
 
@@ -123,9 +133,10 @@ Useful frontend routes:
 - `/applications`: explicit status, notes, follow-up, and event history.
 
 Every person, paper, institution, and opportunity is fictional and uses inert
-`example.org` evidence URLs. Changes remain in the current browser tab. Use
-**Reset demo** on any product route to restore the canonical API profile and
-clear browser-session edits.
+`example.org` evidence URLs. Profile saves survive reloads through the database;
+drafts, saved opportunities, and tracker edits remain in the current browser
+tab. Use **Reset demo** to clear local workflow state while retaining the last
+database-saved profile.
 
 ## Quality checks
 
@@ -141,9 +152,10 @@ npm.cmd run test:e2e
 npm.cmd audit --omit=dev --audit-level=high
 ```
 
-`test:e2e` creates a production build, starts the project virtual environment's
-FastAPI process and an isolated Next.js server, runs the recruiter journey plus
-API failure, mobile, and responsive-matrix checks, and then stops both servers.
+`test:e2e` creates a temporary migrated SQLite database, builds Next.js for an
+isolated API port, owns both test servers, verifies profile persistence plus the
+recruiter journey, failure, mobile, and responsive states, then removes only its
+temporary data.
 
 Backend:
 
@@ -172,6 +184,9 @@ docker compose --env-file .env.example config
 | `APP_ENVIRONMENT` | FastAPI | Environment label such as `development`. |
 | `BACKEND_CORS_ORIGINS` | FastAPI | Comma-separated browser origins allowed during local development. |
 | `LOG_LEVEL` | FastAPI | Standard structured-log level such as `INFO`. |
+| `DATABASE_URL` | FastAPI/Alembic | Async SQLAlchemy URL; local PostgreSQL uses the `postgresql+asyncpg` dialect. |
+| `DATABASE_ECHO` | FastAPI | Opt-in SQL logging for local debugging; keep disabled around private data. |
+| `DEMO_OWNER_ID` | FastAPI | Server-only UUID ownership anchor for the fictional profile. |
 | `POSTGRES_*` | Docker Compose | Local database name, user, password, and host port. |
 
 `API_BASE_URL` is intentionally server-only. Do not move secrets into a
@@ -192,13 +207,24 @@ API_BASE_URL=http://localhost:8000
 ```
 
 Restart the Next.js development server after changing environment variables.
-Phase 4 product routes show an explicit retryable error if FastAPI is absent.
+Product routes show an explicit retryable error if FastAPI is absent.
 
-### Demo changes disappeared
+### Profile saves fail while health still works
 
-Phase 4 uses `sessionStorage`, so editable data is scoped to the current browser tab.
-Closing the tab or choosing **Reset demo** returns to the canonical fictional
-fixtures. Durable persistence arrives in a later database phase.
+Start PostgreSQL and apply migrations with `uv run alembic upgrade head`. The
+health route checks the API process; product routes intentionally fail safely if
+their database is unavailable or behind the current migration head.
+
+### Port 5432 reaches a different PostgreSQL service
+
+Set `POSTGRES_PORT=55432` before `docker compose up -d db` and update the port in
+`DATABASE_URL`. This machine had another PostgreSQL listener on 5432, so the
+live Phase 5 smoke test deliberately used 55432.
+
+### Some demo changes disappeared
+
+Only the fictional profile is durable in Phase 5. Drafts, saves, and tracker
+changes use `sessionStorage`, so they are scoped to the current browser tab.
 
 ### uv selects Python 3.14
 
@@ -232,4 +258,5 @@ tradeoff with a forced install.
 - Phase 2 plan: `docs/plans/phase-02-design-system-and-responsive-shell.md`
 - Phase 3 plan: `docs/plans/phase-03-typed-mock-product-journey.md`
 - Phase 4 plan: `docs/plans/phase-04-backend-contracts.md`
+- Phase 5 plan: `docs/plans/phase-05-database-and-profile.md`
 - Learning log: `docs/LEARNING_LOG.md`

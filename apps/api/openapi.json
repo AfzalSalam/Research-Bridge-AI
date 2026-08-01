@@ -770,7 +770,7 @@
     }
   },
   "info": {
-    "description": "Evidence-first academic discovery API. Phase 4 product routes expose only a visibly fictional, deterministic demo implementation.",
+    "description": "Evidence-first academic discovery API. Phase 5 persists the fictional student profile while discovery remains deterministic demo data.",
     "title": "Research Bridge API",
     "version": "0.1.0"
   },
@@ -949,6 +949,86 @@
         ]
       }
     },
+    "/api/v1/demo/profile": {
+      "get": {
+        "operationId": "read_demo_profile_api_v1_demo_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The profile database operation failed."
+          }
+        },
+        "summary": "Read the durable fictional demo profile",
+        "tags": [
+          "demo"
+        ]
+      },
+      "put": {
+        "operationId": "update_demo_profile_api_v1_demo_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The profile could not be validated."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The profile database operation failed."
+          }
+        },
+        "summary": "Save the fictional demo profile",
+        "tags": [
+          "demo"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "description": "Report that the API process and typed contract are available.",
@@ -978,7 +1058,7 @@
       "name": "system"
     },
     {
-      "description": "Stateless fictional contracts for the recruiter demo.",
+      "description": "Fictional contracts for the recruiter demo.",
       "name": "demo"
     }
   ]

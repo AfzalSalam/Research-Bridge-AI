@@ -22,6 +22,7 @@ import { demoReducer, type DemoAction } from "@/features/demo/demo-reducer";
 import { DemoApiError, getDemoBootstrap } from "@/lib/api/demo";
 
 const STORAGE_KEY = "research-bridge.demo.phase-04.v1";
+export const DEMO_BOOTSTRAP_QUERY_KEY = ["demo", "bootstrap", 1] as const;
 
 interface DemoContextValue {
   bootstrapError: DemoApiError | null;
@@ -97,7 +98,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   );
   const initializedCatalog = useRef<DemoBootstrap | null>(null);
   const bootstrapQuery = useQuery({
-    queryKey: ["demo", "bootstrap", 1],
+    queryKey: DEMO_BOOTSTRAP_QUERY_KEY,
     queryFn: ({ signal }) => getDemoBootstrap(signal),
     retry: 1,
     staleTime: Number.POSITIVE_INFINITY,
@@ -113,7 +114,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       if (storedState) {
         const parsed = demoStateSchema.safeParse(JSON.parse(storedState));
         if (parsed.success && isCatalogCompatible(parsed.data, catalog)) {
-          dispatch({ type: "hydrate", state: parsed.data });
+          dispatch({
+            type: "hydrate",
+            state: { ...parsed.data, profile: catalog.profile },
+          });
           return;
         }
         window.sessionStorage.removeItem(STORAGE_KEY);

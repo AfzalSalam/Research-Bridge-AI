@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Save, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,10 +21,15 @@ import { NativeSelect } from "@/features/demo/components/native-select";
 import {
   profileFormSchema,
   studentProfileSchema,
+  type DemoBootstrap,
   type ProfileFormValues,
   type StudentProfile,
 } from "@/features/demo/contracts";
-import { useReadyDemoStore } from "@/features/demo/demo-store";
+import {
+  DEMO_BOOTSTRAP_QUERY_KEY,
+  useReadyDemoStore,
+} from "@/features/demo/demo-store";
+import { DemoApiError, updateDemoProfile } from "@/lib/api/demo";
 
 function toFormValues(profile: StudentProfile): ProfileFormValues {
   return {
@@ -48,7 +54,12 @@ function commaSeparatedValues(value: string): string[] {
 
 function ProfileForm() {
   const { dispatch, state } = useReadyDemoStore();
+  const queryClient = useQueryClient();
   const [savedMessage, setSavedMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const updateProfile = useMutation({
+    mutationFn: (profile: StudentProfile) => updateDemoProfile(profile),
+  });
   const {
     formState: { errors, isDirty, isSubmitting },
     handleSubmit,
@@ -63,7 +74,9 @@ function ProfileForm() {
     reset(toFormValues(state.profile));
   }, [reset, state.profile]);
 
-  function saveProfile(values: ProfileFormValues) {
+  async function saveProfile(values: ProfileFormValues) {
+    setSavedMessage("");
+    setSaveError("");
     const profile = studentProfileSchema.parse({
       ...values,
       id: "demo-student",
@@ -71,9 +84,28 @@ function ProfileForm() {
       skills: commaSeparatedValues(values.skills),
     });
 
-    dispatch({ type: "save-profile", profile });
-    reset(toFormValues(profile));
-    setSavedMessage("Fictional profile saved in this browser session.");
+    try {
+      const savedProfile = await updateProfile.mutateAsync(profile);
+      queryClient.setQueryData<DemoBootstrap>(DEMO_BOOTSTRAP_QUERY_KEY, (current) => {
+        if (!current) return current;
+        return { ...current, profile: savedProfile };
+      });
+      dispatch({ type: "save-profile", profile: savedProfile });
+      reset(toFormValues(savedProfile));
+      setSavedMessage("Fictional profile saved to the demo database.");
+    } catch (error) {
+      const apiError =
+        error instanceof DemoApiError
+          ? error
+          : new DemoApiError({
+              code: "unexpected_client_error",
+              message: "The demo profile could not be saved.",
+            });
+      const requestReference = apiError.requestId
+        ? ` Request reference: ${apiError.requestId}.`
+        : "";
+      setSaveError(`${apiError.message}${requestReference}`);
+    }
   }
 
   return (
@@ -198,10 +230,15 @@ function ProfileForm() {
         <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-border pt-6">
           <Button disabled={isSubmitting} type="submit" variant="evidence">
             <Save aria-hidden="true" />
-            Save demo profile
+            {isSubmitting ? "Saving profile..." : "Save demo profile"}
           </Button>
-          <p aria-live="polite" className="text-sm text-muted-foreground">
-            {savedMessage || (isDirty ? "Unsaved changes" : "Profile is up to date")}
+          <p
+            aria-live="polite"
+            className={saveError ? "text-sm text-destructive" : "text-sm text-muted-foreground"}
+          >
+            {saveError ||
+              savedMessage ||
+              (isDirty ? "Unsaved changes" : "Profile is up to date")}
           </p>
         </div>
       </form>
@@ -212,7 +249,7 @@ function ProfileForm() {
         <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
           <li>Drafts may reuse only facts visible here and selected paper evidence.</li>
           <li>No resume upload exists in this phase, so no private file is collected.</li>
-          <li>Session storage is a demo convenience, not secure persistence.</li>
+          <li>The API stores this fictional profile; browser storage keeps only workflow state.</li>
         </ul>
       </aside>
     </div>
@@ -222,7 +259,7 @@ function ProfileForm() {
 export function ProfileExperience() {
   return (
     <DemoDataBoundary
-      loadingDescription="Loading the validated fictional profile from the mock API, then restoring compatible browser-session edits."
+      loadingDescription="Loading the validated fictional profile from the API, then restoring compatible browser workflow state."
       loadingTitle="Loading the demo profile"
     >
       <ProfileForm />

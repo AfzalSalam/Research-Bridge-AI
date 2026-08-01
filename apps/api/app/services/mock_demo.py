@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
 from app.core.errors import AppError
 from app.fixtures.demo import (
@@ -20,17 +21,30 @@ from app.schemas.demo import (
     StudentProfile,
 )
 
+if TYPE_CHECKING:
+    from app.services.profile import ProfileReader
+
 
 class MockDemoService:
     """Stateless, deterministic implementation used by the recruiter demo."""
 
-    def __init__(self, clock: Callable[[], datetime] | None = None) -> None:
+    def __init__(
+        self,
+        clock: Callable[[], datetime] | None = None,
+        profile_reader: "ProfileReader | None" = None,
+    ) -> None:
         self._clock = clock or (lambda: datetime.now(UTC))
+        self._profile_reader = profile_reader
 
     async def bootstrap(self) -> DemoBootstrapResponse:
+        profile = (
+            await self._profile_reader.get_profile()
+            if self._profile_reader is not None
+            else fresh_profile()
+        )
         return DemoBootstrapResponse(
             default_query=DEMO_DISCOVERY_QUERY,
-            profile=fresh_profile(),
+            profile=profile,
             mentors=fresh_mentors(),
             opportunities=fresh_opportunities(),
         )

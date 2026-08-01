@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses } from './types.gen';
+import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -84,6 +84,27 @@ export class Sdk extends HeyApiClient {
     public createDemoOutreachDraftApiV1DemoOutreachDraftsPost<ThrowOnError extends boolean = false>(options: Options<CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, ThrowOnError>) {
         return (options.client ?? this.client).post<CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, ThrowOnError>({
             url: '/api/v1/demo/outreach-drafts',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Read the durable fictional demo profile
+     */
+    public readDemoProfileApiV1DemoProfileGet<ThrowOnError extends boolean = false>(options?: Options<ReadDemoProfileApiV1DemoProfileGetData, ThrowOnError>) {
+        return (options?.client ?? this.client).get<ReadDemoProfileApiV1DemoProfileGetResponses, ReadDemoProfileApiV1DemoProfileGetErrors, ThrowOnError>({ url: '/api/v1/demo/profile', ...options });
+    }
+
+    /**
+     * Save the fictional demo profile
+     */
+    public updateDemoProfileApiV1DemoProfilePut<ThrowOnError extends boolean = false>(options: Options<UpdateDemoProfileApiV1DemoProfilePutData, ThrowOnError>) {
+        return (options.client ?? this.client).put<UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateDemoProfileApiV1DemoProfilePutErrors, ThrowOnError>({
+            url: '/api/v1/demo/profile',
             ...options,
             headers: {
                 'Content-Type': 'application/json',

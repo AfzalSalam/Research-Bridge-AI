@@ -58,6 +58,8 @@ papers, authors, institutions, provenance, saved items, drafts, applications,
 and application events. Implement repositories, ownership-ready fields,
 constraints, indexes, migrations, and profile integration.
 
+**Status:** Complete.
+
 ## Phase 6 — OpenAlex discovery and normalization
 
 Integrate OpenAlex as the first real source with async HTTPX, typed models,

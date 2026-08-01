@@ -1,3 +1,4 @@
+import unicodedata
 from datetime import date, datetime
 from typing import Annotated, Literal
 
@@ -30,6 +31,17 @@ class StudentProfile(ApiModel):
         str, StringConstraints(strip_whitespace=True, min_length=40, max_length=500)
     ]
     weekly_availability: Literal["5-10 hours", "10-15 hours", "15+ hours"]
+
+    @field_validator("research_interests", "skills")
+    @classmethod
+    def require_unique_profile_terms(cls, values: list[str]) -> list[str]:
+        normalized = [
+            " ".join(unicodedata.normalize("NFKC", value).casefold().split())
+            for value in values
+        ]
+        if len(normalized) != len(set(normalized)):
+            raise ValueError("profile terms must not contain duplicates")
+        return values
 
 
 class PaperEvidence(ApiModel):

@@ -1,4 +1,5 @@
 from functools import lru_cache
+from uuid import UUID
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -18,6 +19,12 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     api_v1_prefix: str = "/api/v1"
     backend_cors_origins: str = "http://localhost:3000"
+    database_url: str = (
+        "postgresql+asyncpg://research_bridge:research_bridge_dev@"
+        "localhost:5432/research_bridge"
+    )
+    database_echo: bool = False
+    demo_owner_id: UUID = UUID("00000000-0000-4000-8000-000000000001")
 
     @property
     def cors_origins(self) -> list[str]:

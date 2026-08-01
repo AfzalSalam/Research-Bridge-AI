@@ -783,3 +783,193 @@ Phase 5 — Database and profile introduces PostgreSQL persistence: SQLAlchemy 2
 models, Alembic migrations, repositories, constraints, indexes, and durable
 storage for the approved entities. It must preserve the Phase 4 route/service
 boundary and must not introduce ranking or real academic retrieval early.
+
+---
+
+## 2026-08-01 — Phase 05: Database and durable profile
+
+### What was built
+
+Research Bridge now has its first durable product data path. SQLAlchemy 2 maps
+an 18-table relational schema for ownership, student profiles, academic records,
+provenance, opportunities, saves, outreach drafts, and application history.
+Alembic owns a reviewed initial migration and downgrade. The profile route uses
+repositories and one request transaction, while the existing demo bootstrap
+composes the stored profile with the still-fictional catalog.
+
+The profile form now saves through the generated TypeScript client and a
+TanStack Query mutation. It displays pending, success, and safe failure states,
+updates the shared server-state cache, and treats the database profile as more
+authoritative than old browser-session state. The Playwright runner creates and
+removes its own migrated SQLite database and never reuses a developer API.
+
+### Why it exists
+
+Phase 4 proved the HTTP boundary but every product edit disappeared with the
+browser tab. Adding persistence before live academic APIs keeps the next phase
+focused: OpenAlex normalization can store evidence in an already-tested schema
+instead of mixing provider, migration, ownership, and frontend problems at
+once.
+
+The full schema is modelled now because Phase 5 owns relational design, but only
+the profile aggregate has behavior. This avoids pretending that saved papers,
+applications, or generated drafts are durable before their roadmap phases.
+
+### Concepts introduced
+
+- **ORM model:** a typed Python class mapped to a relational table; SQLAlchemy
+  still produces explicit SQL and does not replace database constraints.
+- **Migration:** an ordered, reviewable schema change. Alembic upgrades an
+  existing database; application startup never silently creates tables.
+- **Aggregate:** a record and the children changed with it. A profile save
+  replaces its ordered interests, skills, and project in one transaction.
+- **Repository:** the database access boundary. Services depend on repository
+  protocols instead of writing SQL from routes.
+- **Unit of work/transaction:** all statements in one request either commit
+  together or roll back together.
+- **Ownership anchor:** `account_owners` partitions private rows, but it is not
+  authentication. The server resolves the demo owner; the browser cannot choose
+  an owner ID.
+- **Natural/provider ID versus internal ID:** application rows use UUIDs while
+  DOI, OpenAlex, Semantic Scholar, ORCID, ROR, and source IDs remain explicit.
+- **Provenance:** source URL, record ID, verification time, fields, and optional
+  content hash record where an academic fact came from.
+- **Schema drift:** a mismatch between ORM metadata and migrated tables.
+  `alembic check` detects it before deployment.
+- **Server state:** the saved profile belongs to the API/query cache. Temporary
+  workflow choices remain reducer/session state until their own phases.
+
+### Data flow
+
+```text
+Profile form
+  -> React Hook Form + Zod validation
+  -> TanStack Query mutation
+  -> generated PUT /api/v1/demo/profile client
+  -> FastAPI request-ID/error boundary
+  -> profile route
+  -> ProfileService
+  -> owner + profile repositories
+  -> request-scoped AsyncSession transaction
+  -> PostgreSQL
+  -> validated StudentProfile response
+  -> query cache + reducer update
+
+Later page load
+  -> GET /api/v1/demo/bootstrap
+  -> MockDemoService asks ProfileService for the stored profile
+  -> stored profile overrides stale sessionStorage profile data
+  -> fictional mentors/opportunities remain deterministic fixtures
+```
+
+### Important files
+
+- `apps/api/app/db/base.py`: declarative base, UUIDs, timestamps, and stable
+  constraint naming.
+- `apps/api/app/db/models/`: ownership, profile, academic, provenance, and
+  workflow mappings.
+- `apps/api/alembic/`: async migration environment and reversible initial
+  schema.
+- `apps/api/app/db/session.py`: async engine and session factory.
+- `apps/api/app/dependencies/database.py`: request transaction commit/rollback.
+- `apps/api/app/repositories/owners.py`: server-owned demo account anchor.
+- `apps/api/app/repositories/profiles.py`: eager aggregate read and atomic
+  upsert/child replacement.
+- `apps/api/app/services/profile.py`: persistence use case and ORM-to-contract
+  mapping.
+- `apps/api/app/api/v1/routes/profile.py`: thin GET/PUT transport.
+- `apps/web/src/features/profile/profile-experience.tsx`: accessible durable
+  save interaction.
+- `apps/web/src/features/demo/demo-store.tsx`: server-authoritative profile
+  hydration.
+- `apps/web/scripts/run-e2e.mjs`: isolated migrated full-stack test harness.
+- `docs/plans/phase-05-database-and-profile.md`: scope, model, risks, and
+  verification decisions.
+
+### How to run and test it
+
+Start the database from the repository root, then migrate from `apps/api`:
+
+```powershell
+docker compose up -d db
+Set-Location apps/api
+uv sync --all-groups
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+Run the frontend from a second root terminal:
+
+```powershell
+npm.cmd run dev
+```
+
+Phase 5 verification completed with 18 backend tests, 18 frontend tests, and
+five full-stack Playwright tests. The browser suite proved that a profile
+survives cleared session storage and reload. A disposable PostgreSQL 17 database
+also passed upgrade, head check, zero-drift check, profile save/bootstrap reload,
+and downgrade.
+
+```powershell
+Set-Location apps/api
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app scripts
+uv run pytest
+uv run alembic upgrade head --sql
+uv run python -m scripts.export_openapi --check
+
+Set-Location ../..
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+```
+
+### Common errors and debugging
+
+- **`relation student_profiles does not exist`:** run `uv run alembic upgrade
+  head` against the same `DATABASE_URL` used by FastAPI.
+- **Health works but profile loading fails:** health measures the process, not
+  database readiness. Check PostgreSQL, `DATABASE_URL`, migration head, and the
+  response request ID.
+- **Password authentication fails unexpectedly:** verify which PostgreSQL
+  service owns the configured host port. Another local service on this machine
+  occupied 5432; the live smoke test used Docker on 55432.
+- **Psycopg reports `ProactorEventLoop`:** Phase 5 intentionally uses
+  `postgresql+asyncpg`, which is supported by SQLAlchemy's async engine and
+  Uvicorn's default Windows loop.
+- **`alembic check` reports new operations:** the ORM and migration disagree.
+  Review the intended model change and create a migration; do not silence the
+  drift check.
+- **A second profile save hits an ordered-child uniqueness error:** old children
+  must be flushed as deletes before inserting replacements with reused
+  positions. The repository implements and tests this ordering.
+- **`uv` cannot initialize its global cache:** set `UV_CACHE_DIR=.uv-cache`; the
+  directory is already ignored and does not change `.venv` activation.
+
+### Limitations
+
+- The ownership anchor does not authenticate or authorize anyone. Only
+  fictional profile data is appropriate until Phase 10.
+- Only the profile is durable. Draft edits, opportunity saves, and application
+  tracking still use tab-scoped session storage.
+- Academic tables are empty and have no ingestion repositories yet; OpenAlex
+  begins in Phase 6.
+- Ranking, embeddings, pgvector usage, OpenSearch, Redis, background workers,
+  LangGraph, LLM calls, and email sending remain absent.
+- The fixed demo owner is suitable for a local portfolio demo, not a multi-user
+  deployment.
+- Concurrent first writes for the same fixed demo owner are constrained by the
+  database but are not yet retried as an idempotent operation.
+- Polymorphic provenance keeps one shared entity ID without a physical foreign
+  key; later repositories must validate the target kind and ID together.
+
+### Next step
+
+Phase 6 integrates OpenAlex behind a typed async client with explicit timeouts,
+bounded retries, rate-limit and partial-failure handling, normalization,
+deduplication, and provenance writes. It will not add ranking yet: retrieved
+evidence must be correct and measurable before candidate ordering becomes its
+own Phase 7 concern.

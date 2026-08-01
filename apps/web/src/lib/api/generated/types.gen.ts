@@ -542,6 +542,60 @@ export type CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses = {
 
 export type CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponse = CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses[keyof CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses];
 
+export type ReadDemoProfileApiV1DemoProfileGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/demo/profile';
+};
+
+export type ReadDemoProfileApiV1DemoProfileGetErrors = {
+    /**
+     * The profile database operation failed.
+     */
+    500: ErrorResponse;
+};
+
+export type ReadDemoProfileApiV1DemoProfileGetError = ReadDemoProfileApiV1DemoProfileGetErrors[keyof ReadDemoProfileApiV1DemoProfileGetErrors];
+
+export type ReadDemoProfileApiV1DemoProfileGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentProfile;
+};
+
+export type ReadDemoProfileApiV1DemoProfileGetResponse = ReadDemoProfileApiV1DemoProfileGetResponses[keyof ReadDemoProfileApiV1DemoProfileGetResponses];
+
+export type UpdateDemoProfileApiV1DemoProfilePutData = {
+    body: StudentProfile;
+    path?: never;
+    query?: never;
+    url: '/api/v1/demo/profile';
+};
+
+export type UpdateDemoProfileApiV1DemoProfilePutErrors = {
+    /**
+     * The profile could not be validated.
+     */
+    422: ErrorResponse;
+    /**
+     * The profile database operation failed.
+     */
+    500: ErrorResponse;
+};
+
+export type UpdateDemoProfileApiV1DemoProfilePutError = UpdateDemoProfileApiV1DemoProfilePutErrors[keyof UpdateDemoProfileApiV1DemoProfilePutErrors];
+
+export type UpdateDemoProfileApiV1DemoProfilePutResponses = {
+    /**
+     * Successful Response
+     */
+    200: StudentProfile;
+};
+
+export type UpdateDemoProfileApiV1DemoProfilePutResponse = UpdateDemoProfileApiV1DemoProfilePutResponses[keyof UpdateDemoProfileApiV1DemoProfilePutResponses];
+
 export type ReadHealthApiV1HealthGetData = {
     body?: never;
     path?: never;

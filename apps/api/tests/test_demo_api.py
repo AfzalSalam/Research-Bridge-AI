@@ -17,7 +17,7 @@ def build_client(*, raise_server_exceptions: bool = True) -> TestClient:
             log_level="CRITICAL",
         )
     )
-    application.state.demo_service = MockDemoService(clock=lambda: FIXED_TIME)
+    application.state.demo_service_override = MockDemoService(clock=lambda: FIXED_TIME)
     return TestClient(
         application,
         raise_server_exceptions=raise_server_exceptions,
@@ -203,7 +203,7 @@ def test_unexpected_failure_is_logged_but_returns_only_a_safe_error() -> None:
     application = create_app(
         Settings(app_environment="test", backend_cors_origins="", log_level="CRITICAL")
     )
-    application.state.demo_service = FailingDemoService()
+    application.state.demo_service_override = FailingDemoService()
     with TestClient(application, raise_server_exceptions=False) as client:
         response = client.get(
             "/api/v1/demo/bootstrap",
@@ -230,4 +230,5 @@ def test_openapi_documents_product_routes_and_error_schema() -> None:
     assert "/api/v1/demo/bootstrap" in schema["paths"]
     assert "/api/v1/demo/discovery" in schema["paths"]
     assert "/api/v1/demo/outreach-drafts" in schema["paths"]
+    assert "/api/v1/demo/profile" in schema["paths"]
     assert "ErrorResponse" in schema["components"]["schemas"]
