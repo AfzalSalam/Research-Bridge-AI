@@ -31,6 +31,13 @@ const openAlexFixturePath = path.join(
   "openalex",
   "works-representative.json",
 );
+const greenhouseFixturePath = path.join(
+  apiRoot,
+  "tests",
+  "fixtures",
+  "greenhouse",
+  "jobs-representative.json",
+);
 
 function forwardOutput(stream, destination) {
   stream.on("data", (chunk) => destination.write(chunk));
@@ -89,6 +96,9 @@ async function stopServer(server) {
 
 async function startOpenAlexStub() {
   const fixture = JSON.parse(await readFile(openAlexFixturePath, "utf8"));
+  const greenhouseFixture = JSON.parse(
+    await readFile(greenhouseFixturePath, "utf8"),
+  );
   const records = fixture.results.slice(0, 2);
   records[1].authorships.push(structuredClone(records[0].authorships[0]));
   const server = createServer((request, response) => {
@@ -96,7 +106,15 @@ async function startOpenAlexStub() {
     response.setHeader("Content-Type", "application/json");
     response.setHeader("X-RateLimit-Remaining", "99");
     response.setHeader("X-RateLimit-Reset", "3600");
-    if (request.method !== "GET" || !url.pathname.startsWith("/works")) {
+    if (request.method !== "GET") {
+      response.writeHead(404).end(JSON.stringify({ error: "not found" }));
+      return;
+    }
+    if (url.pathname.startsWith("/v1/boards/") && url.pathname.endsWith("/jobs")) {
+      response.writeHead(200).end(JSON.stringify(greenhouseFixture));
+      return;
+    }
+    if (!url.pathname.startsWith("/works")) {
       response.writeHead(404).end(JSON.stringify({ error: "not found" }));
       return;
     }
@@ -154,6 +172,8 @@ try {
     LOG_LEVEL: "WARNING",
     OPENALEX_API_KEY: "e2e-provider-key",
     OPENALEX_BASE_URL: openAlexStub.baseUrl,
+    GREENHOUSE_BASE_URL: openAlexStub.baseUrl,
+    GREENHOUSE_ENABLED_BOARDS: "thealleninstitute",
   };
   await runCommand(pythonExecutable, ["-m", "alembic", "upgrade", "head"], {
     cwd: apiRoot,

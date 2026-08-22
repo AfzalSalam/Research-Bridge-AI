@@ -38,6 +38,21 @@ class Settings(BaseSettings):
     openalex_max_attempts: int = Field(default=3, ge=1, le=4)
     openalex_backoff_base_seconds: float = Field(default=0.25, ge=0, le=5)
     openalex_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
+    greenhouse_base_url: str = "https://boards-api.greenhouse.io"
+    greenhouse_enabled_boards: str = (
+        "thealleninstitute,constructorknowledgelabs,"
+        "centerforstrategicandinternationalstudiesinc,verainstituteofjustice"
+    )
+    greenhouse_connect_timeout_seconds: float = Field(default=3.0, ge=0.1, le=30)
+    greenhouse_read_timeout_seconds: float = Field(default=12.0, ge=0.1, le=60)
+    greenhouse_write_timeout_seconds: float = Field(default=5.0, ge=0.1, le=30)
+    greenhouse_pool_timeout_seconds: float = Field(default=2.0, ge=0.1, le=30)
+    greenhouse_max_connections: int = Field(default=8, ge=1, le=20)
+    greenhouse_max_keepalive_connections: int = Field(default=4, ge=0, le=10)
+    greenhouse_max_attempts: int = Field(default=3, ge=1, le=4)
+    greenhouse_backoff_base_seconds: float = Field(default=0.25, ge=0, le=5)
+    greenhouse_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
+    opportunity_stale_after_hours: int = Field(default=168, ge=1, le=720)
     openai_api_key: SecretStr | None = None
     openai_base_url: str = "https://api.openai.com/v1"
     openai_outreach_model: str = "gpt-5.6-terra"
@@ -90,6 +105,50 @@ class Settings(BaseSettings):
                 "loopback HTTP is allowed only in test or e2e"
             )
         self.openalex_base_url = self.openalex_base_url.rstrip("/")
+        return self
+
+    @model_validator(mode="after")
+    def validate_greenhouse_configuration(self) -> "Settings":
+        """Keep controlled extraction on one fixed origin and known boards."""
+
+        from app.providers.opportunities import OPPORTUNITY_SOURCES
+
+        parsed = urlparse(self.greenhouse_base_url)
+        has_clean_origin = (
+            parsed.username is None
+            and parsed.password is None
+            and parsed.params == ""
+            and parsed.query == ""
+            and parsed.fragment == ""
+            and parsed.path.rstrip("/") == ""
+        )
+        official_origin = (
+            has_clean_origin
+            and parsed.scheme == "https"
+            and parsed.hostname == "boards-api.greenhouse.io"
+            and parsed.port is None
+        )
+        loopback_test_origin = (
+            has_clean_origin
+            and self.app_environment in {"test", "e2e"}
+            and parsed.scheme == "http"
+            and parsed.hostname in {"127.0.0.1", "localhost"}
+        )
+        if not (official_origin or loopback_test_origin):
+            raise ValueError(
+                "greenhouse_base_url must use the official HTTPS origin; "
+                "loopback HTTP is allowed only in test or e2e"
+            )
+        board_keys = self.greenhouse_board_keys
+        if not board_keys:
+            raise ValueError("greenhouse_enabled_boards must enable at least one board")
+        unknown = sorted(set(board_keys).difference(OPPORTUNITY_SOURCES))
+        if unknown:
+            raise ValueError(
+                "greenhouse_enabled_boards contains a board outside the allowlist: "
+                + ", ".join(unknown)
+            )
+        self.greenhouse_base_url = self.greenhouse_base_url.rstrip("/")
         return self
 
     @model_validator(mode="after")
@@ -152,6 +211,17 @@ class Settings(BaseSettings):
             for origin in self.backend_cors_origins.split(",")
             if origin.strip()
         ]
+
+    @property
+    def greenhouse_board_keys(self) -> list[str]:
+        """Return the ordered, de-duplicated configured allowlist subset."""
+
+        values = [
+            value.strip().casefold()
+            for value in self.greenhouse_enabled_boards.split(",")
+            if value.strip()
+        ]
+        return list(dict.fromkeys(values))
 
 
 @lru_cache

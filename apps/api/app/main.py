@@ -13,8 +13,10 @@ from app.core.middleware import REQUEST_ID_HEADER, request_context_middleware
 from app.db.session import Database, create_database
 from app.runtime import (
     DiscoveryRuntime,
+    OpportunityRuntime,
     OutreachRuntime,
     create_discovery_runtime,
+    create_opportunity_runtime,
     create_outreach_runtime,
 )
 
@@ -28,10 +30,14 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
     finally:
         runtime = cast(DiscoveryRuntime, application.state.discovery_runtime)
         outreach_runtime = cast(OutreachRuntime, application.state.outreach_runtime)
+        opportunity_runtime = cast(
+            OpportunityRuntime, application.state.opportunity_runtime
+        )
         database = cast(Database, application.state.database)
         await runtime.http_client.aclose()
         if outreach_runtime.http_client is not None:
             await outreach_runtime.http_client.aclose()
+        await opportunity_runtime.http_client.aclose()
         await database.engine.dispose()
 
 
@@ -44,8 +50,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         title=app_settings.app_name,
         version=app_settings.app_version,
         description=(
-            "Evidence-first academic discovery API. Phase 8 adds human-selected, "
-            "evidence-grounded, editable outreach without sending email."
+            "Evidence-first academic discovery API. Phase 9 adds source-linked "
+            "research opportunities and explicit application tracking."
         ),
         lifespan=application_lifespan,
         openapi_tags=[
@@ -62,15 +68,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "name": "outreach",
                 "description": "Human-reviewed drafts grounded in selected evidence.",
             },
+            {
+                "name": "opportunities",
+                "description": "Allowlisted employer-published research openings.",
+            },
+            {
+                "name": "applications",
+                "description": "Explicit owner-scoped tracker state; no submission.",
+            },
         ],
     )
     application.state.settings = app_settings
     application.state.database = create_database(app_settings)
     application.state.discovery_runtime = create_discovery_runtime(app_settings)
     application.state.outreach_runtime = create_outreach_runtime(app_settings)
+    application.state.opportunity_runtime = create_opportunity_runtime(app_settings)
     application.state.demo_service_override = None
     application.state.paper_provider_override = None
     application.state.outreach_generator_override = None
+    application.state.opportunity_provider_override = None
     register_exception_handlers(application)
     application.middleware("http")(request_context_middleware)
 
@@ -79,7 +95,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             CORSMiddleware,
             allow_origins=app_settings.cors_origins,
             allow_credentials=False,
-            allow_methods=["GET", "POST", "PUT", "OPTIONS"],
+            allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allow_headers=["Accept", "Content-Type", REQUEST_ID_HEADER],
             expose_headers=[REQUEST_ID_HEADER],
         )

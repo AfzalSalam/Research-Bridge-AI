@@ -1,6 +1,232 @@
 {
   "components": {
     "schemas": {
+      "ApplicationCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "opportunityId": {
+            "format": "uuid",
+            "title": "Opportunityid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "opportunityId"
+        ],
+        "title": "ApplicationCreateRequest",
+        "type": "object"
+      },
+      "ApplicationEventResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "fromStatus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicationStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "occurredAt": {
+            "format": "date-time",
+            "title": "Occurredat",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 1.0,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "toStatus": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          }
+        },
+        "required": [
+          "sequence",
+          "fromStatus",
+          "toStatus",
+          "note",
+          "occurredAt"
+        ],
+        "title": "ApplicationEventResponse",
+        "type": "object"
+      },
+      "ApplicationListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ApplicationListResponse",
+        "type": "object"
+      },
+      "ApplicationResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "allowedNextStatuses": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationStatus"
+            },
+            "title": "Allowednextstatuses",
+            "type": "array"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationEventResponse"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "externalSubmissionPerformed": {
+            "const": false,
+            "default": false,
+            "title": "Externalsubmissionperformed",
+            "type": "boolean"
+          },
+          "followUpDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followupdate"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string"
+          },
+          "opportunityId": {
+            "format": "uuid",
+            "title": "Opportunityid",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "targetLabel": {
+            "title": "Targetlabel",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "opportunityId",
+          "targetLabel",
+          "sourceUrl",
+          "status",
+          "notes",
+          "followUpDate",
+          "version",
+          "createdAt",
+          "updatedAt",
+          "events",
+          "allowedNextStatuses"
+        ],
+        "title": "ApplicationResponse",
+        "type": "object"
+      },
+      "ApplicationStatus": {
+        "enum": [
+          "saved",
+          "drafting",
+          "ready-for-review",
+          "applied",
+          "interviewing",
+          "closed"
+        ],
+        "title": "ApplicationStatus",
+        "type": "string"
+      },
+      "ApplicationUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedVersion": {
+            "minimum": 1.0,
+            "title": "Expectedversion",
+            "type": "integer"
+          },
+          "followUpDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followupdate"
+          },
+          "notes": {
+            "maxLength": 1000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          }
+        },
+        "required": [
+          "status",
+          "notes",
+          "followUpDate",
+          "expectedVersion"
+        ],
+        "title": "ApplicationUpdateRequest",
+        "type": "object"
+      },
       "ClaimEvidence": {
         "additionalProperties": false,
         "description": "Explains which selected records support a draft passage.",
@@ -1101,6 +1327,439 @@
         "title": "Opportunity",
         "type": "object"
       },
+      "OpportunityExtractionEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "value"
+        ],
+        "title": "OpportunityExtractionEvidence",
+        "type": "object"
+      },
+      "OpportunityResult": {
+        "additionalProperties": false,
+        "properties": {
+          "applicationId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicationid"
+          },
+          "applicationUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Applicationurl",
+            "type": "string"
+          },
+          "availability": {
+            "enum": [
+              "open",
+              "closed",
+              "unclear"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "countryCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Countrycode"
+          },
+          "deadline": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline"
+          },
+          "descriptionExcerpt": {
+            "title": "Descriptionexcerpt",
+            "type": "string"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "eligibility": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligibility"
+          },
+          "evidenceConfidence": {
+            "const": "high",
+            "title": "Evidenceconfidence",
+            "type": "string"
+          },
+          "extractionEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityExtractionEvidence"
+            },
+            "title": "Extractionevidence",
+            "type": "array"
+          },
+          "funding": {
+            "enum": [
+              "funded",
+              "unfunded",
+              "unclear"
+            ],
+            "title": "Funding",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inclusionSignal": {
+            "title": "Inclusionsignal",
+            "type": "string"
+          },
+          "isExpired": {
+            "title": "Isexpired",
+            "type": "boolean"
+          },
+          "isSaved": {
+            "title": "Issaved",
+            "type": "boolean"
+          },
+          "isStale": {
+            "title": "Isstale",
+            "type": "boolean"
+          },
+          "lastVerifiedAt": {
+            "format": "date-time",
+            "title": "Lastverifiedat",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location"
+          },
+          "opportunityType": {
+            "enum": [
+              "internship",
+              "studentship",
+              "fellowship",
+              "research-assistantship"
+            ],
+            "title": "Opportunitytype",
+            "type": "string"
+          },
+          "organisation": {
+            "title": "Organisation",
+            "type": "string"
+          },
+          "researchFields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Researchfields",
+            "type": "array"
+          },
+          "sourceKind": {
+            "const": "official-ats",
+            "title": "Sourcekind",
+            "type": "string"
+          },
+          "sourceName": {
+            "title": "Sourcename",
+            "type": "string"
+          },
+          "sourceRecordId": {
+            "title": "Sourcerecordid",
+            "type": "string"
+          },
+          "sourceUpdatedAt": {
+            "format": "date-time",
+            "title": "Sourceupdatedat",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "workMode": {
+            "enum": [
+              "on-site",
+              "hybrid",
+              "remote",
+              "unclear"
+            ],
+            "title": "Workmode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "sourceName",
+          "sourceKind",
+          "sourceRecordId",
+          "evidenceConfidence",
+          "opportunityType",
+          "title",
+          "organisation",
+          "descriptionExcerpt",
+          "researchFields",
+          "duration",
+          "eligibility",
+          "countryCode",
+          "location",
+          "workMode",
+          "funding",
+          "availability",
+          "deadline",
+          "sourceUrl",
+          "applicationUrl",
+          "sourceUpdatedAt",
+          "lastVerifiedAt",
+          "isStale",
+          "isExpired",
+          "extractionEvidence",
+          "inclusionSignal",
+          "isSaved",
+          "applicationId"
+        ],
+        "title": "OpportunityResult",
+        "type": "object"
+      },
+      "OpportunitySearchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "countryCode": {
+            "anyOf": [
+              {
+                "maxLength": 2,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Countrycode"
+          },
+          "funding": {
+            "anyOf": [
+              {
+                "enum": [
+                  "funded",
+                  "unfunded",
+                  "unclear"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Funding"
+          },
+          "includeExpired": {
+            "default": false,
+            "title": "Includeexpired",
+            "type": "boolean"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 160,
+            "minLength": 2,
+            "title": "Query",
+            "type": "string"
+          },
+          "workMode": {
+            "anyOf": [
+              {
+                "enum": [
+                  "on-site",
+                  "hybrid",
+                  "remote",
+                  "unclear"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workmode"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "OpportunitySearchRequest",
+        "type": "object"
+      },
+      "OpportunitySearchResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "partialFailure": {
+            "title": "Partialfailure",
+            "type": "boolean"
+          },
+          "policyVersion": {
+            "title": "Policyversion",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "rankingApplied": {
+            "const": false,
+            "default": false,
+            "title": "Rankingapplied",
+            "type": "boolean"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityResult"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "retrievedAt": {
+            "format": "date-time",
+            "title": "Retrievedat",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySourceStatus"
+            },
+            "title": "Sources",
+            "type": "array"
+          }
+        },
+        "required": [
+          "query",
+          "results",
+          "sources",
+          "partialFailure",
+          "policyVersion",
+          "retrievedAt"
+        ],
+        "title": "OpportunitySearchResponse",
+        "type": "object"
+      },
+      "OpportunitySourceStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "acceptedCount": {
+            "minimum": 0.0,
+            "title": "Acceptedcount",
+            "type": "integer"
+          },
+          "errorCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errorcode"
+          },
+          "invalidCount": {
+            "minimum": 0.0,
+            "title": "Invalidcount",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "organisation": {
+            "title": "Organisation",
+            "type": "string"
+          },
+          "retryable": {
+            "default": false,
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "success",
+              "error"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "organisation",
+          "status",
+          "acceptedCount",
+          "invalidCount"
+        ],
+        "title": "OpportunitySourceStatus",
+        "type": "object"
+      },
       "OutreachDraft": {
         "additionalProperties": false,
         "description": "Editable deterministic draft plus its complete provenance.",
@@ -2118,6 +2777,42 @@
         "title": "RelevancePolicy",
         "type": "object"
       },
+      "SavedOpportunity": {
+        "additionalProperties": false,
+        "properties": {
+          "opportunity": {
+            "$ref": "#/components/schemas/OpportunityResult"
+          },
+          "savedAt": {
+            "format": "date-time",
+            "title": "Savedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "savedAt",
+          "opportunity"
+        ],
+        "title": "SavedOpportunity",
+        "type": "object"
+      },
+      "SavedOpportunityListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SavedOpportunity"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "SavedOpportunityListResponse",
+        "type": "object"
+      },
       "SelectedStudentFact": {
         "additionalProperties": false,
         "properties": {
@@ -2508,12 +3203,125 @@
     }
   },
   "info": {
-    "description": "Evidence-first academic discovery API. Phase 8 adds human-selected, evidence-grounded, editable outreach without sending email.",
+    "description": "Evidence-first academic discovery API. Phase 9 adds source-linked research opportunities and explicit application tracking.",
     "title": "Research Bridge API",
     "version": "0.1.0"
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/applications": {
+      "get": {
+        "operationId": "list_applications_api_v1_applications_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List owner-scoped application records and history",
+        "tags": [
+          "applications"
+        ]
+      },
+      "post": {
+        "operationId": "create_application_api_v1_applications_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Track one explicitly saved opportunity",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
+    "/api/v1/applications/{application_id}": {
+      "put": {
+        "operationId": "update_application_api_v1_applications__application_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "application_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Application Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update explicit tracker state with optimistic versioning",
+        "tags": [
+          "applications"
+        ]
+      }
+    },
     "/api/v1/demo/bootstrap": {
       "get": {
         "operationId": "read_demo_bootstrap_api_v1_demo_bootstrap_get",
@@ -2931,6 +3739,145 @@
         ]
       }
     },
+    "/api/v1/opportunities/saved": {
+      "get": {
+        "operationId": "list_saved_opportunities_api_v1_opportunities_saved_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedOpportunityListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List owner-scoped saved opportunities",
+        "tags": [
+          "opportunities"
+        ]
+      }
+    },
+    "/api/v1/opportunities/search": {
+      "post": {
+        "operationId": "search_opportunities_api_v1_opportunities_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpportunitySearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunitySearchResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search allowlisted employer-published research opportunities",
+        "tags": [
+          "opportunities"
+        ]
+      }
+    },
+    "/api/v1/opportunities/{opportunity_id}/save": {
+      "delete": {
+        "operationId": "remove_saved_opportunity_api_v1_opportunities__opportunity_id__save_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove one saved opportunity",
+        "tags": [
+          "opportunities"
+        ]
+      },
+      "post": {
+        "operationId": "save_opportunity_api_v1_opportunities__opportunity_id__save_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedOpportunity"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save one verified opportunity",
+        "tags": [
+          "opportunities"
+        ]
+      }
+    },
     "/api/v1/outreach/drafts": {
       "post": {
         "operationId": "create_outreach_draft_api_v1_outreach_drafts_post",
@@ -3083,6 +4030,14 @@
     {
       "description": "Human-reviewed drafts grounded in selected evidence.",
       "name": "outreach"
+    },
+    {
+      "description": "Allowlisted employer-published research openings.",
+      "name": "opportunities"
+    },
+    {
+      "description": "Explicit owner-scoped tracker state; no submission.",
+      "name": "applications"
     }
   ]
 }

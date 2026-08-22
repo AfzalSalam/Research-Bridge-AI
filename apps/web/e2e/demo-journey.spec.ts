@@ -32,11 +32,47 @@ test("student can move from fictional profile to evidence-grounded outreach", as
 
   await page.getByRole("button", { name: "Add to tracker" }).click();
   await page.getByRole("link", { name: "Open tracker" }).click();
+  await page.getByRole("tab", { name: "Recruiter demo tracker" }).click();
   await expect(page.getByRole("heading", { name: "Dr. Mira Sen (fictional)" })).toBeVisible();
 
   await page.getByLabel("Status").selectOption("Drafting");
   await page.getByRole("button", { name: "Save tracker update" }).click();
   await expect(page.getByText("Application record updated in this browser session.")).toBeVisible();
+});
+
+test("verified opportunity becomes a durable versioned application record", async ({
+  page,
+}) => {
+  await page.goto("/opportunities");
+  await page.getByRole("button", { name: "Search" }).click();
+
+  await expect(page.getByText("Research Internship, Robotics")).toBeVisible();
+  await expect(page.getByText(/no ranking/i).first()).toBeVisible();
+  await expect(page.getByText("Unclear").first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Official application/ })).toHaveAttribute(
+    "href",
+    "https://job-boards.greenhouse.io/thealleninstitute/jobs/7366273",
+  );
+
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("button", { name: "Saved · remove" })).toBeVisible();
+  await page.getByRole("button", { name: "Track" }).click();
+  await page.getByRole("link", { name: "Open tracker" }).click();
+
+  await expect(page.getByText("Research Internship, Robotics")).toBeVisible();
+  await page.getByLabel("Recorded status").selectOption("applied");
+  await page.getByLabel("Private notes").fill("Submitted through the official application page.");
+  await page.getByLabel("Follow-up date").fill("2026-08-15");
+  await page.getByRole("button", { name: "Save tracker update" }).click();
+  await expect(page.getByText("Version 2", { exact: true })).toBeVisible();
+  await expect(page.getByText("2 recorded events")).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByLabel("Recorded status")).toHaveValue("applied");
+  await expect(page.getByLabel("Private notes")).toHaveValue(
+    "Submitted through the official application page.",
+  );
+  await expect(page.getByRole("button", { name: /submit application/i })).toHaveCount(0);
 });
 
 test("live OpenAlex papers retain provider evidence without ranking claims", async ({

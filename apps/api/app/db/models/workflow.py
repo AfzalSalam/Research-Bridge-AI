@@ -194,6 +194,8 @@ class Application(UUIDPrimaryKeyMixin, TimestampMixin, Base):
             name="exactly_one_target",
         ),
         CheckConstraint("version >= 1", name="version_positive"),
+        UniqueConstraint("owner_id", "author_id"),
+        UniqueConstraint("owner_id", "opportunity_id"),
     )
 
     owner_id: Mapped[UUID] = mapped_column(

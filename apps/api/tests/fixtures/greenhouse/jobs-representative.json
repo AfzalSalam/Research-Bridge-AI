@@ -1,0 +1,39 @@
+{
+  "jobs": [
+    {
+      "id": 7366273,
+      "title": "Research Internship, Robotics",
+      "updated_at": "2026-07-30T12:00:00-04:00",
+      "location": {"name": "Seattle, WA"},
+      "absolute_url": "https://job-boards.greenhouse.io/thealleninstitute/jobs/7366273",
+      "content": "<h2>Research Internship</h2><p>Work from our Seattle office in a hybrid arrangement.</p><p>Duration: 12 weeks</p><h3>Qualifications</h3><p>Undergraduate, Masters and PhD students with machine learning and robotics research experience.</p><p>Compensation: $94,320 annualized for undergraduates.</p><p>Application deadline: 30 September 2026</p>",
+      "departments": [{"id": 1, "name": "Robotics"}]
+    },
+    {
+      "id": 4775103101,
+      "title": "PhD Studentship: Knowledge Discovery",
+      "updated_at": "2026-07-29T08:00:00+02:00",
+      "location": {"name": "Bremen, Germany"},
+      "absolute_url": "https://job-boards.eu.greenhouse.io/constructorknowledgelabs/jobs/4775103101",
+      "content": "<p>Study knowledge graphs and scientific publications.</p><h3>Requirements</h3><p>Applicants should hold a relevant degree.</p>",
+      "departments": [{"id": 2, "name": "Artificial Intelligence"}]
+    },
+    {
+      "id": 999,
+      "title": "Software Engineer",
+      "updated_at": "2026-07-28T08:00:00Z",
+      "location": {"name": "Remote"},
+      "absolute_url": "https://job-boards.greenhouse.io/example/jobs/999",
+      "content": "<p>Build internal systems.</p>",
+      "departments": [{"id": 3, "name": "Engineering"}]
+    },
+    {
+      "id": 1000,
+      "title": "Research Internship, Invalid record",
+      "updated_at": "2026-07-28T08:00:00Z",
+      "location": {"name": "Remote"},
+      "content": "<p>This record is missing its application URL.</p>",
+      "departments": []
+    }
+  ]
+}

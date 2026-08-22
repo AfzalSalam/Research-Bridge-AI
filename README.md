@@ -2,7 +2,7 @@
 
 Research Bridge AI is an evidence-first academic discovery and research-
 opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the completed Phase 8 grounded-outreach slice: a
+full-stack foundation and the Phase 9 verified-opportunity implementation: a
 responsive Next.js journey, a modular FastAPI backend, generated TypeScript API
 types, typed and bounded academic retrieval, SQLAlchemy repositories, Alembic
 migrations, and local PostgreSQL with pgvector available for later phases.
@@ -14,8 +14,10 @@ policy. After choosing a researcher and one or two supporting papers, the user
 can create, edit, version, review, and copy a customized outreach draft. Every
 generated claim retains evidence references; an optional server-only OpenAI
 Responses provider has a deterministic fallback, and no email transport exists.
-The adjacent recruiter demo remains deterministic and fictional. Authentication
-and advanced ranking remain later phases.
+Students can also search a bounded allowlist of employer-published Greenhouse
+boards, inspect provenance and explicit unknowns, save opportunities, and keep a
+versioned application history. The adjacent recruiter demo remains deterministic
+and fictional. Authentication and advanced ranking remain later phases.
 
 ## Architecture
 
@@ -39,6 +41,14 @@ Browser
                       -> optional structured OpenAI composition
                       -> deterministic grounding audit + fallback
                       -> current draft + immutable revisions
+                  -> /opportunities
+                      -> fixed-origin Greenhouse client + board allowlist
+                      -> deterministic admission and labelled-field extraction
+                      -> normalized opportunity + provenance persistence
+                  -> /applications
+                      -> saved-opportunity precondition
+                      -> explicit version-checked state transitions
+                      -> current application + immutable event history
                   -> route -> service -> repository -> SQLAlchemy/PostgreSQL
                       -> durable fictional student profile
                   -> DemoService protocol -> MockDemoService
@@ -51,7 +61,7 @@ Browser
 
 Docker Compose
   -> PostgreSQL 17 + pgvector (port 5432)
-      -> Alembic-owned 19-table Phase 8 schema
+      -> Alembic-owned 19-table Phase 9 schema
 ```
 
 FastAPI and PostgreSQL are required for the product routes. Health remains
@@ -122,6 +132,9 @@ Useful URLs:
 - Live paper discovery: `POST http://localhost:8000/api/v1/discovery/papers`
 - Live researcher discovery: `POST http://localhost:8000/api/v1/discovery/mentors`
 - Live outreach creation: `POST http://localhost:8000/api/v1/outreach/drafts`
+- Live opportunity search: `POST http://localhost:8000/api/v1/opportunities/search`
+- Saved opportunities: `GET http://localhost:8000/api/v1/opportunities/saved`
+- Durable application tracker: `GET http://localhost:8000/api/v1/applications`
 - Demo bootstrap: <http://localhost:8000/api/v1/demo/bootstrap>
 - Durable demo profile: <http://localhost:8000/api/v1/demo/profile>
 
@@ -148,18 +161,19 @@ Useful frontend routes:
 - `/mentors`: live paper-backed researcher evidence, transparent policy
   contributions, and the review-gated outreach workspace, plus a separate
   fictional demo;
-- `/opportunities`: source-linked fictional listings, unknown fields, filters,
-  and save actions;
-- `/applications`: explicit status, notes, follow-up, and event history.
+- `/opportunities`: live employer-published research listings with provenance,
+  freshness, explicit unknowns, save actions, and a separate fictional demo;
+- `/applications`: durable, version-checked status, notes, follow-up, and event
+  history, plus a separate fictional demo.
 
 Every record in the **Recruiter demo** tab and its later workflow pages is
 fictional and uses inert `example.org` evidence URLs. The live tabs display
 normalized real-provider papers and paper-backed researcher candidates while
-clearly separating them from the fictional mentor journey. Profile saves and
-live outreach draft revisions are persisted in the database. Fictional
-demo drafts, saved opportunities, and tracker edits remain in the current
-browser tab. Use **Reset demo** to clear local workflow state while retaining
-database-saved records.
+clearly separating them from the fictional mentor journey. Profile saves, live
+outreach draft revisions, live opportunity saves, and live application history
+are persisted in the database. Fictional demo drafts, saves, and tracker edits
+remain in the current browser tab. Use **Reset demo** to clear local demo state
+while retaining database-saved records.
 
 ## Quality checks
 
@@ -176,11 +190,12 @@ npm.cmd audit --omit=dev --audit-level=high
 ```
 
 `test:e2e` creates a temporary migrated SQLite database, starts an owned
-loopback OpenAlex fixture server, builds Next.js for an isolated API port, owns
-all test processes, verifies live evidence and cache behavior plus profile
-persistence, the recruiter journey, failure, mobile, and responsive states,
-then removes only its temporary data. Automated tests never spend OpenAlex API
-allowance.
+loopback OpenAlex and Greenhouse fixture server, builds Next.js for an isolated
+API port, owns all test processes, verifies live evidence and cache behavior
+plus profile, opportunity, and application persistence, the recruiter journey,
+failure, mobile, and responsive states, then removes only its temporary data.
+Automated tests never spend OpenAlex API allowance or depend on a changing job
+listing.
 
 Backend:
 
@@ -219,6 +234,10 @@ docker compose --env-file .env.example config
 | `OPENALEX_*_TIMEOUT_SECONDS` | FastAPI | Explicit connect, read, write, and pool-wait bounds. |
 | `OPENALEX_MAX_*_CONNECTIONS` | FastAPI | Application-scoped upstream connection-pool bounds. |
 | `OPENALEX_MAX_ATTEMPTS` / `OPENALEX_BACKOFF_*` | FastAPI | Bounded idempotent retry budget and capped backoff. |
+| `GREENHOUSE_BASE_URL` | FastAPI | Fixed official Greenhouse Job Board API origin; loopback HTTP is accepted only in test/E2E. |
+| `GREENHOUSE_ENABLED_BOARDS` | FastAPI | Comma-separated subset of the repository-owned research-organization allowlist. |
+| `GREENHOUSE_*_TIMEOUT_SECONDS` / `GREENHOUSE_MAX_ATTEMPTS` | FastAPI | Explicit provider timeouts and bounded idempotent retry budget. |
+| `OPPORTUNITY_STALE_AFTER_HOURS` | FastAPI | Age after which the last successful verification is visibly stale; it does not imply expiry. |
 | `DISCOVERY_CACHE_*` | FastAPI | Process-local TTL and entry bounds for normalized provider responses. |
 | `MENTOR_*_WEIGHT` | FastAPI | Five public Phase 7 evidence-policy weights; values must total exactly 1.0. |
 | `OPENAI_API_KEY` | FastAPI | Optional server-only key for structured outreach composition; omission activates the deterministic fallback. |
@@ -286,11 +305,22 @@ Set `POSTGRES_PORT=55432` before `docker compose up -d db` and update the port i
 `DATABASE_URL`. This machine had another PostgreSQL listener on 5432, so the
 live Phase 5 smoke test deliberately used 55432.
 
-### Some demo changes disappeared
+### Opportunity search is unavailable or a board is partial
 
-The fictional profile and normalized OpenAlex academic catalog are durable.
-Drafts, saves, and tracker changes use `sessionStorage`, so they are scoped to
-the current browser tab.
+Confirm FastAPI can reach `https://boards-api.greenhouse.io`. One failed board
+is reported as a partial source failure while successful boards remain usable;
+if every enabled board fails, the page shows a retryable error. The allowed
+boards are owned by repository configuration, not browser input. A missing
+funding, mode, deadline, duration, eligibility, or country stays **Unclear**.
+`Stale` means the listing has not been verified recently; `Expired` requires an
+explicit past deadline, so those labels are intentionally different.
+
+### Some fictional demo changes disappeared
+
+The fictional profile, normalized OpenAlex catalog, live outreach drafts, live
+opportunity saves, and live application history are durable. Only changes made
+inside a **Recruiter demo** tab use `sessionStorage`, so those are scoped to the
+current browser tab.
 
 ### uv selects Python 3.14
 
@@ -328,4 +358,5 @@ tradeoff with a forced install.
 - Phase 6 plan: `docs/plans/phase-06-openalex-discovery-and-normalization.md`
 - Phase 7 plan: `docs/plans/phase-07-basic-relevance-and-evidence.md`
 - Phase 8 plan: `docs/plans/phase-08-evidence-grounded-outreach.md`
+- Phase 9 plan: `docs/plans/phase-09-verified-opportunities-and-tracker.md`
 - Learning log: `docs/LEARNING_LOG.md`

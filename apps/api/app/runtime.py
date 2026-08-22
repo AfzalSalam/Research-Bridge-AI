@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import httpx2
 
+from app.clients.greenhouse import GreenhouseClient
 from app.clients.openalex import OpenAlexClient
 from app.core.config import Settings
 from app.providers.openai_outreach import OpenAIOutreachProvider
@@ -23,6 +24,14 @@ class OutreachRuntime:
 
     http_client: httpx2.AsyncClient | None
     provider: OpenAIOutreachProvider | None
+
+
+@dataclass(frozen=True, slots=True)
+class OpportunityRuntime:
+    """Application-scoped fixed-origin opportunity provider connection."""
+
+    http_client: httpx2.AsyncClient
+    provider: GreenhouseClient
 
 
 def create_discovery_runtime(settings: Settings) -> DiscoveryRuntime:
@@ -98,3 +107,32 @@ def create_outreach_runtime(settings: Settings) -> OutreachRuntime:
         backoff_cap_seconds=settings.openai_backoff_cap_seconds,
     )
     return OutreachRuntime(http_client=client, provider=provider)
+
+
+def create_opportunity_runtime(settings: Settings) -> OpportunityRuntime:
+    timeout = httpx2.Timeout(
+        connect=settings.greenhouse_connect_timeout_seconds,
+        read=settings.greenhouse_read_timeout_seconds,
+        write=settings.greenhouse_write_timeout_seconds,
+        pool=settings.greenhouse_pool_timeout_seconds,
+    )
+    limits = httpx2.Limits(
+        max_connections=settings.greenhouse_max_connections,
+        max_keepalive_connections=settings.greenhouse_max_keepalive_connections,
+        keepalive_expiry=30,
+    )
+    client = httpx2.AsyncClient(
+        base_url=settings.greenhouse_base_url,
+        headers={"User-Agent": f"ResearchBridgeAI/{settings.app_version}"},
+        timeout=timeout,
+        limits=limits,
+        follow_redirects=False,
+        trust_env=False,
+    )
+    provider = GreenhouseClient(
+        client,
+        max_attempts=settings.greenhouse_max_attempts,
+        backoff_base_seconds=settings.greenhouse_backoff_base_seconds,
+        backoff_cap_seconds=settings.greenhouse_backoff_cap_seconds,
+    )
+    return OpportunityRuntime(http_client=client, provider=provider)

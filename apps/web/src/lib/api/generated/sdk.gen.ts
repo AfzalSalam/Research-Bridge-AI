@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses } from './types.gen';
+import type { CreateApplicationApiV1ApplicationsPostData, CreateApplicationApiV1ApplicationsPostErrors, CreateApplicationApiV1ApplicationsPostResponses, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ListApplicationsApiV1ApplicationsGetData, ListApplicationsApiV1ApplicationsGetResponses, ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostData, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutData, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -55,6 +55,41 @@ export class Sdk extends HeyApiClient {
     }) {
         super(args);
         Sdk.__registry.set(this, args?.key);
+    }
+
+    /**
+     * List owner-scoped application records and history
+     */
+    public listApplicationsApiV1ApplicationsGet<ThrowOnError extends boolean = false>(options?: Options<ListApplicationsApiV1ApplicationsGetData, ThrowOnError>) {
+        return (options?.client ?? this.client).get<ListApplicationsApiV1ApplicationsGetResponses, unknown, ThrowOnError>({ url: '/api/v1/applications', ...options });
+    }
+
+    /**
+     * Track one explicitly saved opportunity
+     */
+    public createApplicationApiV1ApplicationsPost<ThrowOnError extends boolean = false>(options: Options<CreateApplicationApiV1ApplicationsPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<CreateApplicationApiV1ApplicationsPostResponses, CreateApplicationApiV1ApplicationsPostErrors, ThrowOnError>({
+            url: '/api/v1/applications',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Update explicit tracker state with optimistic versioning
+     */
+    public updateApplicationApiV1ApplicationsApplicationIdPut<ThrowOnError extends boolean = false>(options: Options<UpdateApplicationApiV1ApplicationsApplicationIdPutData, ThrowOnError>) {
+        return (options.client ?? this.client).put<UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, ThrowOnError>({
+            url: '/api/v1/applications/{application_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
     }
 
     /**
@@ -148,6 +183,41 @@ export class Sdk extends HeyApiClient {
      */
     public readHealthApiV1HealthGet<ThrowOnError extends boolean = false>(options?: Options<ReadHealthApiV1HealthGetData, ThrowOnError>) {
         return (options?.client ?? this.client).get<ReadHealthApiV1HealthGetResponses, unknown, ThrowOnError>({ url: '/api/v1/health', ...options });
+    }
+
+    /**
+     * List owner-scoped saved opportunities
+     */
+    public listSavedOpportunitiesApiV1OpportunitiesSavedGet<ThrowOnError extends boolean = false>(options?: Options<ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ThrowOnError>) {
+        return (options?.client ?? this.client).get<ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, unknown, ThrowOnError>({ url: '/api/v1/opportunities/saved', ...options });
+    }
+
+    /**
+     * Search allowlisted employer-published research opportunities
+     */
+    public searchOpportunitiesApiV1OpportunitiesSearchPost<ThrowOnError extends boolean = false>(options: Options<SearchOpportunitiesApiV1OpportunitiesSearchPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, ThrowOnError>({
+            url: '/api/v1/opportunities/search',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Remove one saved opportunity
+     */
+    public removeSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDelete<ThrowOnError extends boolean = false>(options: Options<RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, ThrowOnError>) {
+        return (options.client ?? this.client).delete<RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, ThrowOnError>({ url: '/api/v1/opportunities/{opportunity_id}/save', ...options });
+    }
+
+    /**
+     * Save one verified opportunity
+     */
+    public saveOpportunityApiV1OpportunitiesOpportunityIdSavePost<ThrowOnError extends boolean = false>(options: Options<SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, ThrowOnError>({ url: '/api/v1/opportunities/{opportunity_id}/save', ...options });
     }
 
     /**

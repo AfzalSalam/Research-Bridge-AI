@@ -243,7 +243,7 @@ class PaperTopic(UUIDPrimaryKeyMixin, Base):
 
 
 class Opportunity(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """Source-linked opportunity record; ingestion is implemented in Phase 9."""
+    """Normalized source-linked research opportunity."""
 
     __tablename__ = "opportunities"
     __table_args__ = (
@@ -256,9 +256,17 @@ class Opportunity(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     source_name: Mapped[str] = mapped_column(String(80), nullable=False)
     source_record_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    source_kind: Mapped[str] = mapped_column(String(40), nullable=False)
+    evidence_confidence: Mapped[str] = mapped_column(String(20), nullable=False)
+    opportunity_type: Mapped[str] = mapped_column(String(40), nullable=False)
     title: Mapped[str] = mapped_column(String(240), nullable=False)
     organisation: Mapped[str] = mapped_column(String(240), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
+    research_fields: Mapped[list[str]] = mapped_column(
+        JSON, nullable=False, default=list
+    )
+    duration_text: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    eligibility_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     country_code: Mapped[str | None] = mapped_column(String(2), nullable=True)
     location: Mapped[str | None] = mapped_column(String(240), nullable=True)
     work_mode: Mapped[WorkMode] = mapped_column(
@@ -273,8 +281,14 @@ class Opportunity(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     deadline: Mapped[date | None] = mapped_column(Date, nullable=True, index=True)
     source_url: Mapped[str] = mapped_column(String(2048), nullable=False)
     application_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    source_updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     last_verified_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, index=True
+    )
+    extraction_evidence: Mapped[list[dict[str, str]]] = mapped_column(
+        JSON, nullable=False, default=list
     )
 
     saved_items: Mapped[list[SavedItem]] = relationship(back_populates="opportunity")

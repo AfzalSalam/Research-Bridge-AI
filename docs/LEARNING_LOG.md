@@ -1684,3 +1684,246 @@ opportunity ingestion, explicit source/last-verified/stale metadata, allowlisted
 controlled extraction only for documented gaps, and durable application status
 history. The source policy and state-transition model should be planned before
 implementation.
+
+## Phase 9 — Verified opportunities and durable application tracker
+
+### What was built
+
+- A live opportunity search backed by the documented public Greenhouse Job
+  Board GET API and a repository-owned allowlist of four research organizations.
+- A typed async provider client with a fixed origin, explicit connection/read/
+  write/pool timeouts, bounded retries, response-size limits, no redirects, and
+  isolated per-board failures.
+- A deterministic normalizer that converts bounded listing HTML to plain text,
+  rejects non-research titles, extracts only explicitly labelled facts, and
+  retains its policy version and extraction evidence.
+- Opportunity and provenance upserts, idempotent save/remove operations, and
+  owner-scoped saved-opportunity reads through repositories and services.
+- A durable application tracker with a saved-opportunity precondition, database
+  deduplication, explicit allowed status transitions, optimistic versions, and
+  an immutable event for every status, note, or follow-up change.
+- Live opportunity and tracker pages using TanStack Query, React Hook Form, Zod,
+  generated API types, responsive teal/indigo presentation, accessibility
+  states, and separate clearly labelled fictional recruiter-demo tabs.
+- Representative provider fixtures plus client, normalization, API, frontend,
+  and full-browser tests. The E2E path proves search, save, track, update,
+  history, and persistence after a browser reload.
+
+### Why it exists
+
+The fictional Phase 3 screens demonstrated product intent but could not support
+real student decisions. Phase 9 makes those surfaces useful without implying
+that every internet listing is reliable. The system uses an employer-published
+ATS record as evidence, stores when it was checked, and keeps absent facts
+absent. This is more defensible in a recruiter interview than a broad scraper or
+an LLM that guesses eligibility and funding.
+
+The tracker is deliberately a record of the student's own decisions. Research
+Bridge AI does not infer that an application was submitted and has no external
+submission route. That boundary makes the state history auditable and prevents
+a UI click from being mistaken for an action on another service.
+
+### Concepts introduced
+
+- **Source allowlist:** code owns the accepted board identifiers. A browser can
+  filter the known sources but cannot make the server request an arbitrary host
+  or board, which is an important SSRF and data-quality boundary.
+- **Public ATS API versus scraping:** Greenhouse explicitly documents public
+  read endpoints for published boards. EURAXESS, jobs.ac.uk, USAJOBS, and NSF
+  REU were evaluated but excluded because of automation rules, terms, keys,
+  eligibility, or missing read-API fit.
+- **Admission policy versus ranking:** title signals decide whether a board job
+  belongs in this product; freshness orders admitted records. Neither operation
+  claims to measure student suitability, and no numeric recommendation score is
+  created.
+- **Bounded extraction:** the parser ignores executable/style content, limits
+  text size, and recognizes only explicit labels and phrases. It never renders
+  provider HTML and does not ask an LLM to interpret vague claims.
+- **Provenance and content hashes:** source identity, external record ID, URLs,
+  retrieval time, provider update time, extraction evidence, and a stable
+  content hash make a normalized record traceable to what was observed.
+- **Freshness versus expiry:** `lastVerifiedAt` says when retrieval succeeded;
+  `sourceUpdatedAt` says when the provider changed the record; `isStale` is an
+  age policy; and `isExpired` requires an explicit past deadline. These are not
+  interchangeable.
+- **Partial failure:** one unavailable board does not erase valid results from
+  another. The response reports source health so the UI can be useful without
+  pretending coverage is complete.
+- **Idempotency and uniqueness:** repeated save or track requests return the
+  existing domain result, while database constraints enforce one saved item and
+  one opportunity application per owner.
+- **Optimistic concurrency:** `expectedVersion` protects a tracker edit from
+  silently overwriting a newer one. A mismatch returns 409 and the UI offers a
+  reload.
+- **Snapshot plus event history:** the application row is the current snapshot;
+  append-only events explain how it reached that state, including notes-only and
+  follow-up-only edits.
+- **Runtime contract validation:** generated TypeScript captures the OpenAPI
+  shape during compilation, while Zod checks actual browser responses and UTC
+  timestamps at runtime.
+
+### Data flow
+
+```text
+Search form
+  -> POST /api/v1/opportunities/search
+  -> OpportunityService fans out across enabled allowlisted boards
+      -> fixed-origin GreenhouseClient GETs published jobs
+      -> typed response validation + per-record rejection
+      -> deterministic title admission + bounded fact extraction
+      -> opportunity/provenance upsert
+  -> freshness-first results + explicit source failures
+  -> generated TypeScript adapter + Zod
+  -> cards with source link, verification time, and Unclear fields
+
+Explicit Save
+  -> POST /api/v1/opportunities/{id}/save
+  -> owner-scoped idempotent SavedItem
+
+Explicit Track
+  -> POST /api/v1/applications
+  -> verify the same owner saved the opportunity
+  -> current Application at Saved + immutable event 1
+
+Status, notes, or follow-up + expectedVersion
+  -> PUT /api/v1/applications/{id}
+  -> owner check + row lock + transition/version validation
+  -> update snapshot + append immutable event
+  -> externalSubmissionPerformed remains false
+```
+
+### Important files
+
+- `apps/api/app/clients/greenhouse.py`: fixed-origin HTTP behavior, limits,
+  retries, rate-limit handling, and typed provider failures.
+- `apps/api/app/providers/opportunities.py`: provider-neutral contracts and the
+  allowed organization registry.
+- `apps/api/app/providers/greenhouse/models.py` and `normalizer.py`: provider
+  payload validation and deterministic evidence extraction.
+- `apps/api/app/repositories/opportunities.py`: normalized upserts, provenance,
+  owner-scoped saves, applications, locking, and history persistence.
+- `apps/api/app/services/opportunities.py` and `applications.py`: partial source
+  orchestration, public freshness states, transition rules, and version errors.
+- `apps/api/app/api/v1/routes/opportunities.py` and `applications.py`: typed
+  transport-only FastAPI endpoints.
+- `apps/api/alembic/versions/20260801_0004_verified_opportunities.py`: portable
+  opportunity evidence fields and application uniqueness constraints.
+- `apps/web/src/features/opportunities/live-opportunities.tsx`: live filters,
+  source health, evidence cards, save, and track actions.
+- `apps/web/src/features/applications/live-applications.tsx`: durable tracker,
+  explicit allowed transitions, conflict handling, and event history.
+- `apps/web/src/features/*/*-mode-experience.tsx`: clear live/recruiter-demo
+  separation without discarding the useful fictional journey.
+- `apps/web/scripts/run-e2e.mjs` and `apps/web/e2e/demo-journey.spec.ts`: owned
+  Greenhouse fixture plus the durable live browser journey.
+- `docs/plans/phase-09-verified-opportunities-and-tracker.md`: source decision,
+  contracts, risks, non-goals, and acceptance evidence.
+
+### How to run and test it
+
+Apply the Phase 9 migration, then start FastAPI and Next.js as before:
+
+```powershell
+docker compose --env-file .env up -d db
+Set-Location apps/api
+uv run alembic upgrade head
+uv run uvicorn app.main:app --reload --port 8000
+```
+
+In another PowerShell window at the repository root:
+
+```powershell
+npm.cmd run dev
+```
+
+Open `/opportunities`, keep **Live opportunities** selected, enter a topic such
+as `machine learning`, and inspect the source/evidence fields before saving.
+Choose **Track application**, open `/applications`, then change status, notes,
+or follow-up. Reload the page to verify that the event history is durable. The
+external Greenhouse link is user-controlled; Research Bridge AI never submits
+the application.
+
+The Phase 9 automated gates are:
+
+```powershell
+Set-Location apps/api
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy app scripts
+uv run pytest --basetemp=.test-tmp-phase9 -p no:cacheprovider
+uv run python -m scripts.export_openapi --check
+uv run python -m scripts.evaluate_mentor_relevance --check
+uv run python -m scripts.evaluate_outreach_grounding --check
+uv run alembic check
+
+Set-Location ../..
+npm.cmd --workspace @research-bridge/web run api:check
+npm.cmd run lint
+npm.cmd run typecheck
+npm.cmd run test
+npm.cmd run build
+npm.cmd run test:e2e
+npm.cmd audit --omit=dev --audit-level=high
+docker compose --env-file .env.example config
+```
+
+The isolated Playwright runner migrates temporary SQLite, owns its API and web
+processes, and serves both OpenAlex and Greenhouse fixtures from loopback. No
+test depends on a live listing, paid model call, or external application action.
+
+### Common errors and debugging
+
+- **Every source is unavailable:** verify network access to the fixed Greenhouse
+  origin and inspect the safe source-failure code. Restart FastAPI after changing
+  its server-only configuration.
+- **Only some sources failed:** this is a valid partial result. Use the working
+  evidence and retry later rather than treating current coverage as complete.
+- **A visible board job is absent:** only titles with a configured research
+  opportunity signal are admitted, and all query tokens must match normalized
+  content. This conservative policy favors precision over broad coverage.
+- **A field says `Unclear`:** the publisher did not state it in a supported,
+  unambiguous form. Inspect the original source; do not replace it with a guess.
+- **`409 opportunity_must_be_saved`:** save the opportunity before tracking it.
+- **`409 invalid_application_transition`:** select one of the next states shown
+  by the UI. State changes are explicit, not arbitrary strings.
+- **`409 application_version_conflict`:** a newer edit exists. Reload the
+  tracker before editing again.
+- **The tracker says Applied but nothing was submitted:** that status records
+  the student's manual declaration. The API always reports
+  `externalSubmissionPerformed: false`.
+- **Pytest cache/temp access is denied on Windows:** use the repository-local
+  `--basetemp=.test-tmp-phase9 -p no:cacheprovider` flags. This avoids the same
+  environment warning without hiding test failures.
+- **Columns or uniqueness constraints are missing:** run `uv run alembic upgrade
+  head` against the same database URL used by FastAPI.
+
+### Limitations
+
+- The live allowlist is intentionally small and organization-based. It is not a
+  comprehensive university or global internship index.
+- Greenhouse board tokens and listings can change; one successful retrieval
+  proves only what was published at that verification time.
+- Deterministic title signals can miss relevant openings with unusual titles or
+  admit a listing whose detailed duties are less academic than expected.
+- Labelled extraction is conservative and English-oriented. Complex eligibility
+  prose remains available in the source but may be displayed as `Unclear`.
+- Authentication is not implemented. A server-only demo owner partitions data,
+  but this is not yet a production multi-user security boundary.
+- The application tracker stores explicit user status and notes; it does not
+  upload resumes, submit forms, read inboxes, infer replies, or send reminders.
+- Ranking and personalization remain deliberately deferred. Results use a
+  transparent freshness-first order, not a suitability score.
+- Automated provider tests use owned fixtures. They prove contract handling,
+  not permanent availability of third-party boards.
+
+### Next step
+
+The Phase 9 release checks passed an isolated PostgreSQL revision `0004`
+upgrade/downgrade/re-upgrade plus Alembic drift check. The production audit also
+found and remediated one high-severity transitive `nanoid` issue by pinning
+version `3.3.18`; the final production lockfile audit reports zero
+vulnerabilities. Phase 10 should begin with an authentication and threat-model
+decision record. It must replace the demo owner with verified identity, enforce
+user isolation at every repository boundary, define private upload/deletion
+behavior, and add security tests before any production deployment. Ranking
+remains a post-placement enhancement.

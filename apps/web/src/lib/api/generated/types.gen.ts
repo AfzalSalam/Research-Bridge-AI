@@ -5,6 +5,125 @@ export type ClientOptions = {
 };
 
 /**
+ * ApplicationCreateRequest
+ */
+export type ApplicationCreateRequest = {
+    /**
+     * Opportunityid
+     */
+    opportunityId: string;
+};
+
+/**
+ * ApplicationEventResponse
+ */
+export type ApplicationEventResponse = {
+    fromStatus: ApplicationStatus | null;
+    /**
+     * Note
+     */
+    note: string | null;
+    /**
+     * Occurredat
+     */
+    occurredAt: string;
+    /**
+     * Sequence
+     */
+    sequence: number;
+    toStatus: ApplicationStatus;
+};
+
+/**
+ * ApplicationListResponse
+ */
+export type ApplicationListResponse = {
+    /**
+     * Items
+     */
+    items: Array<ApplicationResponse>;
+};
+
+/**
+ * ApplicationResponse
+ */
+export type ApplicationResponse = {
+    /**
+     * Allowednextstatuses
+     */
+    allowedNextStatuses: Array<ApplicationStatus>;
+    /**
+     * Createdat
+     */
+    createdAt: string;
+    /**
+     * Events
+     */
+    events: Array<ApplicationEventResponse>;
+    /**
+     * Externalsubmissionperformed
+     */
+    externalSubmissionPerformed?: false;
+    /**
+     * Followupdate
+     */
+    followUpDate: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Notes
+     */
+    notes: string;
+    /**
+     * Opportunityid
+     */
+    opportunityId: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    status: ApplicationStatus;
+    /**
+     * Targetlabel
+     */
+    targetLabel: string;
+    /**
+     * Updatedat
+     */
+    updatedAt: string;
+    /**
+     * Version
+     */
+    version: number;
+};
+
+/**
+ * ApplicationStatus
+ */
+export type ApplicationStatus = 'saved' | 'drafting' | 'ready-for-review' | 'applied' | 'interviewing' | 'closed';
+
+/**
+ * ApplicationUpdateRequest
+ */
+export type ApplicationUpdateRequest = {
+    /**
+     * Expectedversion
+     */
+    expectedVersion: number;
+    /**
+     * Followupdate
+     */
+    followUpDate: string | null;
+    /**
+     * Notes
+     */
+    notes: string;
+    status: ApplicationStatus;
+};
+
+/**
  * ClaimEvidence
  *
  * Explains which selected records support a draft passage.
@@ -602,6 +721,236 @@ export type Opportunity = {
 };
 
 /**
+ * OpportunityExtractionEvidence
+ */
+export type OpportunityExtractionEvidence = {
+    /**
+     * Field
+     */
+    field: string;
+    /**
+     * Value
+     */
+    value: string;
+};
+
+/**
+ * OpportunityResult
+ */
+export type OpportunityResult = {
+    /**
+     * Applicationid
+     */
+    applicationId: string | null;
+    /**
+     * Applicationurl
+     */
+    applicationUrl: string;
+    /**
+     * Availability
+     */
+    availability: 'open' | 'closed' | 'unclear';
+    /**
+     * Countrycode
+     */
+    countryCode: string | null;
+    /**
+     * Deadline
+     */
+    deadline: string | null;
+    /**
+     * Descriptionexcerpt
+     */
+    descriptionExcerpt: string;
+    /**
+     * Duration
+     */
+    duration: string | null;
+    /**
+     * Eligibility
+     */
+    eligibility: string | null;
+    /**
+     * Evidenceconfidence
+     */
+    evidenceConfidence: 'high';
+    /**
+     * Extractionevidence
+     */
+    extractionEvidence: Array<OpportunityExtractionEvidence>;
+    /**
+     * Funding
+     */
+    funding: 'funded' | 'unfunded' | 'unclear';
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Inclusionsignal
+     */
+    inclusionSignal: string;
+    /**
+     * Isexpired
+     */
+    isExpired: boolean;
+    /**
+     * Issaved
+     */
+    isSaved: boolean;
+    /**
+     * Isstale
+     */
+    isStale: boolean;
+    /**
+     * Lastverifiedat
+     */
+    lastVerifiedAt: string;
+    /**
+     * Location
+     */
+    location: string | null;
+    /**
+     * Opportunitytype
+     */
+    opportunityType: 'internship' | 'studentship' | 'fellowship' | 'research-assistantship';
+    /**
+     * Organisation
+     */
+    organisation: string;
+    /**
+     * Researchfields
+     */
+    researchFields: Array<string>;
+    /**
+     * Sourcekind
+     */
+    sourceKind: 'official-ats';
+    /**
+     * Sourcename
+     */
+    sourceName: string;
+    /**
+     * Sourcerecordid
+     */
+    sourceRecordId: string;
+    /**
+     * Sourceupdatedat
+     */
+    sourceUpdatedAt: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Workmode
+     */
+    workMode: 'on-site' | 'hybrid' | 'remote' | 'unclear';
+};
+
+/**
+ * OpportunitySearchRequest
+ */
+export type OpportunitySearchRequest = {
+    /**
+     * Countrycode
+     */
+    countryCode?: string | null;
+    /**
+     * Funding
+     */
+    funding?: 'funded' | 'unfunded' | 'unclear' | null;
+    /**
+     * Includeexpired
+     */
+    includeExpired?: boolean;
+    /**
+     * Limit
+     */
+    limit?: number;
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Workmode
+     */
+    workMode?: 'on-site' | 'hybrid' | 'remote' | 'unclear' | null;
+};
+
+/**
+ * OpportunitySearchResponse
+ */
+export type OpportunitySearchResponse = {
+    /**
+     * Partialfailure
+     */
+    partialFailure: boolean;
+    /**
+     * Policyversion
+     */
+    policyVersion: string;
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Rankingapplied
+     */
+    rankingApplied?: false;
+    /**
+     * Results
+     */
+    results: Array<OpportunityResult>;
+    /**
+     * Retrievedat
+     */
+    retrievedAt: string;
+    /**
+     * Sources
+     */
+    sources: Array<OpportunitySourceStatus>;
+};
+
+/**
+ * OpportunitySourceStatus
+ */
+export type OpportunitySourceStatus = {
+    /**
+     * Acceptedcount
+     */
+    acceptedCount: number;
+    /**
+     * Errorcode
+     */
+    errorCode?: string | null;
+    /**
+     * Invalidcount
+     */
+    invalidCount: number;
+    /**
+     * Key
+     */
+    key: string;
+    /**
+     * Organisation
+     */
+    organisation: string;
+    /**
+     * Retryable
+     */
+    retryable?: boolean;
+    /**
+     * Status
+     */
+    status: 'success' | 'error';
+};
+
+/**
  * OutreachDraft
  *
  * Editable deterministic draft plus its complete provenance.
@@ -1142,6 +1491,27 @@ export type RelevancePolicy = {
 };
 
 /**
+ * SavedOpportunity
+ */
+export type SavedOpportunity = {
+    opportunity: OpportunityResult;
+    /**
+     * Savedat
+     */
+    savedAt: string;
+};
+
+/**
+ * SavedOpportunityListResponse
+ */
+export type SavedOpportunityListResponse = {
+    /**
+     * Items
+     */
+    items: Array<SavedOpportunity>;
+};
+
+/**
  * SelectedStudentFact
  */
 export type SelectedStudentFact = {
@@ -1356,6 +1726,77 @@ export type AppSchemasMentorDiscoveryMentorCandidate = {
      */
     warnings: Array<string>;
 };
+
+export type ListApplicationsApiV1ApplicationsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/applications';
+};
+
+export type ListApplicationsApiV1ApplicationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationListResponse;
+};
+
+export type ListApplicationsApiV1ApplicationsGetResponse = ListApplicationsApiV1ApplicationsGetResponses[keyof ListApplicationsApiV1ApplicationsGetResponses];
+
+export type CreateApplicationApiV1ApplicationsPostData = {
+    body: ApplicationCreateRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/applications';
+};
+
+export type CreateApplicationApiV1ApplicationsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateApplicationApiV1ApplicationsPostError = CreateApplicationApiV1ApplicationsPostErrors[keyof CreateApplicationApiV1ApplicationsPostErrors];
+
+export type CreateApplicationApiV1ApplicationsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ApplicationResponse;
+};
+
+export type CreateApplicationApiV1ApplicationsPostResponse = CreateApplicationApiV1ApplicationsPostResponses[keyof CreateApplicationApiV1ApplicationsPostResponses];
+
+export type UpdateApplicationApiV1ApplicationsApplicationIdPutData = {
+    body: ApplicationUpdateRequest;
+    path: {
+        /**
+         * Application Id
+         */
+        application_id: string;
+    };
+    query?: never;
+    url: '/api/v1/applications/{application_id}';
+};
+
+export type UpdateApplicationApiV1ApplicationsApplicationIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateApplicationApiV1ApplicationsApplicationIdPutError = UpdateApplicationApiV1ApplicationsApplicationIdPutErrors[keyof UpdateApplicationApiV1ApplicationsApplicationIdPutErrors];
+
+export type UpdateApplicationApiV1ApplicationsApplicationIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ApplicationResponse;
+};
+
+export type UpdateApplicationApiV1ApplicationsApplicationIdPutResponse = UpdateApplicationApiV1ApplicationsApplicationIdPutResponses[keyof UpdateApplicationApiV1ApplicationsApplicationIdPutResponses];
 
 export type ReadDemoBootstrapApiV1DemoBootstrapGetData = {
     body?: never;
@@ -1599,6 +2040,107 @@ export type ReadHealthApiV1HealthGetResponses = {
 };
 
 export type ReadHealthApiV1HealthGetResponse = ReadHealthApiV1HealthGetResponses[keyof ReadHealthApiV1HealthGetResponses];
+
+export type ListSavedOpportunitiesApiV1OpportunitiesSavedGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/opportunities/saved';
+};
+
+export type ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedOpportunityListResponse;
+};
+
+export type ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponse = ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses[keyof ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses];
+
+export type SearchOpportunitiesApiV1OpportunitiesSearchPostData = {
+    body: OpportunitySearchRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/opportunities/search';
+};
+
+export type SearchOpportunitiesApiV1OpportunitiesSearchPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SearchOpportunitiesApiV1OpportunitiesSearchPostError = SearchOpportunitiesApiV1OpportunitiesSearchPostErrors[keyof SearchOpportunitiesApiV1OpportunitiesSearchPostErrors];
+
+export type SearchOpportunitiesApiV1OpportunitiesSearchPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OpportunitySearchResponse;
+};
+
+export type SearchOpportunitiesApiV1OpportunitiesSearchPostResponse = SearchOpportunitiesApiV1OpportunitiesSearchPostResponses[keyof SearchOpportunitiesApiV1OpportunitiesSearchPostResponses];
+
+export type RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Opportunity Id
+         */
+        opportunity_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunities/{opportunity_id}/save';
+};
+
+export type RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteError = RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors[keyof RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors];
+
+export type RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponse = RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses[keyof RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses];
+
+export type SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData = {
+    body?: never;
+    path: {
+        /**
+         * Opportunity Id
+         */
+        opportunity_id: string;
+    };
+    query?: never;
+    url: '/api/v1/opportunities/{opportunity_id}/save';
+};
+
+export type SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostError = SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors[keyof SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors];
+
+export type SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SavedOpportunity;
+};
+
+export type SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponse = SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses[keyof SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses];
 
 export type CreateOutreachDraftApiV1OutreachDraftsPostData = {
     body: OutreachDraftCreateRequest;

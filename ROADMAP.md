@@ -97,6 +97,8 @@ only where needed, funding/work-mode `Unclear` states, source and last-verified
 metadata, stale/expired detection, saving, application status history, notes,
 and follow-up dates.
 
+**Status:** Complete.
+
 ## Phase 10 — Authentication, privacy, and security
 
 Compare and select authentication, then implement protected routes, backend
