@@ -10,6 +10,7 @@ from app.core.config import Settings, get_settings
 from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import REQUEST_ID_HEADER, request_context_middleware
+from app.core.security_headers import security_headers_middleware
 from app.db.session import Database, create_database
 from app.runtime import (
     AuthRuntime,
@@ -96,6 +97,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.state.opportunity_provider_override = None
     application.state.auth_verifier_override = None
     register_exception_handlers(application)
+    application.middleware("http")(security_headers_middleware)
     application.middleware("http")(request_context_middleware)
 
     if app_settings.cors_origins:

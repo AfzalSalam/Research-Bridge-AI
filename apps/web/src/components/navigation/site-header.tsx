@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand/brand";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/features/auth/use-auth";
 import {
   Sheet,
   SheetClose,
@@ -52,7 +53,12 @@ function NavigationLink({
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const mobileNavigation = [...primaryNavigation, profileNavigation];
+  const { user } = useAuth();
+  
+  const mobileNavigation = [...primaryNavigation];
+  if (user) {
+    mobileNavigation.push(profileNavigation);
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 supports-[backdrop-filter]:bg-background/90 supports-[backdrop-filter]:backdrop-blur-sm">
@@ -66,18 +72,24 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden lg:block">
-          <Button asChild size="default" variant="outline">
-            <Link
-              aria-current={
-                isCurrentRoute(pathname, profileNavigation.href)
-                  ? "page"
-                  : undefined
-              }
-              href={profileNavigation.href}
-            >
-              Profile
-            </Link>
-          </Button>
+          {user ? (
+            <Button asChild size="default" variant="outline">
+              <Link
+                aria-current={
+                  isCurrentRoute(pathname, profileNavigation.href)
+                    ? "page"
+                    : undefined
+                }
+                href={profileNavigation.href}
+              >
+                Profile
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild size="default" variant="default">
+              <Link href="/login">Sign In</Link>
+            </Button>
+          )}
         </div>
 
         <div className="lg:hidden">
