@@ -8,7 +8,6 @@ from app.core.errors import AppError
 from app.db.models.enums import ApplicationStatus
 from app.db.models.workflow import Application
 from app.repositories.opportunities import OpportunityRepository
-from app.repositories.owners import OwnerRepository
 from app.schemas.opportunities import (
     ApplicationCreateRequest,
     ApplicationEventResponse,
@@ -65,11 +64,9 @@ class ApplicationTrackerService:
         self,
         *,
         owner_id: UUID,
-        owners: OwnerRepository,
         repository: OpportunityRepository,
     ) -> None:
         self._owner_id = owner_id
-        self._owners = owners
         self._repository = repository
 
     async def create(self, request: ApplicationCreateRequest) -> ApplicationResponse:
@@ -91,7 +88,6 @@ class ApplicationTrackerService:
                 message="The opportunity was not found in the verified catalog.",
                 status_code=404,
             )
-        await self._owners.get_or_create_demo(self._owner_id)
         application = await self._repository.create_application(
             self._owner_id, opportunity
         )

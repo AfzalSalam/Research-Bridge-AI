@@ -22,6 +22,7 @@ from app.providers.base import (
     ProviderRateLimit,
     RawProviderSearchResult,
 )
+from tests.auth_support import StaticAccessTokenVerifier
 
 FIXTURE_PATH = (
     Path(__file__).parent / "fixtures" / "openalex" / "works-representative.json"
@@ -135,7 +136,16 @@ def outreach_client(
         )
     )
     application.state.paper_provider_override = RepeatedAuthorProvider()
+    application.state.auth_verifier_override = StaticAccessTokenVerifier(
+        {"outreach-user-token": "supabase-outreach-user"}
+    )
     with TestClient(application) as client:
+        client.headers.update({"Authorization": "Bearer outreach-user-token"})
+        demo_profile = client.get("/api/v1/demo/profile").json()
+        account_profile = {
+            key: value for key, value in demo_profile.items() if key != "id"
+        }
+        assert client.put("/api/v1/profile", json=account_profile).status_code == 200
         yield client, application
 
 

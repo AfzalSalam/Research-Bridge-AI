@@ -27,7 +27,6 @@ from app.repositories.outreach import (
     NewOutreachDraft,
     OutreachRepository,
 )
-from app.repositories.owners import OwnerRepository
 from app.schemas.mentor_discovery import (
     MentorCandidate,
     MentorDiscoveryRequest,
@@ -70,14 +69,12 @@ class OutreachService:
         self,
         *,
         owner_id: UUID,
-        owners: OwnerRepository,
         repository: OutreachRepository,
         mentors: MentorDiscoveryReader,
         profiles: ProfileReader,
         generator: OutreachDraftGenerator | None,
     ) -> None:
         self._owner_id = owner_id
-        self._owners = owners
         self._repository = repository
         self._mentors = mentors
         self._profiles = profiles
@@ -158,7 +155,6 @@ class OutreachService:
                 model = self._generator.model
                 prompt_version = PROMPT_VERSION
 
-        await self._owners.get_or_create_demo(self._owner_id)
         record = await self._repository.create(
             NewOutreachDraft(
                 owner_id=self._owner_id,

@@ -15,6 +15,7 @@ from app.db.models.profile import (
     StudentProfileRecord,
 )
 from app.schemas.demo import StudentProfile
+from app.schemas.profile import AccountProfile
 
 
 def normalize_profile_value(value: str) -> str:
@@ -30,7 +31,7 @@ class ProfileRepository(Protocol):
     async def get_by_owner(self, owner_id: UUID) -> StudentProfileRecord | None: ...
 
     async def upsert(
-        self, owner_id: UUID, profile: StudentProfile
+        self, owner_id: UUID, profile: StudentProfile | AccountProfile
     ) -> StudentProfileRecord: ...
 
 
@@ -54,7 +55,7 @@ class SqlAlchemyProfileRepository:
         return cast(StudentProfileRecord | None, await self._session.scalar(statement))
 
     async def upsert(
-        self, owner_id: UUID, profile: StudentProfile
+        self, owner_id: UUID, profile: StudentProfile | AccountProfile
     ) -> StudentProfileRecord:
         record = await self.get_by_owner(owner_id)
         if record is None:

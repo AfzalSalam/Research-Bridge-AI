@@ -1,16 +1,21 @@
 from typing import Annotated, cast
+from uuid import UUID
 
 from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
+from app.dependencies.authentication import (
+    AuthenticatedPrincipal,
+    get_current_principal,
+    get_optional_principal,
+)
 from app.dependencies.database import get_session
 from app.providers.opportunities import (
     OPPORTUNITY_SOURCES,
     OpportunityProvider,
 )
 from app.repositories.opportunities import SqlAlchemyOpportunityRepository
-from app.repositories.owners import SqlAlchemyOwnerRepository
 from app.runtime import OpportunityRuntime
 from app.services.applications import (
     ApplicationTrackerReader,
@@ -19,9 +24,10 @@ from app.services.applications import (
 from app.services.opportunities import OpportunityReader, OpportunityService
 
 
-def get_opportunity_service(
+def _get_opportunity_service(
     request: Request,
     session: Annotated[AsyncSession, Depends(get_session)],
+    owner_id: UUID | None,
 ) -> OpportunityReader:
     """Compose verified opportunity retrieval with an explicit test seam."""
 
@@ -35,8 +41,7 @@ def get_opportunity_service(
     )
     repository = SqlAlchemyOpportunityRepository(session)
     return OpportunityService(
-        owner_id=settings.demo_owner_id,
-        owners=SqlAlchemyOwnerRepository(session),
+        owner_id=owner_id,
         repository=repository,
         provider=provider,
         sources=[OPPORTUNITY_SOURCES[key] for key in settings.greenhouse_board_keys],
@@ -44,15 +49,39 @@ def get_opportunity_service(
     )
 
 
-def get_application_tracker_service(
+def get_opportunity_search_service(
     request: Request,
     session: Annotated[AsyncSession, Depends(get_session)],
+    principal: Annotated[
+        AuthenticatedPrincipal | None, Depends(get_optional_principal)
+    ],
+) -> OpportunityReader:
+    """Compose public search with optional signed-in saved-state enrichment."""
+
+    return _get_opportunity_service(
+        request,
+        session,
+        principal.owner_id if principal is not None else None,
+    )
+
+
+def get_opportunity_service(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    principal: Annotated[AuthenticatedPrincipal, Depends(get_current_principal)],
+) -> OpportunityReader:
+    """Compose an authenticated saved-opportunity service."""
+
+    return _get_opportunity_service(request, session, principal.owner_id)
+
+
+def get_application_tracker_service(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    principal: Annotated[AuthenticatedPrincipal, Depends(get_current_principal)],
 ) -> ApplicationTrackerReader:
     """Compose owner-scoped application tracking without external submission."""
 
-    settings = cast(Settings, request.app.state.settings)
     return ApplicationTrackerService(
-        owner_id=settings.demo_owner_id,
-        owners=SqlAlchemyOwnerRepository(session),
+        owner_id=principal.owner_id,
         repository=SqlAlchemyOpportunityRepository(session),
     )

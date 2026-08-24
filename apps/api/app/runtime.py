@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 import httpx2
 
+from app.auth.contracts import AccessTokenVerifier
+from app.auth.supabase import FixedAccessTokenVerifier, SupabaseTokenVerifier
 from app.clients.greenhouse import GreenhouseClient
 from app.clients.openalex import OpenAlexClient
 from app.core.config import Settings
@@ -32,6 +34,14 @@ class OpportunityRuntime:
 
     http_client: httpx2.AsyncClient
     provider: GreenhouseClient
+
+
+@dataclass(frozen=True, slots=True)
+class AuthRuntime:
+    """Optional provider client and token verifier for private API routes."""
+
+    http_client: httpx2.AsyncClient | None
+    verifier: AccessTokenVerifier | None
 
 
 def create_discovery_runtime(settings: Settings) -> DiscoveryRuntime:
@@ -136,3 +146,41 @@ def create_opportunity_runtime(settings: Settings) -> OpportunityRuntime:
         backoff_cap_seconds=settings.greenhouse_backoff_cap_seconds,
     )
     return OpportunityRuntime(http_client=client, provider=provider)
+
+
+def create_auth_runtime(settings: Settings) -> AuthRuntime:
+    """Create a production JWKS verifier or a strictly test/e2e-only verifier."""
+
+    if settings.supabase_test_bearer_token is not None:
+        return AuthRuntime(
+            http_client=None,
+            verifier=FixedAccessTokenVerifier(
+                token=settings.supabase_test_bearer_token.get_secret_value(),
+                subject=settings.supabase_test_subject or "",
+            ),
+        )
+    if settings.supabase_url is None:
+        return AuthRuntime(http_client=None, verifier=None)
+
+    timeout = httpx2.Timeout(
+        connect=settings.supabase_connect_timeout_seconds,
+        read=settings.supabase_read_timeout_seconds,
+        write=settings.supabase_read_timeout_seconds,
+        pool=settings.supabase_connect_timeout_seconds,
+    )
+    client = httpx2.AsyncClient(
+        base_url=settings.supabase_url,
+        headers={"User-Agent": f"ResearchBridgeAI/{settings.app_version}"},
+        timeout=timeout,
+        follow_redirects=False,
+        trust_env=False,
+    )
+    return AuthRuntime(
+        http_client=client,
+        verifier=SupabaseTokenVerifier(
+            http_client=client,
+            audience=settings.supabase_jwt_audience,
+            issuer=f"{settings.supabase_url}/auth/v1",
+            jwks_cache_ttl_seconds=settings.supabase_jwks_cache_ttl_seconds,
+        ),
+    )

@@ -8,8 +8,8 @@ from statistics import fmean
 from typing import Literal
 from uuid import UUID
 
-from app.schemas.demo import StudentProfile
 from app.schemas.discovery import DiscoveredPaper, PaperAuthor
+from app.schemas.profile import StudentProfileFacts
 
 type PolicyFeature = Literal[
     "query-evidence",
@@ -148,7 +148,7 @@ def derive_candidates(
     query: str,
     query_kind: Literal["text", "doi", "openalex-id"],
     papers: list[DiscoveredPaper],
-    profile: StudentProfile,
+    profile: StudentProfileFacts,
     evaluation_year: int,
     weights: RelevanceWeights,
 ) -> CandidateDerivation:
@@ -222,7 +222,7 @@ def _derive_candidate(
     query: str,
     query_kind: Literal["text", "doi", "openalex-id"],
     supporting: tuple[SupportingPaper, ...],
-    profile: StudentProfile,
+    profile: StudentProfileFacts,
     evaluation_year: int,
     weights: RelevanceWeights,
 ) -> DerivedCandidate:
@@ -360,7 +360,7 @@ def _paper_query_overlap(
 
 
 def _profile_alignment(
-    profile: StudentProfile, papers: tuple[DiscoveredPaper, ...]
+    profile: StudentProfileFacts, papers: tuple[DiscoveredPaper, ...]
 ) -> tuple[float, tuple[str, ...]]:
     evidence_tokens: frozenset[str] = frozenset().union(
         *(_paper_evidence_tokens(paper) for paper in papers)

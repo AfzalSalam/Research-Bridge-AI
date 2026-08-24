@@ -7,7 +7,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
-from app.schemas.demo import StudentProfile
 from app.schemas.mentor_discovery import MentorCandidate, MentorSupportingPaper
 from app.schemas.outreach import (
     ClaimEvidenceReference,
@@ -15,6 +14,7 @@ from app.schemas.outreach import (
     SelectedStudentFact,
     StudentFactKey,
 )
+from app.schemas.profile import StudentProfileFacts
 
 PROMPT_VERSION = "outreach-grounded.v1"
 TEMPLATE_VERSION = "outreach-template.v1"
@@ -82,7 +82,7 @@ class OutreachComposition(BaseModel):
 class OutreachEvidencePackage:
     mentor: MentorCandidate
     papers: tuple[MentorSupportingPaper, ...]
-    profile: StudentProfile
+    profile: StudentProfileFacts
     student_facts: tuple[SelectedStudentFact, ...]
 
 
@@ -118,7 +118,7 @@ def build_evidence_package(
     *,
     mentor: MentorCandidate,
     papers: list[MentorSupportingPaper],
-    profile: StudentProfile,
+    profile: StudentProfileFacts,
 ) -> OutreachEvidencePackage:
     facts = (
         SelectedStudentFact(key="profile.name", label="Name", value=profile.name),
@@ -319,7 +319,7 @@ def _deterministic_subject(evidence: OutreachEvidencePackage) -> str:
 
 
 def _deterministic_paper_connection(
-    paper: MentorSupportingPaper, profile: StudentProfile
+    paper: MentorSupportingPaper, profile: StudentProfileFacts
 ) -> str:
     title = f"your {paper.publication_year} paper, “{paper.title}”"
     if paper.evidence_strength == "title-only":

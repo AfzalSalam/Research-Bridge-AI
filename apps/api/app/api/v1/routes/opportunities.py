@@ -3,7 +3,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response, status
 
-from app.dependencies.opportunities import get_opportunity_service
+from app.dependencies.opportunities import (
+    get_opportunity_search_service,
+    get_opportunity_service,
+)
 from app.schemas.opportunities import (
     OpportunitySearchRequest,
     OpportunitySearchResponse,
@@ -22,7 +25,7 @@ router = APIRouter(prefix="/opportunities", tags=["opportunities"])
 )
 async def search_opportunities(
     request: OpportunitySearchRequest,
-    service: Annotated[OpportunityReader, Depends(get_opportunity_service)],
+    service: Annotated[OpportunityReader, Depends(get_opportunity_search_service)],
 ) -> OpportunitySearchResponse:
     return await service.search(request)
 

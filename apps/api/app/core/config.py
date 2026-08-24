@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     )
     database_echo: bool = False
     demo_owner_id: UUID = UUID("00000000-0000-4000-8000-000000000001")
+    supabase_url: str | None = None
+    supabase_jwt_audience: str = "authenticated"
+    supabase_jwks_cache_ttl_seconds: int = Field(default=600, ge=60, le=3600)
+    supabase_connect_timeout_seconds: float = Field(default=3.0, ge=0.1, le=30)
+    supabase_read_timeout_seconds: float = Field(default=5.0, ge=0.1, le=30)
+    supabase_test_bearer_token: SecretStr | None = None
+    supabase_test_subject: str | None = None
     openalex_api_key: SecretStr | None = None
     openalex_base_url: str = "https://api.openalex.org"
     openalex_connect_timeout_seconds: float = Field(default=3.0, ge=0.1, le=30)
@@ -105,6 +112,59 @@ class Settings(BaseSettings):
                 "loopback HTTP is allowed only in test or e2e"
             )
         self.openalex_base_url = self.openalex_base_url.rstrip("/")
+        return self
+
+    @model_validator(mode="after")
+    def validate_supabase_configuration(self) -> "Settings":
+        """Accept one official project origin and guarded E2E-only credentials."""
+
+        if self.supabase_url is not None:
+            parsed = urlparse(self.supabase_url)
+            has_clean_origin = (
+                parsed.username is None
+                and parsed.password is None
+                and parsed.params == ""
+                and parsed.query == ""
+                and parsed.fragment == ""
+                and parsed.path.rstrip("/") == ""
+            )
+            official_origin = (
+                has_clean_origin
+                and parsed.scheme == "https"
+                and parsed.hostname is not None
+                and parsed.hostname.endswith(".supabase.co")
+                and parsed.port is None
+            )
+            loopback_test_origin = (
+                has_clean_origin
+                and self.app_environment in {"test", "e2e"}
+                and parsed.scheme == "http"
+                and parsed.hostname in {"127.0.0.1", "localhost"}
+            )
+            if not (official_origin or loopback_test_origin):
+                raise ValueError(
+                    "supabase_url must use an official HTTPS project origin; "
+                    "loopback HTTP is allowed only in test or e2e"
+                )
+            self.supabase_url = self.supabase_url.rstrip("/")
+
+        has_test_token = self.supabase_test_bearer_token is not None
+        has_test_subject = self.supabase_test_subject is not None
+        if has_test_token != has_test_subject:
+            raise ValueError(
+                "supabase test bearer token and subject must be set together"
+            )
+        if has_test_token and self.app_environment not in {"test", "e2e"}:
+            raise ValueError(
+                "supabase test authentication is allowed only in test or e2e"
+            )
+        if self.supabase_test_subject is not None and (
+            not self.supabase_test_subject.strip()
+            or len(self.supabase_test_subject) > 255
+        ):
+            raise ValueError(
+                "supabase_test_subject must be a non-empty 255-character value"
+            )
         return self
 
     @model_validator(mode="after")

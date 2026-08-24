@@ -12,9 +12,11 @@ from app.core.logging import configure_logging
 from app.core.middleware import REQUEST_ID_HEADER, request_context_middleware
 from app.db.session import Database, create_database
 from app.runtime import (
+    AuthRuntime,
     DiscoveryRuntime,
     OpportunityRuntime,
     OutreachRuntime,
+    create_auth_runtime,
     create_discovery_runtime,
     create_opportunity_runtime,
     create_outreach_runtime,
@@ -33,11 +35,14 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
         opportunity_runtime = cast(
             OpportunityRuntime, application.state.opportunity_runtime
         )
+        auth_runtime = cast(AuthRuntime, application.state.auth_runtime)
         database = cast(Database, application.state.database)
         await runtime.http_client.aclose()
         if outreach_runtime.http_client is not None:
             await outreach_runtime.http_client.aclose()
         await opportunity_runtime.http_client.aclose()
+        if auth_runtime.http_client is not None:
+            await auth_runtime.http_client.aclose()
         await database.engine.dispose()
 
 
@@ -51,7 +56,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         version=app_settings.app_version,
         description=(
             "Evidence-first academic discovery API. Phase 9 adds source-linked "
-            "research opportunities and explicit application tracking."
+            "research opportunities, private authenticated workspaces, and explicit "
+            "application tracking."
         ),
         lifespan=application_lifespan,
         openapi_tags=[
@@ -83,10 +89,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.state.discovery_runtime = create_discovery_runtime(app_settings)
     application.state.outreach_runtime = create_outreach_runtime(app_settings)
     application.state.opportunity_runtime = create_opportunity_runtime(app_settings)
+    application.state.auth_runtime = create_auth_runtime(app_settings)
     application.state.demo_service_override = None
     application.state.paper_provider_override = None
     application.state.outreach_generator_override = None
     application.state.opportunity_provider_override = None
+    application.state.auth_verifier_override = None
     register_exception_handlers(application)
     application.middleware("http")(request_context_middleware)
 
@@ -96,7 +104,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             allow_origins=app_settings.cors_origins,
             allow_credentials=False,
             allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            allow_headers=["Accept", "Content-Type", REQUEST_ID_HEADER],
+            allow_headers=[
+                "Accept",
+                "Authorization",
+                "Content-Type",
+                REQUEST_ID_HEADER,
+            ],
             expose_headers=[REQUEST_ID_HEADER],
         )
 

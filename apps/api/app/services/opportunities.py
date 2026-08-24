@@ -22,7 +22,6 @@ from app.providers.opportunities import (
     OpportunitySource,
 )
 from app.repositories.opportunities import OpportunityRepository, StoredOpportunity
-from app.repositories.owners import OwnerRepository
 from app.schemas.opportunities import (
     OpportunityExtractionEvidence,
     OpportunityResult,
@@ -52,8 +51,7 @@ class OpportunityService:
     def __init__(
         self,
         *,
-        owner_id: UUID,
-        owners: OwnerRepository,
+        owner_id: UUID | None,
         repository: OpportunityRepository,
         provider: OpportunityProvider,
         sources: Sequence[OpportunitySource],
@@ -61,7 +59,6 @@ class OpportunityService:
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         self._owner_id = owner_id
-        self._owners = owners
         self._repository = repository
         self._provider = provider
         self._sources = tuple(sources)
@@ -121,9 +118,13 @@ class OpportunityService:
             )
         )
         visible = visible[: request.limit]
-        saved_ids, application_ids = await self._repository.ownership_state(
-            self._owner_id, [item.id for item in visible]
-        )
+        if self._owner_id is None:
+            saved_ids: set[UUID] = set()
+            application_ids: dict[UUID, UUID] = {}
+        else:
+            saved_ids, application_ids = await self._repository.ownership_state(
+                self._owner_id, [item.id for item in visible]
+            )
         now = self._clock()
         return OpportunitySearchResponse(
             query=" ".join(request.query.split()),
@@ -145,10 +146,10 @@ class OpportunityService:
 
     async def save(self, opportunity_id: UUID) -> SavedOpportunity:
         opportunity = await self._required_opportunity(opportunity_id)
-        await self._owners.get_or_create_demo(self._owner_id)
-        saved = await self._repository.save(self._owner_id, opportunity_id)
+        owner_id = self._required_owner_id()
+        saved = await self._repository.save(owner_id, opportunity_id)
         application = await self._repository.get_application_for_opportunity(
-            self._owner_id, opportunity_id
+            owner_id, opportunity_id
         )
         return SavedOpportunity(
             saved_at=_aware(saved.saved_at),
@@ -163,12 +164,13 @@ class OpportunityService:
 
     async def remove_save(self, opportunity_id: UUID) -> None:
         await self._required_opportunity(opportunity_id)
-        await self._repository.remove_save(self._owner_id, opportunity_id)
+        await self._repository.remove_save(self._required_owner_id(), opportunity_id)
 
     async def list_saved(self) -> SavedOpportunityListResponse:
-        rows = await self._repository.list_saved(self._owner_id)
+        owner_id = self._required_owner_id()
+        rows = await self._repository.list_saved(owner_id)
         _, application_ids = await self._repository.ownership_state(
-            self._owner_id, [row.opportunity.id for row in rows]
+            owner_id, [row.opportunity.id for row in rows]
         )
         now = self._clock()
         return SavedOpportunityListResponse(
@@ -196,6 +198,11 @@ class OpportunityService:
                 status_code=404,
             )
         return opportunity
+
+    def _required_owner_id(self) -> UUID:
+        if self._owner_id is None:
+            raise RuntimeError("A private opportunity action requires an owner scope.")
+        return self._owner_id
 
     def _matches_filters(
         self, opportunity: NormalizedOpportunity, request: OpportunitySearchRequest

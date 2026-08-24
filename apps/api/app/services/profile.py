@@ -6,12 +6,13 @@ from app.fixtures.demo import fresh_profile
 from app.repositories.owners import OwnerRepository
 from app.repositories.profiles import ProfileRepository
 from app.schemas.demo import StudentProfile
+from app.schemas.profile import StudentProfileFacts
 
 
 class ProfileReader(Protocol):
     """Read boundary used when composing the demo bootstrap."""
 
-    async def get_profile(self) -> StudentProfile: ...
+    async def get_profile(self) -> StudentProfileFacts: ...
 
 
 class ProfileService:

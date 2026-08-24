@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.api.v1.routes.account_profile import router as account_profile_router
 from app.api.v1.routes.applications import router as applications_router
 from app.api.v1.routes.demo import router as demo_router
 from app.api.v1.routes.discovery import router as discovery_router
@@ -17,4 +18,5 @@ api_router.include_router(mentor_discovery_router)
 api_router.include_router(outreach_router)
 api_router.include_router(opportunities_router)
 api_router.include_router(applications_router)
+api_router.include_router(account_profile_router)
 api_router.include_router(profile_router)

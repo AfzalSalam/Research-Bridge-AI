@@ -13,6 +13,7 @@ from app.providers.opportunities import (
     RawOpportunityBoard,
     RawOpportunityRecord,
 )
+from tests.auth_support import StaticAccessTokenVerifier
 
 FIXED_TIME = datetime(2026, 8, 1, 12, 0, tzinfo=UTC)
 
@@ -71,7 +72,14 @@ def opportunity_client(migrated_database_url: str) -> Iterator[TestClient]:
         )
     )
     application.state.opportunity_provider_override = OpportunityFixtureProvider()
+    application.state.auth_verifier_override = StaticAccessTokenVerifier(
+        {
+            "opportunity-user-a-token": "supabase-opportunity-user-a",
+            "opportunity-user-b-token": "supabase-opportunity-user-b",
+        }
+    )
     with TestClient(application) as client:
+        client.headers.update({"Authorization": "Bearer opportunity-user-a-token"})
         yield client
 
 
@@ -117,9 +125,10 @@ def test_save_track_update_and_reload_preserve_explicit_versioned_history(
     assert saved_again.status_code == 201
     assert saved.json()["opportunity"]["isSaved"] is True
     assert saved.json()["savedAt"].endswith("Z")
-    assert (
-        len(opportunity_client.get("/api/v1/opportunities/saved").json()["items"]) == 1
-    )
+    saved_items = opportunity_client.get("/api/v1/opportunities/saved").json()[
+        "items"
+    ]
+    assert len(saved_items) == 1
 
     created = opportunity_client.post(
         "/api/v1/applications", json={"opportunityId": opportunity_id}
@@ -197,3 +206,50 @@ def test_tracker_requires_a_save_and_rejects_invalid_transition(
 
     assert invalid.status_code == 409
     assert invalid.json()["error"]["code"] == "invalid_application_transition"
+
+
+def test_private_tracker_records_are_isolated_between_verified_subjects(
+    opportunity_client: TestClient,
+) -> None:
+    search = opportunity_client.post(
+        "/api/v1/opportunities/search", json={"query": "robotics"}
+    ).json()
+    opportunity_id = search["results"][0]["id"]
+    assert (
+        opportunity_client.post(
+            f"/api/v1/opportunities/{opportunity_id}/save"
+        ).status_code
+        == 201
+    )
+    application = opportunity_client.post(
+        "/api/v1/applications", json={"opportunityId": opportunity_id}
+    ).json()
+
+    opportunity_client.headers.update(
+        {"Authorization": "Bearer opportunity-user-b-token"}
+    )
+    assert opportunity_client.get("/api/v1/opportunities/saved").json()["items"] == []
+    foreign_update = opportunity_client.put(
+        f"/api/v1/applications/{application['id']}",
+        json={
+            "status": "applied",
+            "notes": "Attempted cross-account update.",
+            "followUpDate": None,
+            "expectedVersion": 1,
+        },
+    )
+    assert foreign_update.status_code == 404
+    assert foreign_update.json()["error"]["code"] == "application_not_found"
+    assert (
+        opportunity_client.delete(
+            f"/api/v1/opportunities/{opportunity_id}/save"
+        ).status_code
+        == 204
+    )
+
+    opportunity_client.headers.update(
+        {"Authorization": "Bearer opportunity-user-a-token"}
+    )
+    assert (
+        len(opportunity_client.get("/api/v1/opportunities/saved").json()["items"]) == 1
+    )
