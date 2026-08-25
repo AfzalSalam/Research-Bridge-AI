@@ -10,6 +10,7 @@ from app.api.v1.routes.mentor_discovery import router as mentor_discovery_router
 from app.api.v1.routes.opportunities import router as opportunities_router
 from app.api.v1.routes.outreach import router as outreach_router
 from app.api.v1.routes.profile import router as profile_router
+from app.api.v1.routes.workflow import router as workflow_router
 
 api_router = APIRouter()
 api_router.include_router(health_router)
@@ -22,3 +23,4 @@ api_router.include_router(applications_router)
 api_router.include_router(account_profile_router)
 api_router.include_router(account_router)
 api_router.include_router(profile_router)
+api_router.include_router(workflow_router)

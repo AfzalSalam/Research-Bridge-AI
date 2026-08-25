@@ -1,9 +1,13 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import cast
+from typing import Any, cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from psycopg import AsyncConnection
+from psycopg.rows import dict_row
+from psycopg_pool import AsyncConnectionPool
 
 from app.api.v1.router import api_router
 from app.core.config import Settings, get_settings
@@ -28,6 +32,42 @@ from app.runtime import (
 async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
     """Release pooled database and provider connections during shutdown."""
 
+    app_settings = cast(Settings, application.state.settings)
+    psycopg_url = app_settings.database_url.replace("postgresql+asyncpg", "postgresql")
+
+    # LangGraph Postgres checkpointer — optional; gracefully degraded when DB is absent or SQLite is used
+    pool: AsyncConnectionPool[AsyncConnection[dict[str, Any]]] | None = None
+    if app_settings.database_url.startswith("postgres"):
+        try:
+            _pool = cast(
+                AsyncConnectionPool[AsyncConnection[dict[str, Any]]],
+                AsyncConnectionPool(
+                    conninfo=psycopg_url,
+                    max_size=20,
+                    kwargs={
+                        "autocommit": True,
+                        "prepare_threshold": 0,
+                        "row_factory": dict_row,
+                    },
+                    open=False,
+                ),
+            )
+            await _pool.open()
+            checkpointer = AsyncPostgresSaver(_pool)
+            await checkpointer.setup()
+            application.state.workflow_checkpointer = checkpointer
+            pool = _pool
+        except Exception:
+            import logging as _logging
+
+            _logging.getLogger(__name__).warning(
+                "LangGraph checkpointer unavailable — workflow endpoints disabled",
+                exc_info=True,
+            )
+            application.state.workflow_checkpointer = None
+    else:
+        application.state.workflow_checkpointer = None
+
     try:
         yield
     finally:
@@ -45,6 +85,8 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
         if auth_runtime.http_client is not None:
             await auth_runtime.http_client.aclose()
         await database.engine.dispose()
+        if pool is not None:
+            await pool.close()
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:

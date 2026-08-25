@@ -10,10 +10,7 @@ _SECURITY_HEADERS: dict[str, str] = {
     "X-XSS-Protection": "0",  # Modern browsers ignore this; CSP is the real guard
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-    "Content-Security-Policy": (
-        "default-src 'none'; "
-        "frame-ancestors 'none';"
-    ),
+    "Content-Security-Policy": ("default-src 'none'; frame-ancestors 'none';"),
 }
 
 

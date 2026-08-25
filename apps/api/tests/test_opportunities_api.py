@@ -125,9 +125,7 @@ def test_save_track_update_and_reload_preserve_explicit_versioned_history(
     assert saved_again.status_code == 201
     assert saved.json()["opportunity"]["isSaved"] is True
     assert saved.json()["savedAt"].endswith("Z")
-    saved_items = opportunity_client.get("/api/v1/opportunities/saved").json()[
-        "items"
-    ]
+    saved_items = opportunity_client.get("/api/v1/opportunities/saved").json()["items"]
     assert len(saved_items) == 1
 
     created = opportunity_client.post(

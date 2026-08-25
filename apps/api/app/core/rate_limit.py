@@ -61,18 +61,15 @@ class InProcessRateLimiter:
     async def check(self, request: Request) -> None:
         """Raise 429 if the client IP has exceeded the configured rate limit."""
 
-        ip = (
-            request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
-            or (request.client.host if request.client else "unknown")
+        ip = request.headers.get("X-Forwarded-For", "").split(",")[0].strip() or (
+            request.client.host if request.client else "unknown"
         )
         counter = await self._get_counter(ip)
         count = await counter.record_and_check(self._limit)
         if count > self._limit:
             raise AppError(
                 code="rate_limit_exceeded",
-                message=(
-                    "Too many requests. Please wait before trying again."
-                ),
+                message=("Too many requests. Please wait before trying again."),
                 status_code=429,
             )
 
