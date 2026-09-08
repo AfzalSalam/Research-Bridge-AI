@@ -174,14 +174,22 @@ try {
     OPENALEX_BASE_URL: openAlexStub.baseUrl,
     GREENHOUSE_BASE_URL: openAlexStub.baseUrl,
     GREENHOUSE_ENABLED_BOARDS: "thealleninstitute",
+    SUPABASE_TEST_BEARER_TOKEN: "e2e-token",
+    SUPABASE_TEST_SUBJECT: "e2e-user"
   };
   await runCommand(pythonExecutable, ["-m", "alembic", "upgrade", "head"], {
     cwd: apiRoot,
     env: apiEnvironment,
   });
+  
+  const webEnvironmentWithE2E = {
+    ...webEnvironment,
+    NEXT_PUBLIC_E2E_TEST: "true"
+  };
+  
   await runCommand(process.execPath, [nextCli, "build"], {
     cwd: webRoot,
-    env: webEnvironment,
+    env: webEnvironmentWithE2E,
   });
 
   apiServer = spawn(
@@ -205,7 +213,7 @@ try {
   webServer = spawn(
     process.execPath,
     [nextCli, "start", "--hostname", "127.0.0.1", "--port", "3100"],
-    { cwd: webRoot, env: webEnvironment, stdio: ["ignore", "pipe", "pipe"] },
+    { cwd: webRoot, env: webEnvironmentWithE2E, stdio: ["ignore", "pipe", "pipe"] },
   );
   forwardOutput(webServer.stdout, process.stdout);
   forwardOutput(webServer.stderr, process.stderr);

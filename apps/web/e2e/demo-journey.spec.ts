@@ -1,9 +1,15 @@
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 test("student can move from fictional profile to evidence-grounded outreach", async ({
   page,
 }) => {
   await page.goto("/profile");
+  
+  // Accessibility check on /profile
+  const profileAxe = await new AxeBuilder({ page }).analyze();
+  expect(profileAxe.violations).toEqual([]);
+  
   await page.getByLabel("Name").fill("Riya Demo");
   await page.getByRole("button", { name: "Save demo profile" }).click();
   await expect(page.getByText("Fictional profile saved to the demo database.")).toBeVisible();
@@ -12,6 +18,10 @@ test("student can move from fictional profile to evidence-grounded outreach", as
   await expect(page.getByLabel("Name")).toHaveValue("Riya Demo");
 
   await page.goto("/discover");
+  
+  // Accessibility check on /discover
+  const discoverAxe = await new AxeBuilder({ page }).analyze();
+  expect(discoverAxe.violations).toEqual([]);
   await page.getByRole("tab", { name: "Recruiter demo" }).click();
   await page.getByRole("button", { name: "Run demo search" }).click();
   await expect(
@@ -151,6 +161,24 @@ test("live papers lead to grounded, versioned, human-reviewed outreach", async (
   await expect(page.getByText(/historical paper evidence/)).toBeVisible();
   await expect(page.getByText(/placement-relevance-v1/)).toBeVisible();
   await expect(page.getByText("Academic title", { exact: true })).toBeVisible();
+  // Seed a profile for the authenticated E2E user so the outreach
+  // endpoint does not return 409 "profile_required".
+  await page.request.put("http://127.0.0.1:8100/api/v1/profile", {
+    headers: { Authorization: "Bearer e2e-token", "Content-Type": "application/json" },
+    data: {
+      name: "E2E Student",
+      program: "Computer Science",
+      institution: "E2E University",
+      graduationYear: "2026",
+      researchInterests: ["machine learning", "clinical AI"],
+      skills: ["Python", "PyTorch"],
+      projectTitle: "Interpretable clinical decision support",
+      projectSummary:
+        "Building interpretable machine learning models for clinical decision support using attention-based architectures and feature attribution methods.",
+      weeklyAvailability: "10-15 hours",
+    },
+  });
+
   await page.getByLabel("2. Choose generation mode").selectOption("deterministic");
   await page.getByRole("button", { name: "Build grounded draft" }).click();
   await expect(page.getByRole("heading", { name: "Outreach draft" })).toBeVisible();

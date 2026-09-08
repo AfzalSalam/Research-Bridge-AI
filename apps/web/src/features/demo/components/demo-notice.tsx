@@ -24,6 +24,7 @@ export function DemoNotice({ className }: { className?: string }) {
 
   return (
     <aside
+      aria-label="Demo notice"
       className={cn(
         "flex flex-col gap-4 border border-brand-indigo/20 bg-brand-indigo-soft/60 p-5 sm:flex-row sm:items-center sm:justify-between",
         className,

@@ -9,7 +9,6 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph.state import CompiledStateGraph
 
 from app.core.config import Settings

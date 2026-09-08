@@ -264,7 +264,7 @@ function DemoDiscoveryWorkspace() {
         </div>
       </section>
 
-      <aside className="border border-border bg-surface-subtle p-6 lg:sticky lg:top-24">
+      <aside aria-label="What this phase proves" className="border border-border bg-surface-subtle p-6 lg:sticky lg:top-24">
         <div className="grid size-10 place-items-center rounded-full bg-brand-indigo-soft text-brand-indigo">
           <SlidersHorizontal aria-hidden="true" className="size-5" />
         </div>

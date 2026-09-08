@@ -175,4 +175,87 @@ To exercise the workflow manually:
 - No frontend loading skeletons yet on the candidate list
 
 ### Next step
-Phase 12 — Quality & Observability (latency percentiles, Recall@5/10, MRR, nDCG@10, duplicate rate, evidence coverage, structured logging to a log sink)
+Phase 13 — Production hardening (Redis caching, rate limiting, deployment config)
+
+---
+
+## Phase 12 — Quality & Observability
+
+### What was built
+Three pillars of quality infrastructure that close the loop between "it works" and "we can measure how well it works":
+
+1. **Structured observability** — `JsonFormatter` now auto-injects the per-request `request_id` from a `ContextVar` into every structured log line, so any log entry can be correlated to a specific API request.
+2. **Retrieval quality evaluation script** — `evaluate_retrieval.py` runs benchmark queries against the live OpenAlex pipeline (via `httpx.ASGITransport`) and reports Recall@5, Recall@10, MRR, duplicate rate, and evidence coverage.
+3. **End-to-end accessibility audits** — `@axe-core/playwright` is integrated into the Playwright E2E suite to catch WCAG violations automatically on every test run.
+
+### Why it exists
+The roadmap requires measured retrieval quality (not just "it returns results"). The AGENTS.md rules mandate Recall@5, Recall@10, MRR, nDCG@10, duplicate rate, evidence coverage, unsupported-claim rate, and latency percentiles. This phase builds the measurement infrastructure so those metrics can be tracked over time.
+
+Accessibility audits exist because the project targets an academic audience that includes screen reader users, keyboard-only navigators, and users with reduced motion preferences.
+
+### Concepts introduced
+- **ContextVar-based request correlation** — Python's `contextvars.ContextVar` propagates a UUID across all log calls within a single async request without thread-local hacks.
+- **ASGI transport testing** — `httpx.ASGITransport` lets you run HTTP requests against a FastAPI app in-process without starting a server, enabling fast integration-level evaluation scripts.
+- **axe-core accessibility auditing** — `@axe-core/playwright` runs the Deque axe engine inside Playwright's browser, returning structured violation reports that can be asserted in tests.
+- **E2E auth bypass pattern** — A `NEXT_PUBLIC_E2E_TEST` environment variable short-circuits Supabase session checks in both the React `useAuth` hook and the API client interceptor, while the backend uses `SUPABASE_TEST_BEARER_TOKEN` for a fixed token verifier.
+
+### Data flow
+```
+evaluate_retrieval.py
+  → sets DATABASE_URL to sqlite+aiosqlite:///:memory:
+  → calls create_app() to build a real FastAPI app
+  → creates tables via Base.metadata.create_all()
+  → sends POST /api/v1/discovery/mentors via httpx ASGITransport
+  → collects candidates, computes Recall@K, MRR, duplicate rate
+  → prints summary report
+
+E2E accessibility flow:
+  Playwright test
+  → navigates to a page
+  → AxeBuilder({ page }).analyze()
+  → asserts violations.length === 0
+```
+
+### Important files
+| File | Purpose |
+|------|---------|
+| `apps/api/app/core/logging.py` | `JsonFormatter` with `request_id` injection |
+| `apps/api/scripts/evaluate_retrieval.py` | Retrieval quality evaluation script |
+| `apps/web/e2e/demo-journey.spec.ts` | E2E tests with axe-core accessibility checks |
+| `apps/web/src/features/auth/use-auth.ts` | Auth hook with E2E bypass via initial state |
+| `apps/web/src/lib/api/setup.ts` | API interceptor with E2E token injection |
+| `apps/web/src/features/demo/components/demo-notice.tsx` | Added `aria-label` to aside |
+| `apps/web/src/features/discovery/discovery-experience.tsx` | Added `aria-label` to aside |
+
+### How to run / test
+```bash
+# Backend quality gates
+cd apps/api
+uv run ruff check .
+uv run pytest --basetemp=.test-tmp -p no:cacheprovider
+
+# Retrieval evaluation (requires network for OpenAlex)
+cd apps/api
+$env:PYTHONPATH="."
+uv run python scripts/evaluate_retrieval.py
+
+# Frontend quality gates
+cd apps/web
+npm.cmd run typecheck
+npm.cmd run lint
+npm.cmd run test:e2e   # runs 9 E2E tests including axe-core
+```
+
+### Common errors
+- **`PermissionError` on pytest temp dir** — on Windows, use `--basetemp=.test-tmp` to avoid the locked system temp directory
+- **409 "profile_required" on outreach draft** — the live `/api/v1/outreach/drafts` endpoint requires a saved profile for the authenticated user; E2E tests seed one via `PUT /api/v1/profile` before creating drafts
+- **axe-core violation on `<aside>`** — every `<aside>` element needs a unique `aria-label` or `aria-labelledby` attribute; without it, screen readers cannot distinguish between multiple complementary landmarks
+
+### Limitations
+- The evaluation script uses in-memory SQLite so it cannot test the authenticated outreach draft endpoint (which needs a profile + owner record); it measures retrieval quality only
+- nDCG@10 is not yet computed (requires graded relevance judgments, not just binary hit/miss)
+- Latency percentiles (p50, p95, p99) are not yet tracked — the script reports only average latency
+- axe-core checks run only on `/profile` and `/discover` pages; other routes should be added incrementally
+
+### Next step
+Phase 13 — Production hardening (Redis caching, rate limiting, deployment configuration)

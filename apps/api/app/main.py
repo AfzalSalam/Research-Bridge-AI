@@ -35,7 +35,8 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
     app_settings = cast(Settings, application.state.settings)
     psycopg_url = app_settings.database_url.replace("postgresql+asyncpg", "postgresql")
 
-    # LangGraph Postgres checkpointer — optional; gracefully degraded when DB is absent or SQLite is used
+    # LangGraph Postgres checkpointer — optional; degrades
+    # gracefully when DB is absent or SQLite is used.
     pool: AsyncConnectionPool[AsyncConnection[dict[str, Any]]] | None = None
     if app_settings.database_url.startswith("postgres"):
         try:
