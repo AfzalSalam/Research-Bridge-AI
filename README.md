@@ -1,362 +1,119 @@
 # Research Bridge AI
 
-Research Bridge AI is an evidence-first academic discovery and research-
-opportunity platform. The repository currently contains a reproducible
-full-stack foundation and the Phase 9 verified-opportunity implementation: a
-responsive Next.js journey, a modular FastAPI backend, generated TypeScript API
-types, typed and bounded academic retrieval, SQLAlchemy repositories, Alembic
-migrations, and local PostgreSQL with pgvector available for later phases.
+![Hero image showing the application interface](/docs/images/hero.png)
 
-The discovery workspace retrieves real publication evidence from OpenAlex by
-topic, DOI, or OpenAlex Work ID. It can now consolidate paper authors into
-researcher candidates and order them with a versioned deterministic evidence
-policy. After choosing a researcher and one or two supporting papers, the user
-can create, edit, version, review, and copy a customized outreach draft. Every
-generated claim retains evidence references; an optional server-only OpenAI
-Responses provider has a deterministic fallback, and no email transport exists.
-Students can also search a bounded allowlist of employer-published Greenhouse
-boards, inspect provenance and explicit unknowns, save opportunities, and keep a
-versioned application history. The adjacent recruiter demo remains deterministic
-and fictional. Authentication and advanced ranking remain later phases.
+Research Bridge AI is a full-stack academic discovery and research-opportunity platform. It helps students navigate the complex academic landscape by discovering relevant papers, identifying suitable professors with deterministic evidence, and generating editable, evidence-grounded outreach drafts.
+
+This project enforces strict **evidence before generation**, ensuring that LLMs are only used for text composition based on deterministic facts, never for inventing scores or retrieving non-existent papers.
+
+---
 
 ## Architecture
 
-```text
-Browser
-  -> Next.js App Router (apps/web, port 3000)
-      -> responsive root shell + project-owned design system
-      -> TanStack Query server-state boundary
-          -> same-origin /backend rewrite
-              -> FastAPI /api/v1
-                  -> /discovery/papers
-                      -> discovery service -> bounded cache
-                      -> typed OpenAlex provider -> async HTTPX2 client
-                      -> academic repository -> normalized PostgreSQL catalog
-                  -> /discovery/mentors
-                      -> profile + paper discovery services
-                      -> deterministic candidate derivation
-                      -> evidence bands + feature contributions
-                  -> /outreach/drafts
-                      -> server-revalidated mentor + paper selection
-                      -> optional structured OpenAI composition
-                      -> deterministic grounding audit + fallback
-                      -> current draft + immutable revisions
-                  -> /opportunities
-                      -> fixed-origin Greenhouse client + board allowlist
-                      -> deterministic admission and labelled-field extraction
-                      -> normalized opportunity + provenance persistence
-                  -> /applications
-                      -> saved-opportunity precondition
-                      -> explicit version-checked state transitions
-                      -> current application + immutable event history
-                  -> route -> service -> repository -> SQLAlchemy/PostgreSQL
-                      -> durable fictional student profile
-                  -> DemoService protocol -> MockDemoService
-                      -> typed fictional catalog + deterministic draft
-      -> validated reducer state (tab-scoped sessionStorage)
-          -> selections, saved drafts, and tracker transitions
-      -> typed server-side health client
-          -> FastAPI (apps/api, port 8000)
-              -> /api/v1/health
+The project is structured as a modular monolith built with a **Next.js** frontend and a **FastAPI** backend, backed by **PostgreSQL** (with pgvector) and **Redis**.
 
-Docker Compose
-  -> PostgreSQL 17 + pgvector (port 5432)
-      -> Alembic-owned 19-table Phase 9 schema
+```mermaid
+graph TD
+    User([User Browser]) --> NextJS[Next.js Frontend]
+    NextJS --> FastAPI[FastAPI Backend]
+
+    subgraph Data Layer
+        FastAPI --> Postgres[(PostgreSQL)]
+        FastAPI --> Redis[(Redis Cache)]
+    end
+
+    subgraph External APIs
+        FastAPI --> OpenAlex[OpenAlex API]
+        FastAPI --> LLM[OpenAI API]
+        FastAPI --> Jobs[Greenhouse Job Boards]
+    end
+
+    classDef next fill:#000,stroke:#333,stroke-width:2px,color:#fff
+    classDef fast fill:#009688,stroke:#333,stroke-width:2px,color:#fff
+    classDef db fill:#336699,stroke:#333,stroke-width:2px,color:#fff
+    
+    class NextJS next
+    class FastAPI fast
+    class Postgres,Redis db
 ```
 
-FastAPI and PostgreSQL are required for the product routes. Health remains
-available independently so process and database failures stay distinguishable.
+### Tech Stack
 
-## Prerequisites
+- **Frontend**: Next.js 14 App Router, React, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, React Hook Form, Zod.
+- **Backend**: Python 3.12+, FastAPI, Pydantic, SQLAlchemy 2, Alembic, HTTPX, LangGraph.
+- **Infrastructure**: Docker, PostgreSQL (pgvector), Redis.
+- **Testing/Quality**: Playwright, Pytest, Ruff, Mypy, ESLint, axe-core.
 
-- Node.js 24 LTS. The repository pins the major version in `.nvmrc`.
-- npm 11.
-- Python 3.13.
-- uv.
-- Docker Desktop when running PostgreSQL.
+---
 
-This repository was prepared on Windows PowerShell. Use `npm.cmd` if PowerShell
-blocks the `npm.ps1` shim.
+## Core Features
 
-## First-time setup
+- **Profile & Preference Tracking**: Persist research interests, past projects, and location preferences to surface the most relevant matches.
+- **Deterministic Academic Discovery**: Query the OpenAlex API to find exact paper authors, normalized institutions, and verifiable topics.
+- **Evidence-Grounded Recommendations**: Professor candidates are ranked based on a verifiable multi-factor heuristic (query evidence, profile alignment, supporting depth, recent activity), not LLM hallucination.
+- **Safe Outreach Drafting**: Select specific papers and generate an outreach draft. The system maps generated claims to explicit source evidence, warning the user of any unsupported claims.
+- **Verified Opportunities**: Aggregate academic opportunities directly from known greenhouse boards using an explicit allowlist to prevent SSRF and hallucination.
+- **LangGraph Workflow Orchestration**: Complex multi-step reasoning is handled asynchronously with streaming updates, preserving the deterministic nature of intermediate steps.
 
-From the repository root:
+---
 
-```powershell
-Copy-Item .env.example .env
-Copy-Item apps/web/.env.example apps/web/.env.local
-Copy-Item apps/api/.env.example apps/api/.env
+## Local Development & Docker Deployment
 
-npm.cmd install
+Research Bridge AI supports a full local-production setup using Docker Compose.
 
-Set-Location apps/api
-uv sync --all-groups
-Set-Location ../..
-```
+### Requirements
 
-The copied `.env` files are ignored by Git. Never place real credentials or API
-keys in an example file.
+- Docker Desktop (or equivalent engine)
+- Node.js 20+ (for local frontend development)
+- `uv` (for local backend development)
 
-## Run locally
+### Running with Docker Compose (Production Preview)
 
-### 1. Database
+1. Clone the repository.
+2. Copy the example environment files:
+   ```bash
+   cp apps/web/.env.example apps/web/.env.local
+   cp apps/api/.env.example apps/api/.env
+   ```
+3. Boot the stack:
+   ```bash
+   docker compose up --build -d
+   ```
+4. Access the frontend at `http://localhost:3000` and the API documentation at `http://localhost:8000/docs`.
 
-Start Docker Desktop, then from the repository root:
+### Running Locally (Development)
 
-```powershell
-docker compose --env-file .env up -d db
-docker compose ps
-
-Set-Location apps/api
+**Backend:**
+```bash
+cd apps/api
+uv sync
 uv run alembic upgrade head
-Set-Location ../..
-```
-
-Alembic creates the application schema; application startup never mutates it.
-The image includes pgvector, but vector columns and queries remain deferred.
-
-### 2. Backend
-
-Open another PowerShell window:
-
-```powershell
-Set-Location apps/api
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
-Useful URLs:
-
-- Health: <http://localhost:8000/api/v1/health>
-- OpenAPI UI: <http://localhost:8000/docs>
-- OpenAPI JSON: <http://localhost:8000/openapi.json>
-- Live paper discovery: `POST http://localhost:8000/api/v1/discovery/papers`
-- Live researcher discovery: `POST http://localhost:8000/api/v1/discovery/mentors`
-- Live outreach creation: `POST http://localhost:8000/api/v1/outreach/drafts`
-- Live opportunity search: `POST http://localhost:8000/api/v1/opportunities/search`
-- Saved opportunities: `GET http://localhost:8000/api/v1/opportunities/saved`
-- Durable application tracker: `GET http://localhost:8000/api/v1/applications`
-- Demo bootstrap: <http://localhost:8000/api/v1/demo/bootstrap>
-- Durable demo profile: <http://localhost:8000/api/v1/demo/profile>
-
-### 3. Frontend
-
-Open another PowerShell window at the repository root:
-
-```powershell
-npm.cmd run dev
+**Frontend:**
+```bash
+cd apps/web
+npm ci
+npm run dev
 ```
 
-Open <http://localhost:3000> and choose **Launch the product demo**. Keep FastAPI
-running because the product catalog and mock operations now use its typed
-contracts, and keep PostgreSQL running because bootstrap reads the durable demo
-profile.
+---
 
-Useful frontend routes:
+## Documentation & Runbooks
 
-- `/design-system`: internal tokens, primitives, form patterns, and data-state
-  gallery;
-- `/profile`: validated fictional student context;
-- `/discover`: real OpenAlex paper search plus transparent complete, partial,
-  empty, error, and loading states; the recruiter demo remains a second tab;
-- `/mentors`: live paper-backed researcher evidence, transparent policy
-  contributions, and the review-gated outreach workspace, plus a separate
-  fictional demo;
-- `/opportunities`: live employer-published research listings with provenance,
-  freshness, explicit unknowns, save actions, and a separate fictional demo;
-- `/applications`: durable, version-checked status, notes, follow-up, and event
-  history, plus a separate fictional demo.
+- [Architecture & Rules](AGENTS.md)
+- [Product Specification](PROJECT_SPEC.md)
+- [Deployment & Incident Runbooks](docs/deployment.md)
+- [Recruiter Interview Script](docs/recruiter-interview-script.md)
+- [Learning & Development Log](docs/LEARNING_LOG.md)
 
-Every record in the **Recruiter demo** tab and its later workflow pages is
-fictional and uses inert `example.org` evidence URLs. The live tabs display
-normalized real-provider papers and paper-backed researcher candidates while
-clearly separating them from the fictional mentor journey. Profile saves, live
-outreach draft revisions, live opportunity saves, and live application history
-are persisted in the database. Fictional demo drafts, saves, and tracker edits
-remain in the current browser tab. Use **Reset demo** to clear local demo state
-while retaining database-saved records.
+## Limitations
 
-## Quality checks
+- **Search Capabilities**: OpenSearch integration is deferred. PostgreSQL `tsvector` is used for basic full-text needs.
+- **Email Delivery**: The platform explicitly does **not** send emails automatically. It only generates drafts for human review.
+- **Data Completeness**: Job titles, contact addresses, and current funding status remain unknown if not explicitly verified by a supported API. The system prefers showing "Unclear" over guessing.
 
-Frontend, from the repository root:
+## License
 
-```powershell
-npm.cmd run lint
-npm.cmd run typecheck
-npm.cmd --workspace @research-bridge/web run api:check
-npm.cmd run test
-npm.cmd run build
-npm.cmd run test:e2e
-npm.cmd audit --omit=dev --audit-level=high
-```
-
-`test:e2e` creates a temporary migrated SQLite database, starts an owned
-loopback OpenAlex and Greenhouse fixture server, builds Next.js for an isolated
-API port, owns all test processes, verifies live evidence and cache behavior
-plus profile, opportunity, and application persistence, the recruiter journey,
-failure, mobile, and responsive states, then removes only its temporary data.
-Automated tests never spend OpenAlex API allowance or depend on a changing job
-listing.
-
-Backend:
-
-```powershell
-Set-Location apps/api
-uv run ruff check .
-uv run ruff format --check .
-uv run mypy app scripts
-uv run pytest
-uv run python -m scripts.export_openapi --check
-uv run python -m scripts.evaluate_mentor_relevance --check
-uv run python -m scripts.evaluate_outreach_grounding --check
-```
-
-Compose configuration does not require the daemon:
-
-```powershell
-docker compose --env-file .env.example config
-```
-
-## Environment variables
-
-| Variable | Application | Purpose |
-| --- | --- | --- |
-| `API_BASE_URL` | Next.js server | FastAPI origin used by health requests and the same-origin `/backend` rewrite. |
-| `APP_NAME` | FastAPI | Human-readable service name. |
-| `APP_VERSION` | FastAPI | Version returned by the health contract. |
-| `APP_ENVIRONMENT` | FastAPI | Environment label such as `development`. |
-| `BACKEND_CORS_ORIGINS` | FastAPI | Comma-separated browser origins allowed during local development. |
-| `LOG_LEVEL` | FastAPI | Standard structured-log level such as `INFO`. |
-| `DATABASE_URL` | FastAPI/Alembic | Async SQLAlchemy URL; local PostgreSQL uses the `postgresql+asyncpg` dialect. |
-| `DATABASE_ECHO` | FastAPI | Opt-in SQL logging for local debugging; keep disabled around private data. |
-| `DEMO_OWNER_ID` | FastAPI | Server-only UUID ownership anchor for the fictional profile. |
-| `OPENALEX_API_KEY` | FastAPI | Optional server-only OpenAlex key; never expose it through `NEXT_PUBLIC_*`. |
-| `OPENALEX_BASE_URL` | FastAPI | Official OpenAlex HTTPS origin; loopback HTTP is accepted only in test/E2E. |
-| `OPENALEX_*_TIMEOUT_SECONDS` | FastAPI | Explicit connect, read, write, and pool-wait bounds. |
-| `OPENALEX_MAX_*_CONNECTIONS` | FastAPI | Application-scoped upstream connection-pool bounds. |
-| `OPENALEX_MAX_ATTEMPTS` / `OPENALEX_BACKOFF_*` | FastAPI | Bounded idempotent retry budget and capped backoff. |
-| `GREENHOUSE_BASE_URL` | FastAPI | Fixed official Greenhouse Job Board API origin; loopback HTTP is accepted only in test/E2E. |
-| `GREENHOUSE_ENABLED_BOARDS` | FastAPI | Comma-separated subset of the repository-owned research-organization allowlist. |
-| `GREENHOUSE_*_TIMEOUT_SECONDS` / `GREENHOUSE_MAX_ATTEMPTS` | FastAPI | Explicit provider timeouts and bounded idempotent retry budget. |
-| `OPPORTUNITY_STALE_AFTER_HOURS` | FastAPI | Age after which the last successful verification is visibly stale; it does not imply expiry. |
-| `DISCOVERY_CACHE_*` | FastAPI | Process-local TTL and entry bounds for normalized provider responses. |
-| `MENTOR_*_WEIGHT` | FastAPI | Five public Phase 7 evidence-policy weights; values must total exactly 1.0. |
-| `OPENAI_API_KEY` | FastAPI | Optional server-only key for structured outreach composition; omission activates the deterministic fallback. |
-| `OPENAI_BASE_URL` / `OPENAI_OUTREACH_MODEL` | FastAPI | Official Responses API origin and configurable outreach model. |
-| `OPENAI_*_TIMEOUT_SECONDS` / `OPENAI_MAX_ATTEMPTS` | FastAPI | Explicit provider timeouts and bounded retry budget. |
-| `POSTGRES_*` | Docker Compose | Local database name, user, password, and host port. |
-
-`API_BASE_URL` is intentionally server-only. Do not move secrets into a
-`NEXT_PUBLIC_*` variable because those values are included in browser assets.
-
-## Common issues
-
-### `npm.ps1` cannot be loaded
-
-Run `npm.cmd` instead of `npm` from PowerShell.
-
-### The page says the API is unavailable
-
-Start FastAPI on port 8000 and confirm `apps/web/.env.local` contains:
-
-```text
-API_BASE_URL=http://localhost:8000
-```
-
-Restart the Next.js development server after changing environment variables.
-Product routes show an explicit retryable error if FastAPI is absent.
-
-### Profile saves fail while health still works
-
-Start PostgreSQL and apply migrations with `uv run alembic upgrade head`. The
-health route checks the API process; product routes intentionally fail safely if
-their database is unavailable or behind the current migration head.
-
-### OpenAlex search is unavailable or rate limited
-
-Confirm FastAPI can reach `https://api.openalex.org`, then inspect the safe
-error code and request ID shown by the UI. Anonymous requests have a very small
-daily allowance; create a free OpenAlex API key for development and place it in
-`apps/api/.env` as `OPENALEX_API_KEY`. Restart FastAPI after changing it. The
-key belongs only on the server and must never use a `NEXT_PUBLIC_*` name.
-
-Repeated identical searches may say **Provider cache hit**. This cache is
-bounded and process-local, so it clears when FastAPI restarts and is not a
-distributed production cache.
-
-### A researcher has no professor title or current institution
-
-That is intentional. OpenAlex paper authorship verifies a publication identity
-and historical affiliations for that paper; it does not prove a current job,
-title, contact address, or student opening. Phase 7 keeps those facts unknown
-until a future official source verifies them.
-
-### Outreach says it used a deterministic fallback
-
-This is expected when `OPENAI_API_KEY` is absent, deterministic mode was chosen,
-or a model request failed/refused/failed validation. The fallback still uses the
-same verified evidence package and exposes its reason. To enable model-assisted
-composition, place a valid key only in `apps/api/.env`, restart FastAPI, and use
-**Best available**. The application still only copies reviewed text; it never
-sends email.
-
-### Port 5432 reaches a different PostgreSQL service
-
-Set `POSTGRES_PORT=55432` before `docker compose up -d db` and update the port in
-`DATABASE_URL`. This machine had another PostgreSQL listener on 5432, so the
-live Phase 5 smoke test deliberately used 55432.
-
-### Opportunity search is unavailable or a board is partial
-
-Confirm FastAPI can reach `https://boards-api.greenhouse.io`. One failed board
-is reported as a partial source failure while successful boards remain usable;
-if every enabled board fails, the page shows a retryable error. The allowed
-boards are owned by repository configuration, not browser input. A missing
-funding, mode, deadline, duration, eligibility, or country stays **Unclear**.
-`Stale` means the listing has not been verified recently; `Expired` requires an
-explicit past deadline, so those labels are intentionally different.
-
-### Some fictional demo changes disappeared
-
-The fictional profile, normalized OpenAlex catalog, live outreach drafts, live
-opportunity saves, and live application history are durable. Only changes made
-inside a **Recruiter demo** tab use `sessionStorage`, so those are scoped to the
-current browser tab.
-
-### uv selects Python 3.14
-
-Run uv inside `apps/api`. Its `.python-version` and `requires-python` constraint
-select Python 3.13. You can verify it with:
-
-```powershell
-uv run python --version
-```
-
-### Docker cannot connect to the engine
-
-Start Docker Desktop and wait until its engine reports ready. `docker compose
-config` can still validate the YAML without starting a container.
-
-### A complete npm audit reports a generator advisory
-
-The deployable production graph audits clean. The pinned OpenAPI generator has
-one moderate development-only template advisory; it processes only the
-repository-owned `apps/api/openapi.json`. Newer generator versions remove that
-advisory but currently pull a high-severity YAML parser advisory. The pin and
-upgrade condition are recorded in the Phase 4 plan instead of hiding the
-tradeoff with a forced install.
-
-## Documentation
-
-- Engineering rules: `AGENTS.md`
-- Product specification: `PROJECT_SPEC.md`
-- Roadmap: `ROADMAP.md`
-- Phase 1 plan: `docs/plans/phase-01-foundation.md`
-- Phase 2 plan: `docs/plans/phase-02-design-system-and-responsive-shell.md`
-- Phase 3 plan: `docs/plans/phase-03-typed-mock-product-journey.md`
-- Phase 4 plan: `docs/plans/phase-04-backend-contracts.md`
-- Phase 5 plan: `docs/plans/phase-05-database-and-profile.md`
-- Phase 6 plan: `docs/plans/phase-06-openalex-discovery-and-normalization.md`
-- Phase 7 plan: `docs/plans/phase-07-basic-relevance-and-evidence.md`
-- Phase 8 plan: `docs/plans/phase-08-evidence-grounded-outreach.md`
-- Phase 9 plan: `docs/plans/phase-09-verified-opportunities-and-tracker.md`
-- Learning log: `docs/LEARNING_LOG.md`
+Copyright 2026. All rights reserved.

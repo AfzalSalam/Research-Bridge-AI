@@ -26,6 +26,7 @@ class Settings(BaseSettings):
         "localhost:5432/research_bridge"
     )
     database_echo: bool = False
+    redis_url: str = "redis://localhost:6379/0"
     demo_owner_id: UUID = UUID("00000000-0000-4000-8000-000000000001")
     supabase_url: str | None = None
     supabase_jwt_audience: str = "authenticated"

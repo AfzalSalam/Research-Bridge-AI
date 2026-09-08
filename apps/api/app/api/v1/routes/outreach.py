@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 
 from app.dependencies.outreach import get_outreach_service
+from app.dependencies.rate_limiting import rate_limit
 from app.schemas.outreach import (
     OutreachDraftCreateRequest,
     OutreachDraftResponse,
@@ -19,6 +20,7 @@ router = APIRouter(prefix="/outreach", tags=["outreach"])
     response_model=OutreachDraftResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Create a draft from one selected researcher and selected papers",
+    dependencies=[rate_limit(times=5, seconds=60)],
 )
 async def create_outreach_draft(
     request: OutreachDraftCreateRequest,

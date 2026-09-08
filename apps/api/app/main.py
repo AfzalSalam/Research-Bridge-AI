@@ -2,8 +2,10 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any, cast
 
+import redis.asyncio as redis
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_limiter import FastAPILimiter
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from psycopg import AsyncConnection
 from psycopg.rows import dict_row
@@ -69,6 +71,23 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
     else:
         application.state.workflow_checkpointer = None
 
+    # Redis caching and rate limiting
+    redis_client = None
+    try:
+        redis_client = redis.from_url(
+            app_settings.redis_url, encoding="utf-8", decode_responses=True
+        )
+        await FastAPILimiter.init(redis_client)
+        application.state.redis = redis_client
+    except Exception:
+        import logging as _logging
+
+        _logging.getLogger(__name__).warning(
+            "Redis unavailable — caching and rate limiting degraded",
+            exc_info=True,
+        )
+        application.state.redis = None
+
     try:
         yield
     finally:
@@ -88,6 +107,8 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
         await database.engine.dispose()
         if pool is not None:
             await pool.close()
+        if redis_client is not None:
+            await redis_client.aclose()
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:

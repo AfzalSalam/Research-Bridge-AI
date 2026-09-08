@@ -258,4 +258,70 @@ npm.cmd run test:e2e   # runs 9 E2E tests including axe-core
 - axe-core checks run only on `/profile` and `/discover` pages; other routes should be added incrementally
 
 ### Next step
-Phase 13 — Production hardening (Redis caching, rate limiting, deployment configuration)
+Phase 14 — Post-placement ranking and enrichment research
+
+---
+
+## Phase 13 — Deployment and Portfolio Release
+
+### What was built
+The final pre-release hardening and deployment configuration, preparing the project for a portfolio showcase:
+1. **Dockerization** — Multi-stage `Dockerfile`s for Next.js (standalone) and FastAPI (using `uv`).
+2. **Orchestration** — A complete `docker-compose.yml` that brings up PostgreSQL (pgvector), Redis, the API, and the Web frontend.
+3. **CI/CD Pipeline** — GitHub Actions (`.github/workflows/main.yml`) for automated linting, type checking, and testing (including Playwright E2E with browser provisioning).
+4. **Production Hardening** — Integrated Redis and `fastapi-limiter` for rate limiting API routes. Created a graceful failure mechanism so local development works without Redis.
+5. **Documentation** — A completely rewritten `README.md` with Mermaid architecture diagrams, a deployment runbook (`docs/deployment.md`), and a `docs/recruiter-interview-script.md`.
+
+### Why it exists
+The placement release gate in `ROADMAP.md` dictates that the project must be fully deployable with rollback and incident runbooks. A portfolio project isn't just about the code; it's about how the code is presented, maintained, and operated in a production-like environment. 
+
+### Concepts introduced
+- **Next.js Standalone Output** — Trims the Next.js production build to only include the `node_modules` strictly necessary for the application, drastically reducing the Docker image size.
+- **FastAPI Graceful Degradation** — The application attempts to initialize Redis on startup, but safely catches connection errors and disables rate-limiting rather than crashing the API.
+- **`fastapi-limiter` Dependency** — A simple library to wrap FastAPI routes with Redis-backed token buckets.
+- **Multi-stage `uv` Docker Builds** — Using Astral's `ghcr.io/astral-sh/uv` as a builder image to quickly synchronize dependencies before copying in the application source.
+
+### Data flow
+```
+User Request
+  → Next.js (port 3000)
+    → Next.js rewrite /backend/*
+      → FastAPI (port 8000)
+        → Custom RateLimiter Dependency
+          → Check Redis (port 6379) for token bucket limit
+        → Route execution
+```
+
+### Important files
+| File | Purpose |
+|------|---------|
+| `.github/workflows/main.yml` | CI/CD pipeline |
+| `apps/web/Dockerfile` | Next.js production multi-stage build |
+| `apps/api/Dockerfile` | FastAPI production multi-stage build |
+| `docker-compose.yml` | Local orchestration |
+| `apps/api/app/dependencies/rate_limiting.py` | Graceful rate limiter dependency |
+| `README.md` | Polish and architecture diagrams |
+
+### How to run / test
+```bash
+# Run the entire stack locally
+docker compose up --build -d
+
+# Verify API health
+curl http://localhost:8000/api/v1/health
+
+# Run CI locally (simulate GitHub Actions)
+cd apps/api && uv run ruff check . && uv run mypy app && uv run pytest
+cd apps/web && npm run lint && npm run typecheck && npm run test:e2e
+```
+
+### Common errors
+- **`FastAPILimiter` raises HTTPException (429)** — If you trigger too many outreach drafts, the limiter correctly kicks in. Wait the specified seconds.
+- **Docker Compose port conflicts** — If 5432 or 8000 are in use locally, edit the `docker-compose.yml` exposed ports (e.g., `55432:5432`).
+
+### Limitations
+- The CI pipeline does not currently deploy to a cloud provider automatically (e.g., Vercel, Render) because specific hosting targets haven't been selected.
+- Redis caching is only used for rate limiting so far, not for the Discovery cache (which still uses `cachetools` in memory).
+
+### Next step
+Phase 14 — Post-placement ranking and enrichment research (evaluating pgvector, embeddings, and cross-encoder reranking).
