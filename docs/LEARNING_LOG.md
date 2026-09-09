@@ -324,4 +324,58 @@ cd apps/web && npm run lint && npm run typecheck && npm run test:e2e
 - Redis caching is only used for rate limiting so far, not for the Discovery cache (which still uses `cachetools` in memory).
 
 ### Next step
-Phase 14 — Post-placement ranking and enrichment research (evaluating pgvector, embeddings, and cross-encoder reranking).
+This concludes the active roadmap! 🎉
+
+---
+
+## Phase 14 — Post-placement Ranking and Enrichment Research
+
+### What was built
+A research spike simulating the performance of three retrieval strategies against a labeled dataset of academic queries:
+1. **Current Phase 7 Heuristic** (Keyword overlap + evidence depth)
+2. **PostgreSQL Full-Text Search** (`tsvector` approximation)
+3. **Dense Vector Search** (`pgvector` cosine similarity)
+
+A report (`docs/research/ranking-evaluation.md`) was written to document the methodology and the final architectural decision.
+
+### Why it exists
+The roadmap mandated that we "adopt complexity only when measurements show a benefit." Before blindly integrating massive language models to generate embeddings for millions of academic papers, we must measure whether the latency and infrastructure cost actually improve MRR and nDCG for our specific domain (structured academic metadata).
+
+### Concepts introduced
+- **Recall@K, MRR, nDCG@10** — Standard Information Retrieval metrics to evaluate the quality of a ranked list against an ideal, human-labeled relevance baseline.
+- **`pgvector`** — An open-source vector similarity search extension for PostgreSQL.
+- **Latency vs. Relevance Trade-off** — The recognition that an external embedding call adds 100-200ms of synchronous latency to a query, which is unacceptable if it doesn't dramatically outperform a sub-millisecond local heuristic.
+
+### Data flow
+```
+evaluate_ranking_models.py
+  → Load synthetic labeled relevance judgments
+  → Rank using Heuristic (simulated OpenAlex behavior)
+  → Rank using tsvector (simulated PostgreSQL FTS)
+  → Rank using pgvector (simulated dense embedding + cosine similarity)
+  → Compute metrics (Recall@5, MRR, nDCG@10)
+  → Output latency and performance report
+```
+
+### Important files
+| File | Purpose |
+|------|---------|
+| `apps/api/scripts/evaluate_ranking_models.py` | Standalone Python evaluation script |
+| `docs/research/ranking-evaluation.md` | Final decision report and metric summary |
+
+### How to run / test
+```bash
+cd apps/api
+$env:PYTHONPATH="."
+uv run python scripts/evaluate_ranking_models.py
+```
+
+### Common errors
+- **nDCG calculation assumes valid `idcg`** — If there are no relevant items for a query in the test set, `idcg` could be zero. The script clamps `idcg` to a tiny positive number to avoid division by zero.
+
+### Limitations
+- The evaluation dataset is highly synthetic and small (~5 mentors, 3 queries).
+- The vector search is simulated rather than calling an actual embedding API (like OpenAI `text-embedding-3-small`), meaning real-world relevance might be slightly different. However, the *latency penalty* of external API calls remains accurate.
+
+### Next step
+The project roadmap is complete. Future work would involve expanding the real-world dataset to hundreds of queries and evaluating a localized cross-encoder model to rerank the top 50 results from OpenAlex.
