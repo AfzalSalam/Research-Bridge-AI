@@ -12,7 +12,14 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies required by psycopg (libpq) and cryptography
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    libffi-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY pyproject.toml uv.lock ./
 RUN uv sync --no-dev --no-install-project
 
