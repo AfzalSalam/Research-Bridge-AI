@@ -46,3 +46,6 @@ plugins = ["pydantic.mypy"]
 [tool.pytest.ini_options]
 addopts = "-ra"
 testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]

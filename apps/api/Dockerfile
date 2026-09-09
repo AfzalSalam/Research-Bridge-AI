@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.12-slim-bookworm
+FROM python:3.13-slim-bookworm
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
@@ -20,6 +20,7 @@ RUN uv sync --no-dev --no-install-project
 COPY alembic.ini .
 COPY alembic/ alembic/
 COPY app/ app/
+COPY README.md .
 
 # Install the project itself
 RUN uv pip install -e .
