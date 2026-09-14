@@ -15,7 +15,7 @@ Usage:
 import math
 import time
 from dataclasses import dataclass
-from typing import List, Dict
+
 
 @dataclass
 class LabeledRelevance:
@@ -27,9 +27,9 @@ class LabeledRelevance:
 class MentorMock:
     id: str
     name: str
-    keywords: List[str]
+    keywords: list[str]
     evidence_depth: int
-    vector: List[float]
+    vector: list[float]
 
 # 1. Labelled Relevance Set
 EVAL_QUERIES = [
@@ -40,24 +40,33 @@ EVAL_QUERIES = [
 
 MENTORS = [
     MentorMock(
-        id="m1", name="Dr. Han", 
-        keywords=["transformer", "efficiency", "edge", "devices", "neural networks", "quantization"],
-        evidence_depth=15, vector=[0.9, 0.8, 0.2]
+        id="m1", name="Dr. Han",
+        keywords=[
+            "transformer", "efficiency", "edge",
+            "devices", "neural networks", "quantization",
+        ],
+        evidence_depth=15, vector=[0.9, 0.8, 0.2],
     ),
     MentorMock(
-        id="m2", name="Dr. Smith", 
+        id="m2", name="Dr. Smith",
         keywords=["transformer", "attention", "vision"],
-        evidence_depth=5, vector=[0.5, 0.4, 0.1]
+        evidence_depth=5, vector=[0.5, 0.4, 0.1],
     ),
     MentorMock(
-        id="m3", name="Dr. Fowler", 
-        keywords=["quantum", "error correction", "surface codes", "qubits"],
-        evidence_depth=22, vector=[0.1, 0.9, 0.9]
+        id="m3", name="Dr. Fowler",
+        keywords=[
+            "quantum", "error correction",
+            "surface codes", "qubits",
+        ],
+        evidence_depth=22, vector=[0.1, 0.9, 0.9],
     ),
     MentorMock(
-        id="m4", name="Dr. Rudin", 
-        keywords=["explainable", "ai", "medical", "imaging", "interpretable", "machine learning"],
-        evidence_depth=18, vector=[0.8, 0.1, 0.8]
+        id="m4", name="Dr. Rudin",
+        keywords=[
+            "explainable", "ai", "medical",
+            "imaging", "interpretable", "machine learning",
+        ],
+        evidence_depth=18, vector=[0.8, 0.1, 0.8],
     ),
     MentorMock(
         id="m5", name="Dr. Jones", 
@@ -75,7 +84,7 @@ RELEVANCE_JUDGMENTS = [
 ]
 
 
-def compute_dcg(relevances: List[int]) -> float:
+def compute_dcg(relevances: list[int]) -> float:
     return sum(rel / math.log2(idx + 2) for idx, rel in enumerate(relevances))
 
 def evaluate_strategy(name: str, ranker_fn) -> None:
@@ -88,19 +97,34 @@ def evaluate_strategy(name: str, ranker_fn) -> None:
     
     for query in EVAL_QUERIES:
         # Get ideal DCG
-        ideal_rels = sorted([j.relevance_score for j in RELEVANCE_JUDGMENTS if j.query == query], reverse=True)
+        ideal_rels = sorted(
+            [
+                j.relevance_score
+                for j in RELEVANCE_JUDGMENTS
+                if j.query == query
+            ],
+            reverse=True,
+        )
         idcg = compute_dcg(ideal_rels[:10]) if ideal_rels else 1.0
         idcg = max(idcg, 1e-9)
-        
+
         # Rank
         ranked_mentors = ranker_fn(query, MENTORS)
-        
+
         # Evaluate
         rels = []
         rank_of_first_relevant = -1
-        
+
         for idx, mentor in enumerate(ranked_mentors[:10]):
-            rel = next((j.relevance_score for j in RELEVANCE_JUDGMENTS if j.query == query and j.mentor_id == mentor.id), 0)
+            rel = next(
+                (
+                    j.relevance_score
+                    for j in RELEVANCE_JUDGMENTS
+                    if j.query == query
+                    and j.mentor_id == mentor.id
+                ),
+                0,
+            )
             rels.append(rel)
             if rel >= 2 and rank_of_first_relevant == -1:
                 rank_of_first_relevant = idx + 1
@@ -123,7 +147,7 @@ def evaluate_strategy(name: str, ranker_fn) -> None:
 
 # --- Ranking Strategies ---
 
-def heuristic_ranker(query: str, mentors: List[MentorMock]) -> List[MentorMock]:
+def heuristic_ranker(query: str, mentors: list[MentorMock]) -> list[MentorMock]:
     """Simulates Phase 7: exact keyword match counting + evidence depth weight."""
     query_terms = set(query.lower().split())
     def score(m: MentorMock) -> float:
@@ -132,7 +156,7 @@ def heuristic_ranker(query: str, mentors: List[MentorMock]) -> List[MentorMock]:
     return sorted(mentors, key=score, reverse=True)
 
 
-def tsvector_ranker(query: str, mentors: List[MentorMock]) -> List[MentorMock]:
+def tsvector_ranker(query: str, mentors: list[MentorMock]) -> list[MentorMock]:
     """Simulates PostgreSQL full-text search with BM25-like behavior."""
     query_terms = set(query.lower().split())
     def score(m: MentorMock) -> float:
@@ -142,7 +166,7 @@ def tsvector_ranker(query: str, mentors: List[MentorMock]) -> List[MentorMock]:
     return sorted(mentors, key=score, reverse=True)
 
 
-def pgvector_ranker(query: str, mentors: List[MentorMock]) -> List[MentorMock]:
+def pgvector_ranker(query: str, mentors: list[MentorMock]) -> list[MentorMock]:
     """Simulates pgvector cosine similarity."""
     # Mocking a vector mapping for the queries
     query_vectors = {
@@ -151,25 +175,34 @@ def pgvector_ranker(query: str, mentors: List[MentorMock]) -> List[MentorMock]:
         EVAL_QUERIES[2]: [0.85, 0.2, 0.85],
     }
     qv = query_vectors.get(query, [0.0, 0.0, 0.0])
-    
+
     def cosine_sim(v1, v2):
-        dot = sum(a*b for a,b in zip(v1, v2))
-        mag1 = math.sqrt(sum(a*a for a in v1))
-        mag2 = math.sqrt(sum(b*b for b in v2))
+        dot = sum(
+            a * b for a, b in zip(v1, v2, strict=True)
+        )
+        mag1 = math.sqrt(sum(a * a for a in v1))
+        mag2 = math.sqrt(sum(b * b for b in v2))
         return dot / (mag1 * mag2) if mag1 and mag2 else 0.0
-        
+
     def score(m: MentorMock) -> float:
-        # Simulate network latency of embedding generation (e.g., OpenAI API)
+        # Simulate network latency of embedding generation
         time.sleep(0.01)
         return cosine_sim(qv, m.vector)
-        
+
     return sorted(mentors, key=score, reverse=True)
 
 
 if __name__ == "__main__":
-    print("=== Phase 14: Ranking & Enrichment Complexity Evaluation ===")
+    print("=== Phase 14: Ranking & Enrichment Evaluation ===")
     evaluate_strategy("Phase 7 Heuristic", heuristic_ranker)
     evaluate_strategy("PostgreSQL tsvector (FTS)", tsvector_ranker)
     evaluate_strategy("pgvector (Cosine Similarity)", pgvector_ranker)
-    print("\nConclusion: Vector similarity introduces embedding latency but can improve nDCG.")
-    print("For a localized dataset without cross-encoder reranking, heuristic + depth provides the best latency/complexity trade-off.")
+    print(
+        "\nConclusion: Vector similarity introduces "
+        "embedding latency but can improve nDCG."
+    )
+    print(
+        "For a localized dataset without cross-encoder "
+        "reranking, heuristic + depth provides the best "
+        "latency/complexity trade-off."
+    )
