@@ -16,6 +16,14 @@ export function useAuth() {
   useEffect(() => {
     if (isE2E) return;
 
+    const isDemo = typeof window !== "undefined" && localStorage.getItem("demo_mode") === "true";
+    if (isDemo) {
+      setUser({ id: "demo-user", email: "demo@researchbridge.ai" } as User);
+      setSession({ access_token: "demo-token" } as Session);
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
