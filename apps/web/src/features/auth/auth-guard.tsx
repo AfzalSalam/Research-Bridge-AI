@@ -9,15 +9,12 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const isDemo = typeof window !== "undefined" && localStorage.getItem("demo_mode") === "true";
-    if (!loading && !user && !isDemo) {
+    if (!loading && !user) {
       router.push("/login");
     }
   }, [user, loading, router]);
 
-  const isDemo = typeof window !== "undefined" && localStorage.getItem("demo_mode") === "true";
-
-  if (!isDemo && (loading || !user)) {
+  if (loading || !user) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <p className="text-muted-foreground animate-pulse">Loading...</p>

@@ -39,9 +39,7 @@ services:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-research_bridge}:${POSTGRES_PASSWORD:-research_bridge_dev}@postgres:5432/${POSTGRES_DB:-research_bridge}
       - REDIS_URL=redis://redis:6379/0
       - LOG_LEVEL=INFO
-      - APP_ENVIRONMENT=e2e
-      - SUPABASE_TEST_BEARER_TOKEN=demo-token
-      - SUPABASE_TEST_SUBJECT=demo-user
+      - APP_ENVIRONMENT=production
       # Supabase and OpenAlex env vars should be provided via .env file or environment
     depends_on:
       postgres:
