@@ -141,3 +141,19 @@ After the placement release, evaluate PostgreSQL full-text retrieval, pgvector,
 embedding strategies, weight tuning, labelled relevance sets, cross-encoder
 reranking, Recall@5/10, MRR, nDCG@10, and larger-scale multi-source enrichment.
 Adopt complexity only when measurements show a benefit.
+
+## Phase 15 - SaaS Foundations & Real Authentication
+
+Transition the architecture from a recruiter demo to a multi-tenant application.
+Strip out all mock authentication bypasses and enforce strict JWT verification.
+Integrate a live authentication provider (e.g., Supabase), create robust user
+onboarding flows to capture initial profile data, and definitively audit all
+SQLAlchemy repositories to ensure 100% data isolation based on owner_id.
+
+## Phase 16 - SaaS UX Refresh & Landing Page
+
+Convert the portfolio-oriented frontend into a professional SaaS product.
+Design and implement a conversion-optimized landing page, simplified student
+dashboards, intuitive onboarding screens, and highly polished UI components. 
+UI changes should be extremely professional, easy for beginners to understand, 
+and follow the strict accessibility and motion rules established in earlier phases.

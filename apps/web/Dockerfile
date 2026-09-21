@@ -17,6 +17,7 @@ COPY . .
 
 # Set build-time env vars if any (e.g., API_BASE_URL)
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV API_BASE_URL=http://api:8000
 
 RUN npm run build
 
