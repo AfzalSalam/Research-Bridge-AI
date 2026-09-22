@@ -1,5 +1,5 @@
-import { AuthGuard } from "@/features/auth/auth-guard";
+import { ProfileGuard } from "@/features/profile/profile-guard";
 
 export default function ApplicationsLayout({ children }: { children: React.ReactNode }) {
-  return <AuthGuard>{children}</AuthGuard>;
+  return <ProfileGuard>{children}</ProfileGuard>;
 }

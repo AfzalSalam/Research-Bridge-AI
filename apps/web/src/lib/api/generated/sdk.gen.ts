@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateApplicationApiV1ApplicationsPostData, CreateApplicationApiV1ApplicationsPostErrors, CreateApplicationApiV1ApplicationsPostResponses, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ListApplicationsApiV1ApplicationsGetData, ListApplicationsApiV1ApplicationsGetResponses, ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostData, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutData, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses } from './types.gen';
+import type { CreateApplicationApiV1ApplicationsPostData, CreateApplicationApiV1ApplicationsPostErrors, CreateApplicationApiV1ApplicationsPostResponses, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DeleteAccountApiV1AccountDeleteData, DeleteAccountApiV1AccountDeleteResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ListApplicationsApiV1ApplicationsGetData, ListApplicationsApiV1ApplicationsGetResponses, ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, ReadAccountProfileApiV1ProfileGetData, ReadAccountProfileApiV1ProfileGetResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, ResumeWorkflowApiV1WorkflowThreadIdResumePostData, ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors, ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostData, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, StartWorkflowApiV1WorkflowStartPostData, StartWorkflowApiV1WorkflowStartPostErrors, StartWorkflowApiV1WorkflowStartPostResponses, StreamWorkflowApiV1WorkflowThreadIdStreamGetData, StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors, StreamWorkflowApiV1WorkflowThreadIdStreamGetResponses, UpdateAccountProfileApiV1ProfilePutData, UpdateAccountProfileApiV1ProfilePutErrors, UpdateAccountProfileApiV1ProfilePutResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutData, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -58,10 +58,27 @@ export class Sdk extends HeyApiClient {
     }
 
     /**
+     * Permanently delete the signed-in account and all private data
+     *
+     * Deletes the owner aggregate including profile, saved opportunities, outreach drafts, draft revisions, applications, and application events. Public academic records (papers, authors, institutions) are never deleted. This action is irreversible and requires an authenticated request.
+     */
+    public deleteAccountApiV1AccountDelete<ThrowOnError extends boolean = false>(options?: Options<DeleteAccountApiV1AccountDeleteData, ThrowOnError>) {
+        return (options?.client ?? this.client).delete<DeleteAccountApiV1AccountDeleteResponses, unknown, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/account',
+            ...options
+        });
+    }
+
+    /**
      * List owner-scoped application records and history
      */
     public listApplicationsApiV1ApplicationsGet<ThrowOnError extends boolean = false>(options?: Options<ListApplicationsApiV1ApplicationsGetData, ThrowOnError>) {
-        return (options?.client ?? this.client).get<ListApplicationsApiV1ApplicationsGetResponses, unknown, ThrowOnError>({ url: '/api/v1/applications', ...options });
+        return (options?.client ?? this.client).get<ListApplicationsApiV1ApplicationsGetResponses, unknown, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/applications',
+            ...options
+        });
     }
 
     /**
@@ -69,6 +86,7 @@ export class Sdk extends HeyApiClient {
      */
     public createApplicationApiV1ApplicationsPost<ThrowOnError extends boolean = false>(options: Options<CreateApplicationApiV1ApplicationsPostData, ThrowOnError>) {
         return (options.client ?? this.client).post<CreateApplicationApiV1ApplicationsPostResponses, CreateApplicationApiV1ApplicationsPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/applications',
             ...options,
             headers: {
@@ -83,6 +101,7 @@ export class Sdk extends HeyApiClient {
      */
     public updateApplicationApiV1ApplicationsApplicationIdPut<ThrowOnError extends boolean = false>(options: Options<UpdateApplicationApiV1ApplicationsApplicationIdPutData, ThrowOnError>) {
         return (options.client ?? this.client).put<UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/applications/{application_id}',
             ...options,
             headers: {
@@ -189,7 +208,11 @@ export class Sdk extends HeyApiClient {
      * List owner-scoped saved opportunities
      */
     public listSavedOpportunitiesApiV1OpportunitiesSavedGet<ThrowOnError extends boolean = false>(options?: Options<ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ThrowOnError>) {
-        return (options?.client ?? this.client).get<ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, unknown, ThrowOnError>({ url: '/api/v1/opportunities/saved', ...options });
+        return (options?.client ?? this.client).get<ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, unknown, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/opportunities/saved',
+            ...options
+        });
     }
 
     /**
@@ -197,6 +220,7 @@ export class Sdk extends HeyApiClient {
      */
     public searchOpportunitiesApiV1OpportunitiesSearchPost<ThrowOnError extends boolean = false>(options: Options<SearchOpportunitiesApiV1OpportunitiesSearchPostData, ThrowOnError>) {
         return (options.client ?? this.client).post<SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/opportunities/search',
             ...options,
             headers: {
@@ -210,14 +234,22 @@ export class Sdk extends HeyApiClient {
      * Remove one saved opportunity
      */
     public removeSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDelete<ThrowOnError extends boolean = false>(options: Options<RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, ThrowOnError>) {
-        return (options.client ?? this.client).delete<RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, ThrowOnError>({ url: '/api/v1/opportunities/{opportunity_id}/save', ...options });
+        return (options.client ?? this.client).delete<RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/opportunities/{opportunity_id}/save',
+            ...options
+        });
     }
 
     /**
      * Save one verified opportunity
      */
     public saveOpportunityApiV1OpportunitiesOpportunityIdSavePost<ThrowOnError extends boolean = false>(options: Options<SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, ThrowOnError>) {
-        return (options.client ?? this.client).post<SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, ThrowOnError>({ url: '/api/v1/opportunities/{opportunity_id}/save', ...options });
+        return (options.client ?? this.client).post<SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/opportunities/{opportunity_id}/save',
+            ...options
+        });
     }
 
     /**
@@ -225,6 +257,7 @@ export class Sdk extends HeyApiClient {
      */
     public createOutreachDraftApiV1OutreachDraftsPost<ThrowOnError extends boolean = false>(options: Options<CreateOutreachDraftApiV1OutreachDraftsPostData, ThrowOnError>) {
         return (options.client ?? this.client).post<CreateOutreachDraftApiV1OutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/outreach/drafts',
             ...options,
             headers: {
@@ -238,7 +271,11 @@ export class Sdk extends HeyApiClient {
      * Read the latest owner-scoped outreach draft
      */
     public readOutreachDraftApiV1OutreachDraftsDraftIdGet<ThrowOnError extends boolean = false>(options: Options<ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ThrowOnError>) {
-        return (options.client ?? this.client).get<ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ThrowOnError>({ url: '/api/v1/outreach/drafts/{draft_id}', ...options });
+        return (options.client ?? this.client).get<ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/outreach/drafts/{draft_id}',
+            ...options
+        });
     }
 
     /**
@@ -246,12 +283,86 @@ export class Sdk extends HeyApiClient {
      */
     public updateOutreachDraftApiV1OutreachDraftsDraftIdPut<ThrowOnError extends boolean = false>(options: Options<UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, ThrowOnError>) {
         return (options.client ?? this.client).put<UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/outreach/drafts/{draft_id}',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
+        });
+    }
+
+    /**
+     * Read the signed-in student's private profile
+     */
+    public readAccountProfileApiV1ProfileGet<ThrowOnError extends boolean = false>(options?: Options<ReadAccountProfileApiV1ProfileGetData, ThrowOnError>) {
+        return (options?.client ?? this.client).get<ReadAccountProfileApiV1ProfileGetResponses, unknown, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/profile',
+            ...options
+        });
+    }
+
+    /**
+     * Save the signed-in student's private profile
+     */
+    public updateAccountProfileApiV1ProfilePut<ThrowOnError extends boolean = false>(options: Options<UpdateAccountProfileApiV1ProfilePutData, ThrowOnError>) {
+        return (options.client ?? this.client).put<UpdateAccountProfileApiV1ProfilePutResponses, UpdateAccountProfileApiV1ProfilePutErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/profile',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Start a new placement workflow
+     *
+     * Initialize a workflow run and return the thread ID.
+     */
+    public startWorkflowApiV1WorkflowStartPost<ThrowOnError extends boolean = false>(options: Options<StartWorkflowApiV1WorkflowStartPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<StartWorkflowApiV1WorkflowStartPostResponses, StartWorkflowApiV1WorkflowStartPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/workflow/start',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Provide human input to resume drafting
+     *
+     * Update workflow state with mentor selection, readying it for the next run.
+     */
+    public resumeWorkflowApiV1WorkflowThreadIdResumePost<ThrowOnError extends boolean = false>(options: Options<ResumeWorkflowApiV1WorkflowThreadIdResumePostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses, ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/workflow/{thread_id}/resume',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Stream workflow progress (SSE)
+     *
+     * Execute the workflow and stream events via Server-Sent Events.
+     */
+    public streamWorkflowApiV1WorkflowThreadIdStreamGet<ThrowOnError extends boolean = false>(options: Options<StreamWorkflowApiV1WorkflowThreadIdStreamGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<StreamWorkflowApiV1WorkflowThreadIdStreamGetResponses, StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/workflow/{thread_id}/stream',
+            ...options
         });
     }
 }

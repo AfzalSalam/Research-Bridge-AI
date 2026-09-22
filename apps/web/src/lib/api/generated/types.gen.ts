@@ -5,6 +5,59 @@ export type ClientOptions = {
 };
 
 /**
+ * AccountProfile
+ *
+ * Verified student facts saved in one authenticated account's workspace.
+ */
+export type AccountProfile = {
+    /**
+     * Graduationyear
+     */
+    graduationYear: string;
+    /**
+     * Institution
+     */
+    institution: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Program
+     */
+    program: string;
+    /**
+     * Projectsummary
+     */
+    projectSummary: string;
+    /**
+     * Projecttitle
+     */
+    projectTitle: string;
+    /**
+     * Researchinterests
+     */
+    researchInterests: Array<string>;
+    /**
+     * Skills
+     */
+    skills: Array<string>;
+    /**
+     * Weeklyavailability
+     */
+    weeklyAvailability: '5-10 hours' | '10-15 hours' | '15+ hours';
+};
+
+/**
+ * AccountProfileReadResponse
+ *
+ * A profile is absent until the signed-in student explicitly saves it.
+ */
+export type AccountProfileReadResponse = {
+    profile: AccountProfile | null;
+};
+
+/**
  * ApplicationCreateRequest
  */
 export type ApplicationCreateRequest = {
@@ -1606,6 +1659,42 @@ export type ValidationError = {
 };
 
 /**
+ * WorkflowResumeRequest
+ */
+export type WorkflowResumeRequest = {
+    /**
+     * Selectedmentorid
+     */
+    selectedMentorId: string;
+    /**
+     * Selectedpaperids
+     */
+    selectedPaperIds: Array<string>;
+};
+
+/**
+ * WorkflowStartRequest
+ */
+export type WorkflowStartRequest = {
+    /**
+     * Candidatelimit
+     */
+    candidateLimit?: number;
+    /**
+     * Generationpreference
+     */
+    generationPreference?: string;
+    /**
+     * Paperlimit
+     */
+    paperLimit?: number;
+    /**
+     * Query
+     */
+    query: string;
+};
+
+/**
  * MentorCandidate
  *
  * Fictional researcher candidate supported by publication evidence.
@@ -1726,6 +1815,22 @@ export type AppSchemasMentorDiscoveryMentorCandidate = {
      */
     warnings: Array<string>;
 };
+
+export type DeleteAccountApiV1AccountDeleteData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account';
+};
+
+export type DeleteAccountApiV1AccountDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteAccountApiV1AccountDeleteResponse = DeleteAccountApiV1AccountDeleteResponses[keyof DeleteAccountApiV1AccountDeleteResponses];
 
 export type ListApplicationsApiV1ApplicationsGetData = {
     body?: never;
@@ -1964,6 +2069,10 @@ export type DiscoverMentorsApiV1DiscoveryMentorsPostErrors = {
      */
     422: ErrorResponse;
     /**
+     * Too many requests from this IP address. Please slow down.
+     */
+    429: ErrorResponse;
+    /**
      * The normalized paper catalog could not be persisted.
      */
     500: ErrorResponse;
@@ -2000,6 +2109,10 @@ export type DiscoverPapersApiV1DiscoveryPapersPostErrors = {
      * The paper query could not be validated or classified.
      */
     422: ErrorResponse;
+    /**
+     * Too many requests from this IP address. Please slow down.
+     */
+    429: ErrorResponse;
     /**
      * The normalized paper catalog could not be persisted.
      */
@@ -2226,3 +2339,135 @@ export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses = {
 };
 
 export type UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponse = UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses[keyof UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses];
+
+export type ReadAccountProfileApiV1ProfileGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile';
+};
+
+export type ReadAccountProfileApiV1ProfileGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AccountProfileReadResponse;
+};
+
+export type ReadAccountProfileApiV1ProfileGetResponse = ReadAccountProfileApiV1ProfileGetResponses[keyof ReadAccountProfileApiV1ProfileGetResponses];
+
+export type UpdateAccountProfileApiV1ProfilePutData = {
+    body: AccountProfile;
+    path?: never;
+    query?: never;
+    url: '/api/v1/profile';
+};
+
+export type UpdateAccountProfileApiV1ProfilePutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateAccountProfileApiV1ProfilePutError = UpdateAccountProfileApiV1ProfilePutErrors[keyof UpdateAccountProfileApiV1ProfilePutErrors];
+
+export type UpdateAccountProfileApiV1ProfilePutResponses = {
+    /**
+     * Successful Response
+     */
+    200: AccountProfile;
+};
+
+export type UpdateAccountProfileApiV1ProfilePutResponse = UpdateAccountProfileApiV1ProfilePutResponses[keyof UpdateAccountProfileApiV1ProfilePutResponses];
+
+export type StartWorkflowApiV1WorkflowStartPostData = {
+    body: WorkflowStartRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/workflow/start';
+};
+
+export type StartWorkflowApiV1WorkflowStartPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StartWorkflowApiV1WorkflowStartPostError = StartWorkflowApiV1WorkflowStartPostErrors[keyof StartWorkflowApiV1WorkflowStartPostErrors];
+
+export type StartWorkflowApiV1WorkflowStartPostResponses = {
+    /**
+     * Response Start Workflow Api V1 Workflow Start Post
+     *
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
+};
+
+export type StartWorkflowApiV1WorkflowStartPostResponse = StartWorkflowApiV1WorkflowStartPostResponses[keyof StartWorkflowApiV1WorkflowStartPostResponses];
+
+export type ResumeWorkflowApiV1WorkflowThreadIdResumePostData = {
+    body: WorkflowResumeRequest;
+    path: {
+        /**
+         * Thread Id
+         */
+        thread_id: string;
+    };
+    query?: never;
+    url: '/api/v1/workflow/{thread_id}/resume';
+};
+
+export type ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ResumeWorkflowApiV1WorkflowThreadIdResumePostError = ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors[keyof ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors];
+
+export type ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses = {
+    /**
+     * Response Resume Workflow Api V1 Workflow  Thread Id  Resume Post
+     *
+     * Successful Response
+     */
+    200: {
+        [key: string]: string;
+    };
+};
+
+export type ResumeWorkflowApiV1WorkflowThreadIdResumePostResponse = ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses[keyof ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses];
+
+export type StreamWorkflowApiV1WorkflowThreadIdStreamGetData = {
+    body?: never;
+    path: {
+        /**
+         * Thread Id
+         */
+        thread_id: string;
+    };
+    query?: never;
+    url: '/api/v1/workflow/{thread_id}/stream';
+};
+
+export type StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StreamWorkflowApiV1WorkflowThreadIdStreamGetError = StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors[keyof StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors];
+
+export type StreamWorkflowApiV1WorkflowThreadIdStreamGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};

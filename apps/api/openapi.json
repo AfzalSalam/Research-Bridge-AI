@@ -1,6 +1,112 @@
 {
   "components": {
     "schemas": {
+      "AccountProfile": {
+        "additionalProperties": false,
+        "description": "Verified student facts saved in one authenticated account's workspace.",
+        "properties": {
+          "graduationYear": {
+            "pattern": "^20\\d{2}$",
+            "title": "Graduationyear",
+            "type": "string"
+          },
+          "institution": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Institution",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 60,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "program": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Program",
+            "type": "string"
+          },
+          "projectSummary": {
+            "maxLength": 500,
+            "minLength": 40,
+            "title": "Projectsummary",
+            "type": "string"
+          },
+          "projectTitle": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Projecttitle",
+            "type": "string"
+          },
+          "researchInterests": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Researchinterests",
+            "type": "array"
+          },
+          "skills": {
+            "items": {
+              "maxLength": 120,
+              "minLength": 2,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Skills",
+            "type": "array"
+          },
+          "weeklyAvailability": {
+            "enum": [
+              "5-10 hours",
+              "10-15 hours",
+              "15+ hours"
+            ],
+            "title": "Weeklyavailability",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "program",
+          "institution",
+          "graduationYear",
+          "researchInterests",
+          "skills",
+          "projectTitle",
+          "projectSummary",
+          "weeklyAvailability"
+        ],
+        "title": "AccountProfile",
+        "type": "object"
+      },
+      "AccountProfileReadResponse": {
+        "additionalProperties": false,
+        "description": "A profile is absent until the signed-in student explicitly saves it.",
+        "properties": {
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AccountProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "profile"
+        ],
+        "title": "AccountProfileReadResponse",
+        "type": "object"
+      },
       "ApplicationCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2978,6 +3084,61 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "WorkflowResumeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "selectedMentorId": {
+            "format": "uuid",
+            "title": "Selectedmentorid",
+            "type": "string"
+          },
+          "selectedPaperIds": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Selectedpaperids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "selectedMentorId",
+          "selectedPaperIds"
+        ],
+        "title": "WorkflowResumeRequest",
+        "type": "object"
+      },
+      "WorkflowStartRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "candidateLimit": {
+            "default": 12,
+            "title": "Candidatelimit",
+            "type": "integer"
+          },
+          "generationPreference": {
+            "default": "auto",
+            "title": "Generationpreference",
+            "type": "string"
+          },
+          "paperLimit": {
+            "default": 20,
+            "title": "Paperlimit",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "WorkflowStartRequest",
+        "type": "object"
+      },
       "app__schemas__demo__MentorCandidate": {
         "additionalProperties": false,
         "description": "Fictional researcher candidate supported by publication evidence.",
@@ -3200,15 +3361,41 @@
         "title": "MentorCandidate",
         "type": "object"
       }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
     }
   },
   "info": {
-    "description": "Evidence-first academic discovery API. Phase 9 adds source-linked research opportunities and explicit application tracking.",
+    "description": "Evidence-first academic discovery API. Phase 9 adds source-linked research opportunities, private authenticated workspaces, and explicit application tracking.",
     "title": "Research Bridge API",
     "version": "0.1.0"
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/account": {
+      "delete": {
+        "description": "Deletes the owner aggregate including profile, saved opportunities, outreach drafts, draft revisions, applications, and application events. Public academic records (papers, authors, institutions) are never deleted. This action is irreversible and requires an authenticated request.",
+        "operationId": "delete_account_api_v1_account_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Permanently delete the signed-in account and all private data",
+        "tags": [
+          "account"
+        ]
+      }
+    },
     "/api/v1/applications": {
       "get": {
         "operationId": "list_applications_api_v1_applications_get",
@@ -3224,6 +3411,11 @@
             "description": "Successful Response"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "List owner-scoped application records and history",
         "tags": [
           "applications"
@@ -3263,6 +3455,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Track one explicitly saved opportunity",
         "tags": [
           "applications"
@@ -3316,6 +3513,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Update explicit tracker state with optimistic versioning",
         "tags": [
           "applications"
@@ -3609,6 +3811,16 @@
             },
             "description": "The paper query could not be validated or classified."
           },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many requests from this IP address. Please slow down."
+          },
           "500": {
             "content": {
               "application/json": {
@@ -3679,6 +3891,16 @@
               }
             },
             "description": "The paper query could not be validated or classified."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many requests from this IP address. Please slow down."
           },
           "500": {
             "content": {
@@ -3754,6 +3976,11 @@
             "description": "Successful Response"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "List owner-scoped saved opportunities",
         "tags": [
           "opportunities"
@@ -3795,6 +4022,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Search allowlisted employer-published research opportunities",
         "tags": [
           "opportunities"
@@ -3831,6 +4063,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Remove one saved opportunity",
         "tags": [
           "opportunities"
@@ -3872,6 +4109,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Save one verified opportunity",
         "tags": [
           "opportunities"
@@ -3913,6 +4155,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Create a draft from one selected researcher and selected papers",
         "tags": [
           "outreach"
@@ -3956,6 +4203,11 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Read the latest owner-scoped outreach draft",
         "tags": [
           "outreach"
@@ -4007,9 +4259,243 @@
             "description": "Validation Error"
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Save a new editable draft revision",
         "tags": [
           "outreach"
+        ]
+      }
+    },
+    "/api/v1/profile": {
+      "get": {
+        "operationId": "read_account_profile_api_v1_profile_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountProfileReadResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read the signed-in student's private profile",
+        "tags": [
+          "profile"
+        ]
+      },
+      "put": {
+        "operationId": "update_account_profile_api_v1_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountProfile"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save the signed-in student's private profile",
+        "tags": [
+          "profile"
+        ]
+      }
+    },
+    "/api/v1/workflow/start": {
+      "post": {
+        "description": "Initialize a workflow run and return the thread ID.",
+        "operationId": "start_workflow_api_v1_workflow_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Start Workflow Api V1 Workflow Start Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start a new placement workflow",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/api/v1/workflow/{thread_id}/resume": {
+      "post": {
+        "description": "Update workflow state with mentor selection, readying it for the next run.",
+        "operationId": "resume_workflow_api_v1_workflow__thread_id__resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "required": true,
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowResumeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Resume Workflow Api V1 Workflow  Thread Id  Resume Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Provide human input to resume drafting",
+        "tags": [
+          "workflow"
+        ]
+      }
+    },
+    "/api/v1/workflow/{thread_id}/stream": {
+      "get": {
+        "description": "Execute the workflow and stream events via Server-Sent Events.",
+        "operationId": "stream_workflow_api_v1_workflow__thread_id__stream_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "thread_id",
+            "required": true,
+            "schema": {
+              "title": "Thread Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stream workflow progress (SSE)",
+        "tags": [
+          "workflow"
         ]
       }
     }
