@@ -44,39 +44,53 @@
 :root {
   --font-manrope: "Manrope Variable";
   --font-source-serif: "Source Serif 4 Variable";
-  --background: #fcfaf8;
-  --foreground: #1a1a19;
-  --surface: #ffffff;
-  --surface-subtle: #f7f5f1;
-  --card: #ffffff;
-  --card-foreground: #1a1a19;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a19;
-  --primary: #151618;
-  --primary-foreground: #fcfaf8;
-  --secondary: #f2f0ec;
-  --secondary-foreground: #2d3b4f;
-  --muted: #f3f1ed;
-  --muted-foreground: #666562;
-  --accent: #e5f0ef;
-  --accent-foreground: #0d3632;
-  --brand-teal: #1a746b;
-  --brand-teal-strong: #0f5b54;
-  --brand-teal-soft: #e5f0ef;
-  --brand-indigo: #3b426e;
-  --brand-indigo-soft: #eef0f8;
-  --warning: #8a5a12;
-  --warning-foreground: #5f3b05;
-  --warning-soft: #fff6dd;
-  --destructive: #9b3a37;
-  --destructive-foreground: #6f211f;
-  --destructive-soft: #fceceb;
-  --border: #e8e6e1;
-  --input: #d7d4ce;
-  --ring: #1a746b;
-  --radius: 0.375rem;
-  --radius-control: 0.375rem;
-  --shadow-sheet: 0 24px 70px rgb(21 22 24 / 18%);
+  
+  /* Crisp white/zinc foundation instead of beige */
+  --background: #FAFAFB;
+  --foreground: #09090B;
+  --surface: #FFFFFF;
+  --surface-subtle: #F4F4F5;
+  --card: #FFFFFF;
+  --card-foreground: #09090B;
+  --popover: #FFFFFF;
+  --popover-foreground: #09090B;
+  
+  /* High contrast primary elements */
+  --primary: #18181B;
+  --primary-foreground: #FAFAFB;
+  --secondary: #F4F4F5;
+  --secondary-foreground: #18181B;
+  --muted: #F4F4F5;
+  --muted-foreground: #71717A;
+  --accent: #F4F4F5;
+  --accent-foreground: #18181B;
+  
+  /* Primary SaaS Brand Color (Vibrant Blue replacing muted Teal) */
+  --brand-teal: #2563EB;
+  --brand-teal-strong: #1D4ED8;
+  --brand-teal-soft: #DBEAFE;
+  
+  /* Secondary Brand Color (Slate replacing muted Indigo) */
+  --brand-indigo: #475569;
+  --brand-indigo-soft: #F1F5F9;
+  
+  /* Feedback colors */
+  --warning: #D97706;
+  --warning-foreground: #78350F;
+  --warning-soft: #FEF3C7;
+  --destructive: #DC2626;
+  --destructive-foreground: #7F1D1D;
+  --destructive-soft: #FEE2E2;
+  
+  /* UI elements */
+  --border: #E4E4E7;
+  --input: #E4E4E7;
+  --ring: #2563EB;
+  --radius: 0.5rem;
+  --radius-control: 0.5rem;
+  --shadow-sheet: 0 24px 70px rgb(9 9 11 / 10%);
+  
+  /* Layout constraints */
   --container-wide: 80rem;
   --container-reading: 46rem;
   --section-space: clamp(4rem, 8vw, 7rem);
@@ -151,8 +165,9 @@
   h3,
   h4 {
     color: var(--foreground);
-    font-family: var(--font-source-serif), ui-serif, Georgia, serif;
+    font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
     text-wrap: balance;
+    letter-spacing: -0.02em;
   }
 
   p {
