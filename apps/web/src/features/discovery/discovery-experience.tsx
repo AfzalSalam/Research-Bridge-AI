@@ -279,84 +279,8 @@ function DemoDiscoveryWorkspace() {
   );
 }
 
+
 export function DiscoveryExperience() {
-  const [mode, setMode] = useState<"live" | "demo">("live");
-  const liveTabRef = useRef<HTMLButtonElement>(null);
-  const demoTabRef = useRef<HTMLButtonElement>(null);
-
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    const nextMode =
-      event.key === "ArrowLeft" || event.key === "Home"
-        ? "live"
-        : event.key === "ArrowRight" || event.key === "End"
-          ? "demo"
-          : null;
-    if (nextMode === null) return;
-    event.preventDefault();
-    setMode(nextMode);
-    (nextMode === "live" ? liveTabRef : demoTabRef).current?.focus();
-  }
-
-  return (
-    <div>
-      <div
-        aria-label="Discovery data mode"
-        className="mb-8 grid gap-1 border border-border bg-surface-subtle p-1 sm:inline-grid sm:grid-cols-2"
-        role="tablist"
-      >
-        <button
-          aria-controls="live-discovery-panel"
-          aria-selected={mode === "live"}
-          className="min-h-11 px-5 text-sm font-semibold transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-selected:bg-surface aria-selected:text-brand-teal-strong aria-selected:shadow-xs"
-          id="live-discovery-tab"
-          onKeyDown={handleTabKeyDown}
-          onClick={() => setMode("live")}
-          ref={liveTabRef}
-          role="tab"
-          tabIndex={mode === "live" ? 0 : -1}
-          type="button"
-        >
-          Live OpenAlex papers
-        </button>
-        <button
-          aria-controls="demo-discovery-panel"
-          aria-selected={mode === "demo"}
-          className="min-h-11 px-5 text-sm font-semibold transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-selected:bg-surface aria-selected:text-brand-indigo aria-selected:shadow-xs"
-          id="demo-discovery-tab"
-          onKeyDown={handleTabKeyDown}
-          onClick={() => setMode("demo")}
-          ref={demoTabRef}
-          role="tab"
-          tabIndex={mode === "demo" ? 0 : -1}
-          type="button"
-        >
-          Recruiter demo
-        </button>
-      </div>
-
-      {mode === "live" ? (
-        <div
-          aria-labelledby="live-discovery-tab"
-          id="live-discovery-panel"
-          role="tabpanel"
-        >
-          <LivePaperDiscovery />
-        </div>
-      ) : (
-        <div
-          aria-labelledby="demo-discovery-tab"
-          id="demo-discovery-panel"
-          role="tabpanel"
-        >
-          <DemoNotice className="mb-8" />
-          <DemoDataBoundary
-            loadingDescription="Loading the fictional evidence catalog from FastAPI, then restoring compatible discovery state from this browser session."
-            loadingTitle="Loading the recruiter demo"
-          >
-            <DemoDiscoveryWorkspace />
-          </DemoDataBoundary>
-        </div>
-      )}
-    </div>
-  );
+  return <LivePaperDiscovery />;
 }
+

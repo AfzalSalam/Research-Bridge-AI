@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
-import { ApplicationModeExperience } from "@/features/applications/application-mode-experience";
-import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
+import { LiveApplications } from "@/features/applications/live-applications";
 
 export const metadata: Metadata = {
   title: "Application Tracker",
-  description: "A durable, explicit research application status history.",
+  description: "Track your research applications with explicit status history and follow-up dates.",
 };
 
 export default function ApplicationsPage() {
@@ -15,13 +14,12 @@ export default function ApplicationsPage() {
     <main id="main-content">
       <Container className="py-10 sm:py-14 lg:py-16">
         <PageHeader
-          description="Keep notes, follow-up dates, and explicit status history without confusing preparation inside this app with submission elsewhere."
-          eyebrow="Step 5 · Track"
+          description="Keep notes, follow-up dates, and an explicit status history for every research opportunity you are pursuing. Nothing is auto-submitted — you stay in control."
+          eyebrow="Step 4 · Track"
           title="Keep every research conversation accountable"
         />
-        <WorkflowSteps current="Track" />
         <div className="mt-8">
-          <ApplicationModeExperience />
+          <LiveApplications />
         </div>
       </Container>
     </main>

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
-import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
-import { OpportunityModeExperience } from "@/features/opportunities/opportunity-mode-experience";
+import { LiveOpportunities } from "@/features/opportunities/live-opportunities";
 
 export const metadata: Metadata = {
   title: "Research Opportunities",
@@ -15,13 +14,12 @@ export default function OpportunitiesPage() {
     <main id="main-content">
       <Container className="py-10 sm:py-14 lg:py-16">
         <PageHeader
-          description="Search employer-published research openings, inspect exactly what was verified, and move only deliberate choices into your tracker."
-          eyebrow="Step 4 · Save"
+          description="Browse verified research openings from employer-published boards. Every listing retains its source URL. Funding, work mode, and availability are never guessed."
+          eyebrow="Step 3 · Opportunities"
           title="Research openings you can verify"
         />
-        <WorkflowSteps current="Save" />
         <div className="mt-8">
-          <OpportunityModeExperience />
+          <LiveOpportunities />
         </div>
       </Container>
     </main>
