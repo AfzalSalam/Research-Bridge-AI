@@ -22,6 +22,44 @@ export const accountProfileSchema = z.object({
   weeklyAvailability: z.enum(["5-10 hours", "10-15 hours", "15+ hours"]),
 });
 
+function commaList(maxItems: number, label: string) {
+  return z
+    .string()
+    .trim()
+    .min(2, `Add at least one ${label}.`)
+    .max(240)
+    .refine(
+      (value) => value.split(",").filter((item) => item.trim()).length <= maxItems,
+      `Add no more than ${maxItems} ${label}.`,
+    )
+    .refine(
+      (value) =>
+        value
+          .split(",")
+          .filter((item) => item.trim())
+          .every((item) => item.trim().length >= 2),
+      `Each ${label.replace(/s$/, "")} must contain at least 2 characters.`,
+    )
+    .refine(
+      (value) => hasUniqueTerms(value.split(",").filter((item) => item.trim())),
+      `${label} must be unique.`,
+    );
+}
+
+export const accountProfileFormSchema = z.object({
+  name: accountProfileSchema.shape.name,
+  program: accountProfileSchema.shape.program,
+  institution: accountProfileSchema.shape.institution,
+  graduationYear: accountProfileSchema.shape.graduationYear,
+  researchInterests: commaList(6, "research interests"),
+  skills: commaList(8, "skills"),
+  projectTitle: accountProfileSchema.shape.projectTitle,
+  projectSummary: accountProfileSchema.shape.projectSummary,
+  weeklyAvailability: accountProfileSchema.shape.weeklyAvailability,
+});
+
+export type AccountProfileFormValues = z.infer<typeof accountProfileFormSchema>;
+
 export const accountProfileResponseSchema = z.object({
   profile: accountProfileSchema.nullable(),
 });

@@ -13,12 +13,17 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/fieldset";
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { NativeSelect } from "@/features/demo/components/native-select";
 import { Textarea } from "@/components/ui/textarea";
-
-import { updateAccountProfile, accountProfileSchema, type AccountProfile } from "@/lib/api/profile";
+import { 
+  updateAccountProfile, 
+  accountProfileSchema, 
+  accountProfileFormSchema,
+  type AccountProfile,
+  type AccountProfileFormValues
+} from "@/lib/api/profile";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 
 function commaSeparatedValues(value: string | string[]): string[] {
@@ -38,8 +43,8 @@ export function OnboardingExperience() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(accountProfileSchema),
+  } = useForm<AccountProfileFormValues>({
+    resolver: zodResolver(accountProfileFormSchema),
     defaultValues: {
       name: "",
       program: "",
@@ -64,7 +69,7 @@ export function OnboardingExperience() {
     },
   });
 
-  async function saveProfile(values: any) {
+  async function saveProfile(values: AccountProfileFormValues) {
     setSaveError("");
     const profile = accountProfileSchema.parse({
       ...values,
