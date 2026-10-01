@@ -8,6 +8,7 @@ import { Brand } from "@/components/brand/brand";
 import { Container } from "@/components/layout/container";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/use-auth";
+import { ThemeToggle } from "@/features/theme/theme-toggle";
 import {
   Sheet,
   SheetClose,
@@ -71,7 +72,8 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-2 lg:flex">
+          <ThemeToggle />
           {user ? (
             <Button asChild size="default" variant="outline">
               <Link

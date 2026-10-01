@@ -135,6 +135,50 @@
   --radius-xl: calc(var(--radius) * 2);
 }
 
+/* ── Dark Mode (Night Mode) ──────────────────────────────────────────────── */
+/* Extracted from the Figma reference design: near-black bg, neon green accent */
+.dark {
+  --background: #0D0D0F;
+  --foreground: #FAFAFA;
+  --surface: #111114;
+  --surface-subtle: #18181C;
+  --card: #18181C;
+  --card-foreground: #FAFAFA;
+  --popover: #18181C;
+  --popover-foreground: #FAFAFA;
+
+  --primary: #FAFAFA;
+  --primary-foreground: #0D0D0F;
+  --secondary: #27272A;
+  --secondary-foreground: #FAFAFA;
+  --muted: #27272A;
+  --muted-foreground: #A1A1AA;
+  --accent: #18181C;
+  --accent-foreground: #FAFAFA;
+
+  /* Neon yellow-green from Figma — used for the hero accent word */
+  --brand-teal: #C8FF00;
+  --brand-teal-strong: #AADE00;
+  --brand-teal-soft: #1A2800;
+
+  /* Subtle slate for secondary labels */
+  --brand-indigo: #A1A1AA;
+  --brand-indigo-soft: #27272A;
+
+  --warning: #F59E0B;
+  --warning-foreground: #FEF3C7;
+  --warning-soft: #292109;
+  --destructive: #EF4444;
+  --destructive-foreground: #FEE2E2;
+  --destructive-soft: #290A0A;
+
+  --border: #27272A;
+  --input: #27272A;
+  --ring: #C8FF00;
+
+  --shadow-sheet: 0 24px 70px rgb(0 0 0 / 60%);
+}
+
 @layer base {
   * {
     border-color: var(--border);
@@ -156,6 +200,22 @@
         circle at 88% -8%,
         color-mix(in srgb, var(--brand-indigo) 7%, transparent),
         transparent 30rem
+      ),
+      var(--background);
+  }
+
+  /* Dark mode: deep purple glow top-right, matching Figma constellation vibe */
+  .dark body {
+    background:
+      radial-gradient(
+        ellipse at 80% 0%,
+        color-mix(in srgb, #7C3AED 12%, transparent),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at 20% 90%,
+        color-mix(in srgb, #065F46 8%, transparent),
+        transparent 40%
       ),
       var(--background);
   }

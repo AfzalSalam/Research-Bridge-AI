@@ -1,6 +1,6 @@
-import { Sdk, type AccountProfile as GeneratedAccountProfile, type AccountProfileReadResponse } from "@/lib/api/generated";
+import { Sdk, type AccountProfile as GeneratedAccountProfile } from "@/lib/api/generated";
 import { client } from "@/lib/api/generated/client.gen";
-import { ApiError, parseApiData } from "@/lib/api/result";
+import { parseApiData } from "@/lib/api/result";
 import { z } from "zod";
 
 const shortText = z.string().trim().min(2).max(120);
