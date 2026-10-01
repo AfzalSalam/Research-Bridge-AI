@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import "@fontsource-variable/manrope";
 import "@fontsource-variable/source-serif-4";
+import "@fontsource-variable/fraunces";
+import "@fontsource-variable/hanken-grotesk";
 import "./globals.css";
 
 import { AppProviders } from "@/app/app-providers";

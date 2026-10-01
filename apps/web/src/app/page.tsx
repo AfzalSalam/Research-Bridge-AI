@@ -1,417 +1,433 @@
-import {
-  ArrowRight,
-  ArrowUpRight,
-  BookCheck,
-  Briefcase,
-  FileSearch,
-  Lock,
-  Mail,
-  Share2,
-  ShieldCheck,
-  Sparkles,
-  Users,
-} from "lucide-react";
 import Link from "next/link";
 
-import { Container } from "@/components/layout/container";
-import { Button } from "@/components/ui/button";
+import { ScrollProgress } from "@/features/landing/scroll-progress";
+import { DemoCard } from "@/features/landing/demo-card";
+import { AnimatedCounter } from "@/features/landing/animated-counter";
+import { Reveal } from "@/features/landing/reveal";
+import { StepsSection } from "@/features/landing/steps-section";
 
-const features = [
+/* ── Static data ────────────────────────────────────────────────────────── */
+const DATA_SOURCES = [
+  "OpenAlex", "Semantic Scholar", "arXiv", "Crossref", "ORCID",
+];
+
+const FEATURES = [
   {
-    icon: FileSearch,
-    title: "Evidence-Based Matching",
-    description:
-      "Search real academic papers from OpenAlex and discover professors whose published work aligns with your interests — ranked by deterministic, transparent scoring.",
+    title: "Matches you can inspect",
+    body: "Every ranking links to the papers behind it and shows its score, so you can judge the match yourself.",
+    visual: (
+      <svg viewBox="0 0 200 96" aria-hidden="true" className="h-full w-full">
+        <g stroke="var(--brand-teal)" strokeWidth="1.5" opacity=".7">
+          <path d="M30 70L80 30L130 60L175 25M80 30L100 80L130 60" fill="none" />
+        </g>
+        <g fill="var(--brand-teal)">
+          <circle className="pulse-dot" cx="30" cy="70" r="5" />
+          <circle cx="80" cy="30" r="6" />
+          <circle className="pulse-dot" cx="130" cy="60" r="5" style={{ animationDelay: ".8s" }} />
+          <circle cx="175" cy="25" r="5" />
+          <circle cx="100" cy="80" r="4" />
+        </g>
+      </svg>
+    ),
   },
   {
-    icon: Mail,
-    title: "Smart Outreach Drafts",
-    description:
-      "Generate personalised email drafts grounded only in your verified profile facts and the papers you selected. Every claim traces back to its source.",
+    title: "Drafts that cite their sources",
+    body: "Emails use only your verified profile and the papers you chose. Edit every word before you send.",
+    visual: (
+      <div className="p-3 text-left text-xs leading-relaxed text-muted-foreground">
+        Dear Prof. Rao, your 2024 paper on sparse graph attention…
+        <span className="cursor-blink" aria-hidden="true" />
+      </div>
+    ),
   },
   {
-    icon: Briefcase,
-    title: "Research Internships",
-    description:
-      "Browse curated, source-linked research opportunities with honest availability, funding, and work-mode labels. Unknown details stay unknown.",
+    title: "Internships, honestly labelled",
+    body: "Availability, funding, and work mode come with a source link. If a detail is unknown, we say so.",
+    visual: (
+      <svg viewBox="0 0 200 96" aria-hidden="true" className="h-full w-full">
+        <g fill="none" stroke="var(--border)">
+          <rect x="20" y="14" width="160" height="22" rx="7" />
+          <rect x="20" y="44" width="160" height="22" rx="7" />
+        </g>
+        <rect x="26" y="20" width="54" height="10" rx="5" fill="var(--brand-teal-soft)" />
+        <rect x="26" y="50" width="38" height="10" rx="5" fill="var(--brand-teal)" />
+        <text x="100" y="86" fontSize="10" fill="var(--muted-foreground)">Funding: unknown</text>
+      </svg>
+    ),
   },
 ];
 
-const steps = [
+const PRINCIPLES = [
   {
-    step: "01",
-    title: "Complete your profile",
-    description:
-      "Add your research interests, skills, and a brief project summary. This becomes the evidence boundary for all matches and drafts.",
+    wide: true,
+    icon: null,
+    visual: (
+      <div className="flex h-16 items-center gap-3 px-4">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
+          <div className="bar-fill h-full w-[86%] rounded-full bg-gradient-to-r from-brand-teal-soft to-brand-teal" />
+        </div>
+        <span className="text-xs text-muted-foreground">paper match 86</span>
+      </div>
+    ),
+    title: "Every match has receipts",
+    body: "Each recommendation keeps its publications and source links, so you can check the claim yourself.",
   },
   {
-    step: "02",
-    title: "Discover papers & mentors",
-    description:
-      "Enter a research topic and receive ranked professors backed by their real publications. Inspect every score and source link.",
-  },
-  {
-    step: "03",
-    title: "Review & reach out",
-    description:
-      "Select your evidence, generate a grounded draft, edit it to your voice, and send it when you are ready. Never automatic, always human-approved.",
-  },
-];
-
-const trustSources = [
-  { name: "OpenAlex", description: "Open catalog of scholarly works" },
-  { name: "Semantic Scholar", description: "AI-powered research tool" },
-  { name: "arXiv", description: "Open-access research archive" },
-  { name: "Crossref", description: "DOI registration agency" },
-  { name: "ORCID", description: "Researcher identity registry" },
-];
-
-const principles = [
-  {
-    icon: FileSearch,
-    title: "Paper-led discovery",
-    description:
-      "Every recommendation retains the publications and source links that support it.",
-  },
-  {
-    icon: ShieldCheck,
+    wide: false,
+    icon: "?",
+    dashed: false,
     title: "Unknown stays unknown",
-    description:
-      "Availability, funding, and contact details are never guessed for polish.",
+    body: "We never guess availability, funding, or contact details to look complete.",
   },
   {
-    icon: BookCheck,
-    title: "Human-approved outreach",
-    description:
-      "You select the mentor and evidence, then review every editable draft before sending.",
+    wide: false,
+    icon: "✓",
+    dashed: true,
+    title: "You press send",
+    body: "Nothing goes out without your review.",
   },
   {
-    icon: Sparkles,
-    title: "AI assists, never decides",
-    description:
-      "LLMs help expand queries and draft emails. Scoring, ranking, and sending stay deterministic and under your control.",
+    wide: true,
+    icon: null,
+    visual: (
+      <div className="h-16">
+        <svg viewBox="0 0 300 70" className="h-full w-full" aria-hidden="true">
+          <path
+            d="M10 50C60 10 100 60 150 30S250 10 290 35"
+            fill="none"
+            stroke="var(--brand-teal)"
+            strokeWidth="2"
+            strokeDasharray="6 6"
+          >
+            <animate attributeName="stroke-dashoffset" to="-48" dur="3s" repeatCount="indefinite" />
+          </path>
+        </svg>
+      </div>
+    ),
+    title: "AI helps, rules decide",
+    body: "Language models expand your query and draft text. Scoring and ranking follow fixed, visible rules.",
   },
 ];
 
-const stats = [
-  { icon: Users, stat: "10,000+", label: "Professors discoverable" },
-  { icon: FileSearch, stat: "200M+", label: "Papers indexed via OpenAlex" },
-  { icon: ShieldCheck, stat: "100%", label: "Evidence-backed matches" },
+const FAQ = [
+  {
+    q: "Is it free?",
+    a: "Yes. Creating an account and using search, matching, and drafts costs nothing.",
+  },
+  {
+    q: "Will it email professors for me?",
+    a: "No. You review and send every message yourself.",
+  },
+  {
+    q: "Where does the data come from?",
+    a: "Open sources: OpenAlex, Semantic Scholar, arXiv, Crossref, and ORCID. We don't scrape websites.",
+  },
+  {
+    q: "What happens to my profile?",
+    a: "It's used only to rank matches and write your drafts, and it stays under your control.",
+  },
 ];
 
-export default function Home() {
+/* ── GlowCard helper ────────────────────────────────────────────────────── */
+function GlowCard({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <main id="main-content">
-      {/* ── Hero ── */}
-      <section className="relative border-b border-border overflow-hidden">
-        <Container className="grid min-h-[calc(100svh-4.5rem)] items-center gap-14 py-16 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] lg:gap-16 lg:py-24">
-          {/* Left: text content */}
-          <div className="max-w-3xl">
-            {/* Eyebrow with coloured bars */}
-            <div className="flex items-center gap-3">
-              <span className="flex gap-1" aria-hidden="true">
-                <span className="block h-4 w-1 rounded-full bg-blue-500" />
-                <span className="block h-4 w-1 rounded-full bg-brand-teal" />
-                <span className="block h-4 w-1 rounded-full bg-yellow-400" />
-              </span>
-              <p className="text-xs font-bold tracking-[0.2em] text-muted-foreground uppercase">
-                AI-Powered Research Discovery for Students
-              </p>
-            </div>
+    <article
+      className={`glow-card rounded-2xl border border-border bg-card p-6 ${className}`}
+      onPointerMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+      }}
+    >
+      {children}
+    </article>
+  );
+}
 
-            <h1 className="mt-6 text-[clamp(2.75rem,6vw,5.75rem)] leading-[0.93] font-extrabold tracking-[-0.04em]">
-              Find your perfect{" "}
-              <span className="text-brand-teal">
-                research mentor.
-              </span>
+/* ── Page ───────────────────────────────────────────────────────────────── */
+export default function Home() {
+  // Derive marquee items (repeat 4× so it loops seamlessly)
+  const marqueeItems = [...DATA_SOURCES, ...DATA_SOURCES, ...DATA_SOURCES, ...DATA_SOURCES];
+
+  return (
+    <main id="main-content" className="relative z-[1]">
+      {/* Ambient blobs */}
+      <div aria-hidden="true" className="ambient-blob ambient-blob-1" />
+      <div aria-hidden="true" className="ambient-blob ambient-blob-2" />
+
+      {/* Scroll progress bar */}
+      <ScrollProgress />
+
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <div className="mx-auto max-w-[1160px] px-7">
+        <section className="grid items-center gap-14 pb-[70px] pt-[84px] lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+          {/* Left */}
+          <div>
+            <h1
+              aria-label="Find the professor whose papers match your questions."
+              className="font-serif text-[clamp(40px,5.6vw,76px)] font-semibold leading-[1.04] tracking-[-0.025em]"
+            >
+              {[
+                "Find", "the", "professor", "whose", "papers", "match", "your", "questions.",
+              ].map((w, i) => (
+                <span
+                  key={i}
+                  aria-hidden="true"
+                  className="hero-word"
+                  style={{ animationDelay: `${0.15 + i * 0.09}s` }}
+                >
+                  {w}{" "}
+                </span>
+              ))}
             </h1>
 
-            <p className="mt-8 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-              Research Bridge AI matches you with professors based on real paper
-              evidence — not guesswork. Discover publications, inspect every
-              score, and send outreach you fully control.
+            {/* Animated arc underline */}
+            <svg
+              className="mt-1 block w-full max-w-[420px]"
+              viewBox="0 0 420 60"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                className="arc-path"
+                d="M2 56C70 4 140 4 210 30S350 56 418 6"
+                stroke="var(--brand-teal)"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+
+            <p className="mt-6 max-w-[30em] text-[19px] text-muted-foreground">
+              Research Bridge matches you with mentors using their real publications. See why each
+              professor ranks where they do, then send an email you wrote and approved.
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Button asChild size="lg" variant="evidence">
-                <Link href="/login">
-                  Get Started Free
-                  <ArrowRight aria-hidden="true" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="#how-it-works">See How It Works</Link>
-              </Button>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/login"
+                className="inline-flex h-[46px] items-center gap-2 rounded-full bg-brand-teal px-[22px] text-[15px] font-bold text-white transition-[box-shadow] hover:shadow-[0_8px_40px_-6px_color-mix(in_srgb,var(--brand-teal)_70%,transparent)] motion-reduce:transition-none"
+              >
+                Create free account
+              </Link>
+              <Link
+                href="#how"
+                className="inline-flex h-[46px] items-center gap-2 rounded-full border border-border px-[22px] text-[15px] font-bold transition-colors hover:border-brand-teal motion-reduce:transition-none"
+              >
+                See how it works
+              </Link>
             </div>
-
-            <p className="mt-5 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Lock aria-hidden="true" className="size-3" />
-              Free to use · No credit card required
+            <p className="mt-4 text-sm text-muted-foreground">
+              Free for students. No credit card.
             </p>
           </div>
 
-          {/* Right: stats card widget */}
-          <aside
-            aria-label="Platform highlights"
-            className="hidden lg:block"
-          >
-            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
-              {/* Card header */}
-              <div className="flex items-start justify-between border-b border-border px-5 pt-5 pb-4">
-                <div>
-                  <p className="text-[10px] font-bold tracking-[0.18em] text-brand-teal uppercase">
-                    Research Bridge / Index
-                  </p>
-                  <p className="mt-1 text-lg font-semibold">Connected evidence</p>
-                </div>
-                <button
-                  aria-label="Share"
-                  className="grid size-8 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <Share2 aria-hidden="true" className="size-3.5" />
-                </button>
-              </div>
+          {/* Right — interactive demo */}
+          <DemoCard />
+        </section>
 
-              {/* Constellation visualisation placeholder */}
-              <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-purple-950/40 via-background to-emerald-950/30">
-                <svg
-                  aria-hidden="true"
-                  className="absolute inset-0 h-full w-full opacity-60"
-                  viewBox="0 0 400 176"
-                >
-                  {/* Edges */}
-                  {[
-                    [200, 88, 120, 40], [200, 88, 280, 40], [200, 88, 320, 100],
-                    [200, 88, 80, 120], [200, 88, 260, 150], [120, 40, 60, 70],
-                    [280, 40, 340, 30], [80, 120, 40, 150], [320, 100, 360, 140],
-                  ].map(([x1, y1, x2, y2], i) => (
-                    <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-                      stroke="url(#edgeGrad)" strokeWidth="0.8" strokeOpacity="0.6" />
-                  ))}
-                  {/* Nodes */}
-                  {[
-                    [200, 88, 6, "#C8FF00"], [120, 40, 4, "#A78BFA"], [280, 40, 4, "#A78BFA"],
-                    [320, 100, 3.5, "#34D399"], [80, 120, 3.5, "#34D399"],
-                    [260, 150, 3, "#A78BFA"], [60, 70, 2.5, "#A78BFA"],
-                    [340, 30, 2.5, "#34D399"], [40, 150, 2, "#A78BFA"],
-                    [360, 140, 2, "#34D399"],
-                  ].map(([cx, cy, r, fill], i) => (
-                    <circle key={i} cx={cx} cy={cy} r={r} fill={fill as string} fillOpacity="0.9" />
-                  ))}
-                  <defs>
-                    <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.8" />
-                      <stop offset="100%" stopColor="#34D399" stopOpacity="0.8" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
+        {/* ── Stats ──────────────────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-5 border-t border-border pb-12 pt-7 sm:grid-cols-3">
+          <Reveal>
+            <strong className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-none">
+              <AnimatedCounter value={200} suffix="M+" />
+            </strong>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              papers searchable through OpenAlex
+            </span>
+          </Reveal>
+          <Reveal delay={100}>
+            <strong className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-none">
+              <AnimatedCounter value={5} />
+            </strong>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              open scholarly sources, no scraping
+            </span>
+          </Reveal>
+          <Reveal delay={200}>
+            <strong className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-none">
+              <AnimatedCounter value={0} />
+            </strong>
+            <span className="mt-1 block text-sm text-muted-foreground">
+              emails sent without your approval
+            </span>
+          </Reveal>
+        </div>
+      </div>
 
-              {/* Stats rows */}
-              <div className="divide-y divide-border">
-                {stats.map(({ icon: Icon, stat, label }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-3 px-5 py-3.5"
-                  >
-                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-surface-subtle text-brand-teal">
-                      <Icon aria-hidden="true" className="size-4" strokeWidth={1.7} />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-base font-bold leading-none">{stat}</p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
-                    </div>
-                    <ArrowUpRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+      {/* ── Marquee ──────────────────────────────────────────────────────── */}
+      <div
+        aria-label="Data sources"
+        className="overflow-hidden border-y border-border py-[18px] [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]"
+      >
+        <div className="marquee-track flex w-max gap-14 font-serif text-[22px] font-semibold text-muted-foreground">
+          {marqueeItems.map((s, i) => (
+            <span key={i}>{s}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Features ─────────────────────────────────────────────────────── */}
+      <section id="features" className="py-24">
+        <div className="mx-auto max-w-[1160px] px-7">
+          <Reveal>
+            <h2 className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em]">
+              Everything between a topic and a sent email
+            </h2>
+          </Reveal>
+          <Reveal delay={60}>
+            <p className="mb-12 mt-3 max-w-[36em] text-muted-foreground">
+              Search papers, compare mentors, find internships, and draft outreach in one place.
+            </p>
+          </Reveal>
+          <div className="grid gap-5 md:grid-cols-3">
+            {FEATURES.map(({ title, body, visual }, i) => (
+              <Reveal key={title} delay={i * 80}>
+                <GlowCard>
+                  <div className="flex h-24 items-center justify-center overflow-hidden rounded-xl border border-border">
+                    {visual}
                   </div>
-                ))}
-              </div>
-            </div>
-          </aside>
-        </Container>
+                  <h3 className="font-serif mt-4 text-[22px] font-semibold">{title}</h3>
+                  <p className="mt-2 text-muted-foreground">{body}</p>
+                </GlowCard>
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* ── Features ── */}
-      <section aria-labelledby="features-title">
-        <Container className="py-[var(--section-space)]">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold tracking-[0.18em] text-brand-teal uppercase">
-              Core features
-            </p>
-            <h2
-              className="mt-4 text-3xl font-bold tracking-[-0.025em] sm:text-4xl"
-              id="features-title"
-            >
-              Everything you need to land a research position
+      {/* ── How it works ─────────────────────────────────────────────────── */}
+      <section id="how" className="py-24">
+        <div className="mx-auto max-w-[1160px] px-7">
+          <Reveal>
+            <h2 className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em]">
+              From profile to first reply in three steps
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-              From paper discovery to professor outreach, Research Bridge AI
-              covers the full workflow while keeping every step transparent and
-              evidence-grounded.
+          </Reveal>
+          <Reveal delay={60}>
+            <p className="mb-12 mt-3 max-w-[36em] text-muted-foreground">
+              You stay in control at every step.
             </p>
-          </div>
+          </Reveal>
+          <StepsSection />
+        </div>
+      </section>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {features.map(({ icon: Icon, title, description }) => (
-              <article
+      {/* ── Principles ───────────────────────────────────────────────────── */}
+      <section id="principles" className="py-24">
+        <div className="mx-auto max-w-[1160px] px-7">
+          <Reveal>
+            <h2 className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em]">
+              Rules we won't bend
+            </h2>
+          </Reveal>
+          <Reveal delay={60}>
+            <p className="mb-12 mt-3 max-w-[36em] text-muted-foreground">
+              Trust matters when you're writing to someone who doesn't know you yet.
+            </p>
+          </Reveal>
+
+          {/* Bento grid */}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-6">
+            {PRINCIPLES.map(({ wide, icon, dashed, visual, title, body }, i) => (
+              <Reveal
                 key={title}
-                className="group rounded-xl border border-border bg-card p-7 transition-all hover:border-brand-teal/30 hover:shadow-md motion-reduce:transition-none"
+                delay={i * 60}
+                className={wide ? "md:col-span-4" : "md:col-span-2"}
               >
-                <span className="grid size-12 place-items-center rounded-lg bg-brand-teal-soft text-brand-teal transition-colors group-hover:bg-brand-teal group-hover:text-card motion-reduce:transition-none">
-                  <Icon aria-hidden="true" className="size-6" strokeWidth={1.7} />
-                </span>
-                <h3 className="mt-5 text-xl font-bold">{title}</h3>
-                <p className="mt-2 leading-7 text-muted-foreground">
-                  {description}
-                </p>
-              </article>
+                <GlowCard className="h-full">
+                  {visual ? (
+                    visual
+                  ) : (
+                    <div
+                      className={`mb-3 inline-grid size-11 place-items-center rounded-full border-2 font-serif text-[22px] font-semibold text-brand-teal ${dashed ? "border-brand-teal" : "border-dashed border-brand-teal"}`}
+                    >
+                      {icon}
+                    </div>
+                  )}
+                  <h3 className="font-serif mt-2 text-[22px] font-semibold">{title}</h3>
+                  <p className="mt-2 text-muted-foreground">{body}</p>
+                </GlowCard>
+              </Reveal>
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* ── How It Works ── */}
-      <section
-        aria-labelledby="how-it-works-title"
-        className="border-y border-border bg-surface-subtle"
-        id="how-it-works"
-      >
-        <Container className="py-[var(--section-space)]">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold tracking-[0.18em] text-brand-teal uppercase">
-              How it works
-            </p>
-            <h2
-              className="mt-4 text-3xl font-bold tracking-[-0.025em] sm:text-4xl"
-              id="how-it-works-title"
-            >
-              Three steps to your next opportunity
+      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+      <section id="faq" className="py-24">
+        <div className="mx-auto max-w-[1160px] px-7">
+          <Reveal>
+            <h2 className="font-serif mb-6 text-[clamp(30px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em]">
+              Questions students ask
             </h2>
-          </div>
-
-          <div className="mx-auto mt-14 grid max-w-4xl gap-8 md:grid-cols-3">
-            {steps.map(({ step, title, description }) => (
-              <div key={step} className="text-center">
-                <span className="mx-auto grid size-14 place-items-center rounded-full bg-brand-teal text-card text-lg font-bold">
-                  {step}
-                </span>
-                <h3 className="mt-5 text-lg font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {description}
-                </p>
-              </div>
+          </Reveal>
+          <div className="max-w-[760px] divide-y divide-border">
+            {FAQ.map(({ q, a }, i) => (
+              <Reveal key={q} delay={i * 60}>
+                <details className="group py-[18px]">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-5 font-serif text-[20px] font-semibold [&::-webkit-details-marker]:hidden">
+                    {q}
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 text-brand-teal transition-transform duration-300 group-open:rotate-45 motion-reduce:transition-none"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-2.5 text-muted-foreground">{a}</p>
+                </details>
+              </Reveal>
             ))}
           </div>
-        </Container>
+        </div>
       </section>
 
-      {/* ── Principles ── */}
-      <section aria-labelledby="principles-title">
-        <Container className="py-[var(--section-space)]">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold tracking-[0.18em] text-brand-teal uppercase">
-              Our principles
-            </p>
-            <h2
-              className="mt-4 text-3xl font-bold tracking-[-0.025em] sm:text-4xl"
-              id="principles-title"
-            >
-              Designed to make evidence easier to inspect
-            </h2>
-          </div>
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {principles.map(({ icon: Icon, title, description }) => (
-              <article
-                key={title}
-                className="rounded-xl border border-border bg-card p-6"
-              >
-                <Icon
-                  aria-hidden="true"
-                  className="size-6 text-brand-teal"
-                  strokeWidth={1.7}
-                />
-                <h3 className="mt-4 text-base font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {description}
+      {/* ── CTA ──────────────────────────────────────────────────────────── */}
+      <section id="cta" className="py-24">
+        <div className="mx-auto max-w-[1160px] px-7">
+          <Reveal>
+            <div className="relative overflow-hidden rounded-[28px] border border-border bg-card px-6 py-[72px] text-center">
+              {/* Conic spin accent */}
+              <div
+                aria-hidden="true"
+                className="conic-spin pointer-events-none absolute inset-[-40%] bg-[conic-gradient(from_0deg,transparent,color-mix(in_srgb,var(--brand-teal)_14%,transparent),transparent_40%)]"
+              />
+              <div className="relative z-[1]">
+                <h2 className="font-serif mx-auto max-w-lg text-[clamp(30px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em]">
+                  Your next research project starts with one search.
+                </h2>
+                <p className="mx-auto mt-3 max-w-[30em] text-muted-foreground">
+                  Create your profile in about two minutes and see mentors matched to your
+                  interests.
                 </p>
-              </article>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Trust Bar ── */}
-      <section
-        aria-labelledby="trust-title"
-        className="border-y border-border bg-surface-subtle"
-      >
-        <Container className="py-12 text-center md:py-16">
-          <p
-            className="text-xs font-bold tracking-[0.18em] text-brand-teal uppercase"
-            id="trust-title"
-          >
-            Built on real academic APIs
-          </p>
-          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            We source data exclusively from trusted, open academic databases — never scraping or guessing.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-            {trustSources.map(({ name, description }) => (
-              <div key={name} className="text-center">
-                <p className="text-lg font-bold tracking-tight text-foreground">
-                  {name}
-                </p>
-                <p className="text-xs text-muted-foreground">{description}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* ── Bottom CTA ── */}
-      <section aria-labelledby="cta-title">
-        <Container className="py-[var(--section-space)]">
-          <div className="relative overflow-hidden rounded-2xl bg-primary px-8 py-16 text-center text-primary-foreground sm:px-16">
-            {/* Subtle glow in dark mode */}
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-teal/5 via-transparent to-purple-900/10" />
-            <h2
-              className="relative mx-auto max-w-lg text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl"
-              id="cta-title"
-            >
-              Start discovering research opportunities today
-            </h2>
-            <p className="relative mx-auto mt-4 max-w-md text-primary-foreground/70">
-              Create your free account, complete your profile, and let
-              evidence-backed matching connect you with professors in your field.
-            </p>
-            <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" variant="evidence">
-                <Link href="/login">
-                  Sign Up Free
-                  <ArrowRight aria-hidden="true" />
+                <Link
+                  href="/login"
+                  className="mt-7 inline-flex h-[46px] items-center gap-2 rounded-full bg-brand-teal px-[22px] text-[15px] font-bold text-white transition-[box-shadow] hover:shadow-[0_8px_40px_-6px_color-mix(in_srgb,var(--brand-teal)_70%,transparent)] motion-reduce:transition-none"
+                >
+                  Create free account
                 </Link>
-              </Button>
+              </div>
             </div>
-            <p className="relative mt-4 text-xs text-primary-foreground/50">
-              No credit card required · Takes less than 2 minutes
-            </p>
-          </div>
-        </Container>
+          </Reveal>
+        </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="border-t border-border">
-        <Container className="flex flex-col items-center justify-between gap-4 py-8 text-sm text-muted-foreground sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} Research Bridge AI. All rights reserved.</p>
-          <nav aria-label="Footer" className="flex gap-6">
-            <Link href="/login" className="hover:text-foreground transition-colors motion-reduce:transition-none">
-              Sign In
-            </Link>
-            <Link href="/design-system" className="hover:text-foreground transition-colors motion-reduce:transition-none">
-              Design System
-            </Link>
+      {/* ── Footer ───────────────────────────────────────────────────────── */}
+      <footer className="border-t border-border py-8">
+        <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-3 px-7 text-sm text-muted-foreground">
+          <span>© {new Date().getFullYear()} Research Bridge</span>
+          <nav aria-label="Footer" className="flex gap-5">
+            <a href="#" className="hover:text-foreground transition-colors motion-reduce:transition-none">Privacy</a>
+            <a href="#" className="hover:text-foreground transition-colors motion-reduce:transition-none">Terms</a>
+            <a href="#" className="hover:text-foreground transition-colors motion-reduce:transition-none">Contact</a>
           </nav>
-        </Container>
+        </div>
       </footer>
     </main>
   );

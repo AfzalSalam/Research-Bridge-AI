@@ -44,6 +44,8 @@
 :root {
   --font-manrope: "Manrope Variable";
   --font-source-serif: "Source Serif 4 Variable";
+  --font-fraunces: "Fraunces Variable";
+  --font-hanken: "Hanken Grotesk Variable";
   
   /* Crisp white/zinc foundation instead of beige */
   --background: #FAFAFB;
@@ -136,34 +138,33 @@
 }
 
 /* ── Dark Mode (Night Mode) ──────────────────────────────────────────────── */
-/* Extracted from the Figma reference design: near-black bg, neon green accent */
+/* Matches the HTML design: very dark green-black bg, emerald green accent */
 .dark {
-  --background: #0D0D0F;
-  --foreground: #FAFAFA;
-  --surface: #111114;
-  --surface-subtle: #18181C;
-  --card: #18181C;
-  --card-foreground: #FAFAFA;
-  --popover: #18181C;
-  --popover-foreground: #FAFAFA;
+  --background: #0a0f0d;
+  --foreground: #f3f6f4;
+  --surface: #111815;
+  --surface-subtle: #111815;
+  --card: #111815;
+  --card-foreground: #f3f6f4;
+  --popover: #111815;
+  --popover-foreground: #f3f6f4;
 
-  --primary: #FAFAFA;
-  --primary-foreground: #0D0D0F;
-  --secondary: #27272A;
-  --secondary-foreground: #FAFAFA;
-  --muted: #27272A;
-  --muted-foreground: #A1A1AA;
-  --accent: #18181C;
-  --accent-foreground: #FAFAFA;
+  --primary: #f3f6f4;
+  --primary-foreground: #0a0f0d;
+  --secondary: #1e2d27;
+  --secondary-foreground: #f3f6f4;
+  --muted: #1e2d27;
+  --muted-foreground: #9baba3;
+  --accent: #1e2d27;
+  --accent-foreground: #f3f6f4;
 
-  /* Neon yellow-green from Figma — used for the hero accent word */
-  --brand-teal: #C8FF00;
-  --brand-teal-strong: #AADE00;
-  --brand-teal-soft: #1A2800;
+  /* Emerald green from the HTML dark mode */
+  --brand-teal: #34d399;
+  --brand-teal-strong: #34d399;
+  --brand-teal-soft: #042a1a;
 
-  /* Subtle slate for secondary labels */
-  --brand-indigo: #A1A1AA;
-  --brand-indigo-soft: #27272A;
+  --brand-indigo: #9baba3;
+  --brand-indigo-soft: #1e2d27;
 
   --warning: #F59E0B;
   --warning-foreground: #FEF3C7;
@@ -172,9 +173,9 @@
   --destructive-foreground: #FEE2E2;
   --destructive-soft: #290A0A;
 
-  --border: #27272A;
-  --input: #27272A;
-  --ring: #C8FF00;
+  --border: #22302a;
+  --input: #22302a;
+  --ring: #34d399;
 
   --shadow-sheet: 0 24px 70px rgb(0 0 0 / 60%);
 }
@@ -290,5 +291,174 @@
 @media (forced-colors: active) {
   .skip-link {
     border: 2px solid ButtonText;
+  }
+}
+
+/* ── Landing-page specific styles ─────────────────────────────────────────── */
+
+/* Serif utility class */
+.font-serif {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+/* Ambient blobs */
+.ambient-blob {
+  position: fixed;
+  z-index: 0;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.09;
+  pointer-events: none;
+  animation: blob-drift 70s ease-in-out infinite alternate;
+}
+.ambient-blob-1 {
+  background: var(--brand-teal);
+  top: -25vmax;
+  right: -15vmax;
+}
+.ambient-blob-2 {
+  background: var(--brand-teal-soft);
+  bottom: -30vmax;
+  left: -20vmax;
+  animation-delay: -30s;
+  opacity: 0.06;
+}
+@keyframes blob-drift {
+  to { transform: translate(-5vmax, 4vmax) scale(1.08); }
+}
+
+/* Hero word-by-word entrance */
+@keyframes word-in {
+  to { opacity: 1; transform: none; filter: none; }
+}
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.6em) rotate(2deg);
+  filter: blur(8px);
+  animation: word-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Arc SVG draw-on */
+@keyframes arc-draw {
+  to { stroke-dashoffset: 0; }
+}
+.arc-path {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: arc-draw 2.4s 0.9s ease forwards;
+}
+
+/* Marquee */
+@keyframes marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-scroll 30s linear infinite;
+}
+
+/* Scroll-reveal */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.reveal-item.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Steps connector line */
+.steps-line {
+  transition: transform 1.6s 0.2s ease;
+}
+.steps-in .steps-line {
+  transform: scaleX(1) !important;
+}
+
+/* Card radial hover glow (cursor-follow) */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 0%),
+    color-mix(in srgb, var(--brand-teal) 18%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+/* CTA conic spin */
+@keyframes conic-spin {
+  to { transform: rotate(360deg); }
+}
+.conic-spin {
+  animation: conic-spin 14s linear infinite;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+.cursor-blink {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--brand-teal);
+  vertical-align: -2px;
+  animation: blink 1s steps(2) infinite;
+}
+
+/* Pulsing dot */
+@keyframes pulse-dot {
+  50% { opacity: 0.35; }
+}
+.pulse-dot {
+  animation: pulse-dot 2.6s ease-in-out infinite;
+}
+
+/* Animated bar fill */
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+}
+.bar-fill {
+  transform-origin: left;
+  animation: bar-grow 1s 0.1s both;
+}
+
+/* Dashed animated path */
+@keyframes dash-move {
+  to { stroke-dashoffset: -48; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-word,
+  .reveal-item {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .arc-path {
+    stroke-dashoffset: 0 !important;
+  }
+  .ambient-blob,
+  .marquee-track,
+  .conic-spin,
+  .cursor-blink,
+  .pulse-dot,
+  .bar-fill {
+    animation: none !important;
   }
 }
