@@ -72,82 +72,102 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        {/* Right-hand actions: toggle always visible, auth buttons desktop-only */}
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          {user ? (
-            <Button asChild size="default" variant="outline">
-              <Link
-                aria-current={
-                  isCurrentRoute(pathname, profileNavigation.href)
-                    ? "page"
-                    : undefined
-                }
-                href={profileNavigation.href}
-              >
-                Profile
-              </Link>
-            </Button>
-          ) : (
-            <Button asChild size="default" variant="default">
-              <Link href="/login">Sign In</Link>
-            </Button>
-          )}
-        </div>
 
-        <div className="lg:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button aria-label="Open navigation" size="icon" variant="outline">
-                <Menu aria-hidden="true" className="size-5" />
+          {/* Desktop auth */}
+          <div className="hidden lg:block">
+            {user ? (
+              <Button asChild size="default" variant="outline">
+                <Link
+                  aria-current={
+                    isCurrentRoute(pathname, profileNavigation.href)
+                      ? "page"
+                      : undefined
+                  }
+                  href={profileNavigation.href}
+                >
+                  Profile
+                </Link>
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <SheetHeader className="border-b border-border">
-                <SheetTitle>Navigate Research Bridge</SheetTitle>
-                <SheetDescription>
-                  Move through the placement-release workflow.
-                </SheetDescription>
-              </SheetHeader>
-              <nav aria-label="Mobile" className="px-6">
-                {mobileNavigation.map((item) => {
-                  const Icon = item.icon;
-                  const isCurrent = isCurrentRoute(pathname, item.href);
+            ) : (
+              <Button asChild size="default" variant="default">
+                <Link href="/login">Sign In</Link>
+              </Button>
+            )}
+          </div>
 
-                  return (
-                    <SheetClose asChild key={item.href}>
-                      <Link
-                        aria-current={isCurrent ? "page" : undefined}
-                        className={cn(
-                          "grid min-h-16 grid-cols-[2.75rem_minmax(0,1fr)] items-center gap-3 border-b border-border py-3 text-foreground outline-none transition-colors hover:text-brand-teal focus-visible:text-brand-teal motion-reduce:transition-none",
-                          isCurrent && "text-brand-teal",
-                        )}
-                        href={item.href}
-                      >
-                        <span className="grid size-10 place-items-center rounded-full bg-muted text-brand-indigo">
-                          <Icon
-                            aria-hidden="true"
-                            className="size-5"
-                            strokeWidth={1.8}
-                          />
-                        </span>
-                        <span>
-                          <span className="block text-sm font-semibold">
-                            {item.label}
+          {/* Mobile hamburger */}
+          <div className="lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button aria-label="Open navigation" size="icon" variant="outline">
+                  <Menu aria-hidden="true" className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader className="border-b border-border">
+                  <SheetTitle>Navigate Research Bridge</SheetTitle>
+                  <SheetDescription>
+                    Move through the placement-release workflow.
+                  </SheetDescription>
+                </SheetHeader>
+                <nav aria-label="Mobile" className="px-6">
+                  {mobileNavigation.map((item) => {
+                    const Icon = item.icon;
+                    const isCurrent = isCurrentRoute(pathname, item.href);
+
+                    return (
+                      <SheetClose asChild key={item.href}>
+                        <Link
+                          aria-current={isCurrent ? "page" : undefined}
+                          className={cn(
+                            "grid min-h-16 grid-cols-[2.75rem_minmax(0,1fr)] items-center gap-3 border-b border-border py-3 text-foreground outline-none transition-colors hover:text-brand-teal focus-visible:text-brand-teal motion-reduce:transition-none",
+                            isCurrent && "text-brand-teal",
+                          )}
+                          href={item.href}
+                        >
+                          <span className="grid size-10 place-items-center rounded-full bg-muted text-brand-indigo">
+                            <Icon
+                              aria-hidden="true"
+                              className="size-5"
+                              strokeWidth={1.8}
+                            />
                           </span>
-                          <span className="mt-0.5 block text-xs leading-5 font-normal text-muted-foreground">
-                            {item.description}
+                          <span>
+                            <span className="block text-sm font-semibold">
+                              {item.label}
+                            </span>
+                            <span className="mt-0.5 block text-xs leading-5 font-normal text-muted-foreground">
+                              {item.description}
+                            </span>
                           </span>
-                        </span>
-                      </Link>
-                    </SheetClose>
-                  );
-                })}
-              </nav>
-              <p className="mt-auto border-t border-border p-6 text-xs leading-5 text-muted-foreground">
-                Evidence before generation. Unknown facts stay unknown.
-              </p>
-            </SheetContent>
-          </Sheet>
+                        </Link>
+                      </SheetClose>
+                    );
+                  })}
+                </nav>
+
+                {/* Auth + sign-in inside mobile sheet */}
+                <div className="border-t border-border px-6 py-4">
+                  {user ? (
+                    <Button asChild className="w-full" variant="outline">
+                      <Link href={profileNavigation.href}>View Profile</Link>
+                    </Button>
+                  ) : (
+                    <Button asChild className="w-full" variant="default">
+                      <Link href="/login">Sign In</Link>
+                    </Button>
+                  )}
+                </div>
+
+                <p className="border-t border-border p-6 text-xs leading-5 text-muted-foreground">
+                  Evidence before generation. Unknown facts stay unknown.
+                </p>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </Container>
     </header>
