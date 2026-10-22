@@ -1,0 +1,23 @@
+{
+  "status": "answer",
+  "claims": [
+    {
+      "text": "GridSearchCV selects parameters by evaluating them against a specified parameter grid and maximizing the score obtained from the estimator's score method.",
+      "citations": [
+        {
+          "passage_id": "p0",
+          "quote": "During the call to fit, it selects the parameters on a speci\u0066ied parameter grid, maximizing a score (thescore method of the underlying estimator)."
+        }
+      ]
+    },
+    {
+      "text": "GridSearchCV uses cross-validation to evaluate performance and select parameters.",
+      "citations": [
+        {
+          "passage_id": "p0",
+          "quote": "Model selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation"
+        }
+      ]
+    }
+  ]
+}

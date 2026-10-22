@@ -5,12 +5,14 @@ from typing import Any, cast
 import redis.asyncio as redis
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from psycopg import AsyncConnection
 from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
 
 from app.api.v1.router import api_router
+from app.clients.institutions import InstitutionRegistry
 from app.core.config import Settings, get_settings
 from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import configure_logging
@@ -27,6 +29,7 @@ from app.runtime import (
     create_opportunity_runtime,
     create_outreach_runtime,
 )
+from app.services.university_scan import UniversityScanService
 
 
 @asynccontextmanager
@@ -36,10 +39,12 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
     app_settings = cast(Settings, application.state.settings)
     psycopg_url = app_settings.database_url.replace("postgresql+asyncpg", "postgresql")
 
-    # LangGraph Postgres checkpointer — optional; degrades
-    # gracefully when DB is absent or SQLite is used.
+    # Keep one checkpointer for the app lifetime so separate HTTP requests
+    # share workflow state. Only local SQLite development/tests use memory.
     pool: AsyncConnectionPool[AsyncConnection[dict[str, Any]]] | None = None
-    if app_settings.database_url.startswith("postgres"):
+    if app_settings.app_environment == "test":
+        application.state.workflow_checkpointer = MemorySaver()
+    elif app_settings.database_url.startswith("postgres"):
         try:
             _pool = cast(
                 AsyncConnectionPool[AsyncConnection[dict[str, Any]]],
@@ -54,11 +59,11 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
                     open=False,
                 ),
             )
+            pool = _pool
             await _pool.open()
             checkpointer = AsyncPostgresSaver(_pool)
             await checkpointer.setup()
             application.state.workflow_checkpointer = checkpointer
-            pool = _pool
         except Exception:
             import logging as _logging
 
@@ -67,25 +72,32 @@ async def application_lifespan(application: FastAPI) -> AsyncIterator[None]:
                 exc_info=True,
             )
             application.state.workflow_checkpointer = None
+    elif app_settings.app_environment in {"development", "test", "e2e"}:
+        application.state.workflow_checkpointer = MemorySaver()
     else:
         application.state.workflow_checkpointer = None
 
-    # Redis connection (used for rate limiting via fastapi_limiter.depends.RateLimiter)
+    # Isolated tests must not connect to an unrelated local Redis instance.
     redis_client = None
-    try:
-        redis_client = redis.from_url(
-            app_settings.redis_url, encoding="utf-8", decode_responses=True
-        )
-        await redis_client.ping()
-        application.state.redis = redis_client
-    except Exception:
-        import logging as _logging
+    application.state.redis = None
+    if app_settings.app_environment not in {"test", "e2e"}:
+        try:
+            redis_client = redis.from_url(
+                app_settings.redis_url,
+                encoding="utf-8",
+                decode_responses=True,
+                socket_connect_timeout=2,
+                socket_timeout=2,
+            )
+            await redis_client.ping()
+            application.state.redis = redis_client
+        except (redis.RedisError, OSError):
+            import logging as _logging
 
-        _logging.getLogger(__name__).warning(
-            "Redis unavailable — rate limiting degraded",
-            exc_info=True,
-        )
-        application.state.redis = None
+            _logging.getLogger(__name__).warning(
+                "Redis unavailable — rate limiting degraded",
+                exc_info=True,
+            )
 
     try:
         yield
@@ -148,6 +160,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             },
         ],
     )
+    application.state.institution_registry = InstitutionRegistry()
+    application.state.university_scanner = UniversityScanService()
     application.state.settings = app_settings
     application.state.database = create_database(app_settings)
     application.state.discovery_runtime = create_discovery_runtime(app_settings)

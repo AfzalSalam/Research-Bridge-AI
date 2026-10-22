@@ -91,6 +91,9 @@ class OutreachDraft(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         ForeignKey("authors.id", ondelete="SET NULL"), nullable=True, index=True
     )
     recipient_display_name: Mapped[str] = mapped_column(String(240), nullable=False)
+    contact_provenance: Mapped[dict[str, str] | None] = mapped_column(
+        JSON, nullable=True
+    )
     recipient_contact: Mapped[str | None] = mapped_column(String(320), nullable=True)
     subject: Mapped[str] = mapped_column(String(160), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)

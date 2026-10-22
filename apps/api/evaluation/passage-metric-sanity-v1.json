@@ -1,0 +1,48 @@
+{
+  "name": "passage-metric-sanity-v1",
+  "kind": "synthetic",
+  "passage_ids": [
+    "p1",
+    "p2",
+    "p3"
+  ],
+  "queries": [
+    {
+      "id": "supported",
+      "relevant": [
+        "p1",
+        "p2"
+      ]
+    },
+    {
+      "id": "unsupported",
+      "relevant": []
+    }
+  ],
+  "runs": [
+    {
+      "query_id": "supported",
+      "engine": "fixture",
+      "retrieved": [
+        "p3",
+        "p1",
+        "p1",
+        "p2"
+      ],
+      "citation_valid": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "latency_ms": 12
+    },
+    {
+      "query_id": "unsupported",
+      "engine": "fixture",
+      "retrieved": [],
+      "citation_valid": [],
+      "latency_ms": 2
+    }
+  ]
+}

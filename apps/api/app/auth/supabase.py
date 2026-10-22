@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 from collections.abc import Mapping
 
@@ -16,6 +17,7 @@ _ALLOWED_ALGORITHMS = frozenset(
     {"RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "EdDSA"}
 )
 _MAX_ACCESS_TOKEN_LENGTH = 8_192
+logger = logging.getLogger(__name__)
 
 
 class AccessTokenInvalidError(Exception):
@@ -74,6 +76,7 @@ class SupabaseTokenVerifier:
             or not isinstance(algorithm, str)
             or algorithm not in _ALLOWED_ALGORITHMS
         ):
+            logger.warning("Access token rejected: unsupported signing header")
             raise AccessTokenInvalidError
 
         key = await self._get_key(key_id)
@@ -89,6 +92,7 @@ class SupabaseTokenVerifier:
                 options={"require": ["aud", "exp", "iat", "sub"]},
             )
         except InvalidTokenError as error:
+            logger.warning("Access token rejected: %s", type(error).__name__)
             raise AccessTokenInvalidError from error
 
         subject = claims.get("sub")
@@ -106,6 +110,7 @@ class SupabaseTokenVerifier:
             await self._refresh_keys()
         key = self._keys.get(key_id)
         if key is None:
+            logger.warning("Access token rejected: signing key not found")
             raise AccessTokenInvalidError
         return key
 

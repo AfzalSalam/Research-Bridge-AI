@@ -11,6 +11,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { z } from "zod";
+import { DraftRecipient } from "@/features/research/draft-recipient";
+import { useResearchValue } from "@/features/discovery/research-session";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -146,7 +149,7 @@ function EvidenceInspector({ draft }: { draft: OutreachDraftResponse }) {
   );
 }
 
-function DraftEditor({
+export function DraftEditor({
   draft,
   onDraftChange,
 }: {
@@ -214,7 +217,7 @@ function DraftEditor({
 
   const saveError = saveMutation.error instanceof ApiError ? saveMutation.error : null;
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
+    <div><DraftRecipient draft={draft} onChange={d=>{setReviewed(false);onDraftChange(d);}}/><div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_21rem]">
       <section className="min-w-0 border border-border bg-surface p-5 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -328,7 +331,7 @@ function DraftEditor({
         </div>
       </section>
       <EvidenceInspector draft={draft} />
-    </div>
+    </div></div>
   );
 }
 
@@ -339,10 +342,10 @@ export function LiveOutreachWorkspace({
   candidate: MentorCandidateResult;
   query: string;
 }) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([
+  const [selectedIds, setSelectedIds] = useResearchValue(`outreach-papers-${candidate.id}`, z.array(z.string()), [
     candidate.supportingPapers[0]?.id ?? "",
   ].filter(Boolean));
-  const [preference, setPreference] = useState<"auto" | "deterministic">("auto");
+  const [preference, setPreference] = useResearchValue(`outreach-preference-${candidate.id}`, z.enum(["auto", "deterministic"]), "auto");
   const [draft, setDraft] = useState<OutreachDraftResponse | null>(null);
   const mutation = useMutation({ mutationFn: createLiveOutreachDraft });
   const selectedPapers = useMemo(
@@ -389,8 +392,8 @@ export function LiveOutreachWorkspace({
             Write from evidence, then make it yours
           </h3>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            Recipient contact, title, current institution, availability, and funding
-            remain unknown. This workspace drafts and copies; it never sends.
+            Check recipient contact, title, current institution, availability, and funding
+            against source evidence. This workspace drafts and copies; it never sends.
           </p>
         </div>
       </div>

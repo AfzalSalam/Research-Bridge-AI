@@ -1,0 +1,146 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "started_at": "2026-10-21T07:05:22.937294+00:00",
+  "answer_prompt": "paper-cited-answer-v2",
+  "review_prompt": "paper-answer-support-v1",
+  "complete": false,
+  "cases": [
+    {
+      "id": "scikit-learn:quality",
+      "question": "What tools and tests support code quality?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nFurthermore, thanks to its liberal license, it has been widely distributed as pa rt of major free soft-\nware distributions such as Ubuntu, Debian, Mandriva, NetBSD and Macp orts and in commercial\ndistributions such as the \u201cEnthought Python Distribution\u201d.\n2. Project Vision\nCode quality. Rather than providing as many features as possible, the project\u2019s goal ha s been to\nprovide solid implementations. Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8. Finally, we\nstrive to use consistent naming for the functions and parameters used throughout a strict adherence\nto the Python coding guidelines and numpy style documentation.\nBSD licensing. Most of the Python ecosystem is licensed with non-copyleft licenses. While such\npolicy is bene\ufb01cial for adoption of these tools by commercial projects, it does impose some restric-\ntions: we are unable to use some existing scienti\ufb01c code, such as the GSL.\nBare-bone design and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for"
+        },
+        {
+          "id": "p1",
+          "page": 3,
+          "start": 2100,
+          "end": 3300,
+          "text": "rations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bindings for many Fortran-based standard numerical packages,\nsuch as LAPACK. This is important for ease of installation and portability, as p roviding libraries\naround Fortran code can prove challenging on various platforms.\nCython: a language for combining C in Python. Cython makes it easy to reach the perf ormance\nof compiled languages with Python-like syntax and high-level operations. I t is also used to bind\ncompiled libraries, eliminating the boilerplate code of Python/C extensions.\n4. Code Design\nObjects speci\ufb01ed by interface, not by inheritance. To facilitate the use of external objects with\nscikit-learn, inheritance is not enforced; instead, code conventions provide a con sistent interface.\nThe central object is anestimator, that implements afit method, accepting as arguments an input\ndata array and, optionally, an array of labels for supervised problems.Supervised estimators, such as\nSVM classi\ufb01ers, can implement apredict method. Some estimators, that we call transformers,\nfor example, PCA, implement a transform method, returni"
+        },
+        {
+          "id": "p2",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nMatthieu Brucher MATTHIEU .BRUCHER @GMAIL .COM\nTotal SA, CSTJF\navenue Larribau\n64000 Pau \u2013 France\nMatthieu Perrot MATTHIEU .PERROT @CEA .FR\n\u00b4Edouard Duchesnay EDOUARD .DUCHESNAY @CEA .FR\nLNAO\nNeurospin, B\u02c6at 145, CEA Saclay\n91191 Gif sur Yvette \u2013 France\nEditor: Mikio Braun\nAbstract\nScikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algo-\nrithms for medium-scale supervised and unsupervised probl ems. This package focuses on bring-\ning machine learning to non-specialists using a general-pu rpose high-level language. Emphasis is\nput on ease of use, performance, documentation, and API cons istency. It has minimal dependen-\ncies and is distributed under the simpli\ufb01ed BSD license, enc ouraging its use in both academic\nand commercial settings. Source code, binaries, and docume ntation can be downloaded from\nhttp://scikit-learn.sourceforge.net.\nKeywords: Python, supervised learning, unsupervised learning, model selection\n1. Introduction\nThe Python programming language is establishing itself as one of the most popu lar languages for\nscienti\ufb01c computing. Thanks to its high-level interactive nature and its mat"
+        },
+        {
+          "id": "p3",
+          "page": 3,
+          "start": 1050,
+          "end": 2250,
+          "text": "ign and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for data containers.\nCommunity-driven development. We base our development on collaborative tools such as git, github\nand public mailing lists. External contributions are welcome and encouraged.\nDocumentation. Scikit-learn provides a \u223c300 page user guide including narrative documentation,\nclass references, a tutorial, installation instructions, as well as more than 60 examples, some fea-\nturing real-world applications. We try to minimize the use of machine-learning jargon, while main-\ntaining precision with regards to the algorithms employed.\n3. Underlying Technologies\nNumpy: the base data structure used for data and model parameters. Input data is presented as\nnumpy arrays, thus integrating seamlessly with other scienti\ufb01c Python libraries . Numpy\u2019s view-\nbased memory model limits copies, even when binding with compiled code (Van der Walt et al.,\n2011). It also provides basic arithmetic operations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bi"
+        },
+        {
+          "id": "p4",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nscikit-learn mlpy pybrain pymvpa mdp shogun\nSupport Vector Classi\ufb01cation 5.2 9.47 17.5 11.52 40.48 5.63\nLasso (LARS) 1.17 105.3 - 37.35 - -\nElastic Net 0.52 73.7 - 1.44 - -\nk-Nearest Neighbors 0.57 1.41 - 0.56 0.58 1.36\nPCA (9 components) 0.18 - - 8.93 0.47 0.33\nk-Means (9 clusters) 1.34 0.79 \u22c6 - 35.75 0.68\nLicense BSD GPL BSD BSD BSD GPL\n-: Not implemented. \u22c6: Does not converge within 1 hour.\nTable 1: Time in seconds on the Madelon data set for various machine learnin g libraries exposed\nin Python: MLPy (Albanese et al., 2008), PyBrain (Schaul et al., 2010) , pymvpa (Hanke\net al., 2009), MDP (Zito et al., 2008) and Shogun (Sonnenburg et al., 20 10). For more\nbenchmarks seehttp://github.com/scikit-learn.\nmay also provide a score method, which is an increasing evaluation of goodness of \ufb01t: a log-\nlikelihood, or a negated loss function. The other important object is the cross-validation iterator,\nwhich provides pairs of train and test indices to split input data, for example K-fold, leave one out,\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, op"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "Code quality is supported by the use of unit tests and static analysis tools.",
+            "citations": [
+              {
+                "page": 3,
+                "start": 446,
+                "end": 590,
+                "quote": "Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8."
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 2204.74
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 1372.34
+        }
+      ],
+      "latency_ms": 3577.4
+    },
+    {
+      "id": "scikit-learn:grid",
+      "question": "How does GridSearchCV select parameters?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 4,
+          "start": 1050,
+          "end": 2250,
+          "text": ",\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, optionally distributing the computation to several cores. Th is is accomplished by\nwrapping an estimator in a GridSearchCV object, where the \u201cCV\u201d stands for \u201ccross-validated\u201d.\nDuring the call to fit, it selects the parameters on a speci\ufb01ed parameter grid, maximizing a score\n(thescore method of the underlying estimator).predict,score, ortransform are then delegated\nto the tuned estimator. This object can therefore be used transparently as any other estimator. Cross\nvalidation can be made more ef\ufb01cient for certain estimators by exploiting speci\ufb01 c properties, such\nas warm restarts or regularization paths (Friedman et al., 2010). This is su pported through special\nobjects, such as the LassoCV. Finally, aPipeline object can combine several transformers and\nan estimator to create a combined estimator to, for example, apply dimension reduc tion before\n\ufb01tting. It behaves as a standard estimator, and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, an"
+        },
+        {
+          "id": "p1",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nFurthermore, thanks to its liberal license, it has been widely distributed as pa rt of major free soft-\nware distributions such as Ubuntu, Debian, Mandriva, NetBSD and Macp orts and in commercial\ndistributions such as the \u201cEnthought Python Distribution\u201d.\n2. Project Vision\nCode quality. Rather than providing as many features as possible, the project\u2019s goal ha s been to\nprovide solid implementations. Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8. Finally, we\nstrive to use consistent naming for the functions and parameters used throughout a strict adherence\nto the Python coding guidelines and numpy style documentation.\nBSD licensing. Most of the Python ecosystem is licensed with non-copyleft licenses. While such\npolicy is bene\ufb01cial for adoption of these tools by commercial projects, it does impose some restric-\ntions: we are unable to use some existing scienti\ufb01c code, such as the GSL.\nBare-bone design and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for"
+        },
+        {
+          "id": "p2",
+          "page": 4,
+          "start": 2100,
+          "end": 3181,
+          "text": "and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, and is mostly written in a high level language, care has\nbeen taken to maximize computational ef\ufb01ciency. In Table 1, we compare compu tation time for a\nfew algorithms implemented in the major machine learning toolkits accessible in Python. We use\nthe Madelon data set (Guyon et al., 2004), 4400 instances and 500 attribu tes, The data set is quite\nlarge, but small enough for most algorithms to run.\nSVM. While all of the packages compared call libsvm in the background, the performance of scikit-\nlearn can be explained by two factors. First, our bindings avoid memory copies and have up to\n40% less overhead than the original libsvm Python bindings. Second, we p atch libsvm to improve\nef\ufb01ciency on dense data, use a smaller memory footprint, and better use memor y alignment and\npipelining capabilities of modern processors. This patched version also pr ovides unique features,\nsuch as setting weights for individual samples.\n2828"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nscikit-learn mlpy pybrain pymvpa mdp shogun\nSupport Vector Classi\ufb01cation 5.2 9.47 17.5 11.52 40.48 5.63\nLasso (LARS) 1.17 105.3 - 37.35 - -\nElastic Net 0.52 73.7 - 1.44 - -\nk-Nearest Neighbors 0.57 1.41 - 0.56 0.58 1.36\nPCA (9 components) 0.18 - - 8.93 0.47 0.33\nk-Means (9 clusters) 1.34 0.79 \u22c6 - 35.75 0.68\nLicense BSD GPL BSD BSD BSD GPL\n-: Not implemented. \u22c6: Does not converge within 1 hour.\nTable 1: Time in seconds on the Madelon data set for various machine learnin g libraries exposed\nin Python: MLPy (Albanese et al., 2008), PyBrain (Schaul et al., 2010) , pymvpa (Hanke\net al., 2009), MDP (Zito et al., 2008) and Shogun (Sonnenburg et al., 20 10). For more\nbenchmarks seehttp://github.com/scikit-learn.\nmay also provide a score method, which is an increasing evaluation of goodness of \ufb01t: a log-\nlikelihood, or a negated loss function. The other important object is the cross-validation iterator,\nwhich provides pairs of train and test indices to split input data, for example K-fold, leave one out,\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, op"
+        },
+        {
+          "id": "p4",
+          "page": 5,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nLARS. Iteratively re\ufb01ning the residuals instead of recomputing them gives perfo rmance gains of\n2\u201310 times over the reference R implementation (Hastie and Efron, 2004).Pymvpa uses this imple-\nmentation via the Rpy R bindings and pays a heavy price to memory copies.\nElastic Net. We benchmarked thescikit-learn coordinate descent implementations of Elastic Net. It\nachieves the same order of performance as the highly optimized Fortran ver sion glmnet (Friedman\net al., 2010) on medium-scale problems, but performance on very large pr oblems is limited since\nwe do not use the KKT conditions to de\ufb01ne an active set.\nkNN. The k-nearest neighbors classi\ufb01er implementation constructs a ball tree (O mohundro, 1989)\nof the samples, but uses a more ef\ufb01cient brute force search in large dimensions.\nPCA. For medium to large data sets, scikit-learn provides an implementation of a truncated PCA\nbased on random projections (Rokhlin et al., 2009).\nk-means. scikit-learn \u2019s k-means algorithm is implemented in pure Python. Its performance is lim-\nited by the fact that numpy\u2019s array operations take multiple passes over data.\n6. Conclusion\nScikit-learn exposes a wid"
+        }
+      ],
+      "result": {
+        "status": "unavailable",
+        "reason": "invalid_provider_output",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 2128.97
+        }
+      ],
+      "latency_ms": 2129.8
+    }
+  ],
+  "limitations": "Two public papers; provisional labels; observed retrieval corpus; not held-out accuracy. Model review is not independent human verification.",
+  "finished_at": "2026-10-21T07:05:34.843210+00:00"
+}

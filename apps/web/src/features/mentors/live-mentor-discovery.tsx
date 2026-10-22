@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import { useResearchTask, useResearchValue } from "@/features/discovery/research-session";
 import {
   ArrowLeft,
   BookOpen,
@@ -13,7 +14,7 @@ import {
   ShieldQuestion,
   UserRoundSearch,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import { DataState } from "@/components/states/data-state";
@@ -26,14 +27,18 @@ import { LiveOutreachWorkspace } from "@/features/outreach/live-outreach-workspa
 import { NativeSelect } from "@/features/demo/components/native-select";
 import {
   liveMentorSearchFormSchema,
+  mentorDiscoveryResponseSchema,
   type LiveMentorSearchForm,
   type LiveMentorSearchFormInput,
   type MentorCandidateResult,
   type MentorDiscoveryResponse,
 } from "@/features/discovery/contracts";
 import { discoverOpenAlexMentors } from "@/lib/api/mentors";
-import { ApiError } from "@/lib/api/result";
+
 import { cn } from "@/lib/utils";
+
+import { PublicEmailLookup } from "./public-email-lookup";
+import { PaperAuthorGroups } from "./paper-author-groups";
 
 const fallbackQuery = "interpretable machine learning for clinical decision support";
 const bandLabel = {
@@ -55,10 +60,10 @@ function CandidateList({
     <section aria-labelledby="candidate-list-title">
       <div className="border-b border-border pb-4">
         <p className="text-xs font-bold tracking-[0.12em] text-brand-indigo uppercase">
-          Evidence order · no prestige signal
+          Matched through their publications
         </p>
         <h2 className="mt-2 text-2xl font-medium" id="candidate-list-title">
-          Researcher candidates
+          Research authors
         </h2>
       </div>
       <div className="divide-y divide-border border-b border-border">
@@ -257,8 +262,10 @@ function CandidateDetail({
   onBack: () => void;
   query: string;
 }) {
+  const [savedIds, setSavedIds] = useResearchValue("saved-researchers", z.array(z.string()), []);
+  const saved = savedIds.includes(candidate.id);
   return (
-    <article>
+    <article id="researcher-detail" tabIndex={-1} className="scroll-mt-24">
       <Button className="mb-5 lg:hidden" onClick={onBack} size="sm" variant="outline">
         <ArrowLeft aria-hidden="true" /> Back to candidates
       </Button>
@@ -297,41 +304,58 @@ function CandidateDetail({
         the author&apos;s current employer. Verify identity, title, lab page, and
         openings before outreach.
       </p>
-      <Contributions candidate={candidate} />
+      <PublicEmailLookup authorId={candidate.id} authorName={candidate.displayName} />
+      <details className="mt-6"><summary className="cursor-pointer text-sm font-medium">How are these results ordered?</summary><Contributions candidate={candidate} /></details>
+      <div className="mt-6 flex flex-wrap items-center gap-4 text-sm">
+        <a href="#paper-evidence-title" className="underline">View papers</a>
+        <a href="#researcher-email" className="underline">Draft an email</a>
+        <Button variant="outline" aria-pressed={saved} onClick={() => setSavedIds((old) => saved ? old.filter((id) => id !== candidate.id) : [...old, candidate.id])}>{saved ? "Saved for this session" : "Save researcher for this session"}</Button>
+      </div>
       <Papers candidate={candidate} />
-      <LiveOutreachWorkspace candidate={candidate} key={candidate.id} query={query} />
+      <div id="researcher-email" className="scroll-mt-24"><LiveOutreachWorkspace candidate={candidate} key={candidate.id} query={query} /></div>
     </article>
   );
 }
 
 function ResultWorkspace({ result }: { result: MentorDiscoveryResponse }) {
-  const [selectedId, setSelectedId] = useState<string | null>(
-    result.candidates[0]?.id ?? null,
-  );
+  const [selectedId, setSelectedId] = useResearchValue("mentor-selected", z.string().nullable(), result.candidates[0]?.id ?? null);
   const lastSelectedId = useRef<string | null>(selectedId);
   const selected = result.candidates.find((item) => item.id === selectedId);
 
+  const pendingFocus = useRef<"detail" | "list" | null>(null);
+  useEffect(() => {
+    if (pendingFocus.current === "detail") {
+      const detail = document.getElementById("researcher-detail");
+      detail?.scrollIntoView({ block: "start" });
+      detail?.focus({ preventScroll: true });
+    } else if (pendingFocus.current === "list" && lastSelectedId.current) {
+      document.getElementById(`candidate-${lastSelectedId.current}`)?.focus();
+    }
+    pendingFocus.current = null;
+  }, [selectedId]);
+
   function selectCandidate(id: string) {
     lastSelectedId.current = id;
+    if (id === selectedId) {
+      document.getElementById("researcher-detail")?.focus();
+      return;
+    }
+    pendingFocus.current = "detail";
     setSelectedId(id);
   }
 
   function returnToCandidates() {
+    pendingFocus.current = "list";
     setSelectedId(null);
-    window.requestAnimationFrame(() => {
-      if (lastSelectedId.current) {
-        document.getElementById(`candidate-${lastSelectedId.current}`)?.focus();
-      }
-    });
   }
   return (
     <>
       <div className="mb-7 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
         <div>
           <p className="text-xs font-bold tracking-[0.12em] text-brand-indigo uppercase">
-            {result.policy.version} · transparent placement policy
+            Choose a person, read their papers, then review an email draft
           </p>
-          <h2 className="mt-2 text-3xl font-medium">Reviewable researcher evidence</h2>
+          <h2 className="mt-2 text-3xl font-medium">People working on your topic</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             {result.paperCount} papers · {result.authorAppearanceCount} authorships
           </p>
@@ -343,6 +367,7 @@ function ResultWorkspace({ result }: { result: MentorDiscoveryResponse }) {
           </StatusBadge>
         </div>
       </div>
+      <PaperAuthorGroups candidates={result.candidates} onSelect={selectCandidate} />
       <div className="grid gap-8 lg:grid-cols-[21rem_minmax(0,1fr)] lg:items-start lg:gap-10">
         <div className={cn(selected && "hidden lg:block", "lg:sticky lg:top-24")}>
           <CandidateList candidates={result.candidates} onSelect={selectCandidate} selectedId={selectedId} />
@@ -364,27 +389,30 @@ function ResultWorkspace({ result }: { result: MentorDiscoveryResponse }) {
   );
 }
 
+const persistedFormSchema = liveMentorSearchFormSchema.extend({ query: z.string().max(300) });
+
 export function LiveMentorDiscovery({ initialQuery }: { initialQuery?: string }) {
-  const [activeController, setActiveController] = useState<AbortController | null>(null);
-  const mutation = useMutation({ mutationFn: discoverOpenAlexMentors });
+  const mutation = useResearchTask("mentor-search", mentorDiscoveryResponseSchema, liveMentorSearchFormSchema, (values, signal) => discoverOpenAlexMentors({ ...values, candidateLimit: 12, signal }));
+  const [savedForm, setSavedForm] = useResearchValue("mentor-search-form", persistedFormSchema, { query: initialQuery || fallbackQuery, paperLimit: 20 });
   const {
+    subscribe,
+    reset: resetForm,
     formState: { errors },
     handleSubmit,
     register,
   } = useForm<LiveMentorSearchFormInput, unknown, LiveMentorSearchForm>({
-    defaultValues: { query: initialQuery || fallbackQuery, paperLimit: 20 },
+    defaultValues: savedForm,
     resolver: zodResolver(liveMentorSearchFormSchema),
   });
-  useEffect(() => () => activeController?.abort(), [activeController]);
+  useEffect(() => subscribe({ formState: { values: true }, callback: ({ values }) => { const parsed = persistedFormSchema.safeParse(values); if (parsed.success) setSavedForm(parsed.data); } }), [subscribe, setSavedForm]);
+
+  useEffect(() => { if (initialQuery) resetForm({ query: initialQuery, paperLimit: 20 }); }, [initialQuery, resetForm]);
 
   function submit(values: LiveMentorSearchForm) {
-    activeController?.abort();
-    const controller = new AbortController();
-    setActiveController(controller);
-    mutation.mutate({ ...values, candidateLimit: 12, signal: controller.signal });
+    mutation.mutate(values);
   }
 
-  const error = mutation.error instanceof ApiError ? mutation.error : null;
+  const error = mutation.error;
   const result = mutation.data;
   return (
     <div className="grid gap-8">
@@ -392,39 +420,43 @@ export function LiveMentorDiscovery({ initialQuery }: { initialQuery?: string })
         <form className="border border-border bg-surface p-5 sm:p-7" noValidate onSubmit={handleSubmit(submit)}>
           <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_9rem_auto] md:items-end">
             <Field data-invalid={Boolean(errors.query)}>
-              <FieldLabel htmlFor="live-mentor-query">Research topic, DOI, or OpenAlex Work ID</FieldLabel>
+              <FieldLabel htmlFor="live-mentor-query">What topic interests you?</FieldLabel>
               <Input aria-invalid={Boolean(errors.query)} id="live-mentor-query" placeholder="e.g. trustworthy ML for public health" {...register("query")} />
               <FieldError errors={[errors.query]} />
             </Field>
             <Field data-invalid={Boolean(errors.paperLimit)}>
-              <FieldLabel htmlFor="live-mentor-paper-limit">Paper pool</FieldLabel>
+              <FieldLabel htmlFor="live-mentor-paper-limit">Papers to search</FieldLabel>
               <NativeSelect id="live-mentor-paper-limit" {...register("paperLimit")}>
                 <option value="10">10 papers</option>
                 <option value="20">20 papers</option>
-                <option value="25">25 papers</option>
+                <option value="30">30 papers</option>
               </NativeSelect>
               <FieldError errors={[errors.paperLimit]} />
             </Field>
             <Button disabled={mutation.isPending} type="submit" variant="evidence">
-              <Search aria-hidden="true" /> {mutation.isPending ? "Deriving…" : "Find researchers"}
+              <Search aria-hidden="true" /> {mutation.isPending ? "Searching…" : "Find researchers"}
             </Button>
           </div>
           <FieldDescription className="mt-4 border-t border-border pt-4">
-            OpenAlex supplies publication facts. Research Bridge applies a versioned
-            deterministic policy—without an LLM, prestige signal, or invented score.
+            Find authors whose papers relate to your interests. Review their work before contacting them; not every author is a professor or accepting interns.
           </FieldDescription>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {mutation.isPending && <Button type="button" variant="outline" onClick={mutation.cancel}>Cancel search</Button>}
+            {mutation.data && !mutation.isPending && <Button type="button" variant="outline" onClick={mutation.clear}>Clear results</Button>}
+          </div>
         </form>
         <div aria-live="polite" className="mt-8">
+          {mutation.status === "interrupted" && <p className="mb-4 text-sm">Search interrupted by refresh. Received results are kept; search again when ready.</p>}
           {!mutation.isPending && !mutation.isError && !result ? (
-            <DataState description="Search a focused topic to derive researchers from real publication authorships. Every connection exposes its evidence and unknowns." kind="empty" title="Ready to find paper-backed researchers" />
+            <DataState description="Search a focused topic to derive researchers from real publication authorships. Every connection exposes its evidence and unknowns." kind="empty" title="Who is working on your topic?" />
           ) : null}
           {mutation.isPending ? (
-            <DataState description="Retrieving papers, consolidating repeated authors, calculating policy contributions, and checking evidence coverage." kind="loading" title="Building candidate evidence trails" />
+            <DataState description="Retrieving papers, consolidating repeated authors, calculating policy contributions, and checking evidence coverage." kind="loading" title="Finding papers and their authors" />
           ) : null}
           {mutation.isError ? (
             <DataState
-              action={mutation.variables ? <Button onClick={() => submit({ paperLimit: mutation.variables.paperLimit, query: mutation.variables.query })} variant="outline"><RefreshCw aria-hidden="true" /> Retry request</Button> : null}
-              description={`${error?.message ?? "The researcher request could not be completed."}${error?.requestId ? ` Request reference: ${error.requestId}.` : ""}`}
+              action={mutation.variables ? <Button onClick={() => submit({ paperLimit: mutation.variables!.paperLimit, query: mutation.variables!.query })} variant="outline"><RefreshCw aria-hidden="true" /> Retry request</Button> : null}
+              description={`${error ?? "The researcher request could not be completed."}`}
               kind="error"
               title="Researcher evidence is unavailable"
             />
@@ -443,20 +475,20 @@ export function LiveMentorDiscovery({ initialQuery }: { initialQuery?: string })
           <div className="grid size-10 place-items-center rounded-full bg-brand-teal-soft text-brand-teal-strong">
             <UserRoundSearch aria-hidden="true" className="size-5" />
           </div>
-          <h2 className="mt-5 text-xl font-medium">What this proves</h2>
+          <h2 className="mt-5 text-xl font-medium">Before you reach out</h2>
         </div>
         <ul className="grid gap-4 text-sm leading-6 text-muted-foreground sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-          <li className="flex gap-2"><Database aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Repeated authors collapse into one candidate with all supporting papers.</li>
-          <li className="flex gap-2"><Scale aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Five documented features control ordering; an LLM cannot invent scores.</li>
+          <li className="flex gap-2"><Database aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Each person appears once, with links to the papers that connect them to your topic.</li>
+          <li className="flex gap-2"><Scale aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Check the paper and the researcher’s official profile before deciding whom to contact.</li>
           <li className="flex gap-2"><ShieldQuestion aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Title, current employer, contact, and openings stay unknown until verified.</li>
-          <li className="flex gap-2"><FileSearch aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Positive contributions retain paper evidence IDs.</li>
+          <li className="flex gap-2"><FileSearch aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Choose one person and relevant papers to prepare an email you can review and edit.</li>
         </ul>
         <div className="border-t border-border pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
           <p className="text-xs font-bold tracking-[0.1em] text-muted-foreground uppercase">Profile context</p>
           {result ? (
             <><p className="mt-3 text-sm font-medium">{result.profileInputs.projectTitle}</p><p className="mt-2 text-xs leading-5 text-muted-foreground">{result.profileInputs.researchInterests.join(" · ")}</p></>
           ) : (
-            <p className="mt-3 text-xs leading-5 text-muted-foreground">Your saved profile is used when available; otherwise a visibly fictional profile is the safe fallback.</p>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">Matching uses the research interests, skills, and project saved in your account.</p>
           )}
         </div>
       </aside>

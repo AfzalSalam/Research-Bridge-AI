@@ -1,0 +1,52 @@
+{
+  "prompt": "paper-answer-support-v3",
+  "source": "public-answer-pilot-v6-continuation.json",
+  "cases": [
+    {
+      "name": "uncited-qualifier",
+      "claim": {
+        "text": "In the comparison experiments, five-fold cross validation is conducted to select the best penalty parameter C for each learning method.",
+        "citations": [
+          {
+            "page": 3,
+            "start": 2450,
+            "end": 2950,
+            "quote": "kip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et"
+          }
+        ]
+      },
+      "review": {
+        "addresses_question": true,
+        "claims": [
+          {
+            "index": 0,
+            "verdict": "supported"
+          }
+        ]
+      }
+    },
+    {
+      "name": "qualifier-removed",
+      "claim": {
+        "text": "In the comparison experiments, five-fold cross validation is conducted to select the best parameter C for each learning method.",
+        "citations": [
+          {
+            "page": 3,
+            "start": 2450,
+            "end": 2950,
+            "quote": "kip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et"
+          }
+        ]
+      },
+      "review": {
+        "addresses_question": true,
+        "claims": [
+          {
+            "index": 0,
+            "verdict": "supported"
+          }
+        ]
+      }
+    }
+  ]
+}

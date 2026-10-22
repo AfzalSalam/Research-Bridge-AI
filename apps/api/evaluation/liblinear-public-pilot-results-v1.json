@@ -1,0 +1,184 @@
+{
+  "labels": "provisional-single-agent-reviewed-not-human-gold",
+  "dataset": {
+    "name": "liblinear-public-pilot-v1",
+    "kind": "labelled-corpus",
+    "passage_ids": [
+      "1:0:1200",
+      "1:1050:2250",
+      "1:2100:2468",
+      "2:0:1200",
+      "2:1050:2250",
+      "2:2100:2914",
+      "3:0:1200",
+      "3:1050:2250",
+      "3:2100:3254",
+      "4:0:1200",
+      "4:1050:2027"
+    ],
+    "queries": [
+      {
+        "id": "solver",
+        "relevant": [
+          "2:0:1200"
+        ]
+      },
+      {
+        "id": "multiclass",
+        "relevant": [
+          "2:1050:2250"
+        ]
+      },
+      {
+        "id": "separate",
+        "relevant": [
+          "2:1050:2250"
+        ]
+      },
+      {
+        "id": "validation",
+        "relevant": [
+          "3:2100:3254"
+        ]
+      },
+      {
+        "id": "unsupported-gpu",
+        "relevant": []
+      },
+      {
+        "id": "unsupported-transformer",
+        "relevant": []
+      }
+    ],
+    "runs": [
+      {
+        "query_id": "solver",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "4:1050:2027",
+          "2:0:1200",
+          "1:0:1200",
+          "2:2100:2914",
+          "3:2100:3254"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 20.24909999454394
+      },
+      {
+        "query_id": "multiclass",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "1:1050:2250",
+          "2:1050:2250",
+          "3:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 9.407400008058175
+      },
+      {
+        "query_id": "separate",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "1:1050:2250",
+          "2:1050:2250",
+          "4:0:1200",
+          "3:0:1200",
+          "3:2100:3254"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 10.213100002147257
+      },
+      {
+        "query_id": "validation",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:2100:3254",
+          "2:0:1200",
+          "1:0:1200",
+          "2:2100:2914"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 9.818000005907379
+      },
+      {
+        "query_id": "unsupported-gpu",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "4:0:1200",
+          "2:1050:2250",
+          "3:2100:3254",
+          "1:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 9.098999988054857
+      },
+      {
+        "query_id": "unsupported-transformer",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "2:1050:2250",
+          "1:0:1200",
+          "3:0:1200",
+          "3:2100:3254",
+          "4:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 9.466200004681014
+      }
+    ]
+  },
+  "report": {
+    "dataset": "liblinear-public-pilot-v1",
+    "kind": "labelled-corpus",
+    "engines": {
+      "postgresql_fts": {
+        "queries": 6,
+        "answerable_queries": 4,
+        "unsupported_queries": 2,
+        "recall_at_5": 1.0,
+        "recall_at_10": 1.0,
+        "mrr": 0.625,
+        "ndcg_at_10": 0.7231973151785931,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 9.466200004681014,
+        "latency_p95_ms": 20.24909999454394
+      }
+    },
+    "notice": "Metrics describe supplied rankings and citation audits only. Synthetic runs do not measure semantic quality. Retrieved passages are not generated claims; unsupported-claim rate is not measured."
+  },
+  "limitations": "One paper; provisional labels; retrieval-only timing; no live embeddings; no semantic accuracy or generated-answer claim."
+}

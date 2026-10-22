@@ -4,18 +4,18 @@ from typing import Annotated, cast
 from fastapi import Depends, Request
 
 from app.core.config import Settings
+from app.dependencies.account_profile import get_account_profile_service
 from app.dependencies.discovery import get_paper_discovery_service
-from app.dependencies.profile import get_profile_service
 from app.relevance.mentor import RelevanceWeights
+from app.services.account_profile import AccountProfileService
 from app.services.discovery import PaperDiscoveryReader
 from app.services.mentor_discovery import MentorDiscoveryReader, MentorDiscoveryService
-from app.services.profile import ProfileReader
 
 
 def get_mentor_discovery_service(
     request: Request,
     papers: Annotated[PaperDiscoveryReader, Depends(get_paper_discovery_service)],
-    profiles: Annotated[ProfileReader, Depends(get_profile_service)],
+    profiles: Annotated[AccountProfileService, Depends(get_account_profile_service)],
 ) -> MentorDiscoveryReader:
     """Compose mentor discovery from existing request-scoped services."""
 

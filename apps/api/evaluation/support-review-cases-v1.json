@@ -1,0 +1,54 @@
+{
+  "kind": "synthetic",
+  "labels": "agent-authored; frozen before provider calls; not human gold",
+  "cases": [
+    {
+      "id": "parameter",
+      "quote": "Five-fold cross validation selects the best parameter C.",
+      "claim": "Cross validation selects parameter C.",
+      "supported": true
+    },
+    {
+      "id": "qualifier",
+      "quote": "Five-fold cross validation selects the best parameter C.",
+      "claim": "Cross validation selects the penalty parameter C.",
+      "supported": false
+    },
+    {
+      "id": "count",
+      "quote": "The experiment used 12 samples.",
+      "claim": "The experiment used 12 samples.",
+      "supported": true
+    },
+    {
+      "id": "wrong-count",
+      "quote": "The experiment used 12 samples.",
+      "claim": "The experiment used 20 samples.",
+      "supported": false
+    },
+    {
+      "id": "negation",
+      "quote": "The study did not evaluate GPU performance.",
+      "claim": "GPU performance was not evaluated.",
+      "supported": true
+    },
+    {
+      "id": "wrong-negation",
+      "quote": "The study did not evaluate GPU performance.",
+      "claim": "The study evaluated GPU performance.",
+      "supported": false
+    },
+    {
+      "id": "funding",
+      "quote": "Funding availability is unknown.",
+      "claim": "The source does not establish funding availability.",
+      "supported": true
+    },
+    {
+      "id": "invented-funding",
+      "quote": "Funding availability is unknown.",
+      "claim": "The internship is fully funded.",
+      "supported": false
+    }
+  ]
+}

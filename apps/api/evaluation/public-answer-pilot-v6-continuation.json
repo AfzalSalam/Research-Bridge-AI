@@ -1,0 +1,377 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "answer_prompt": "paper-cited-answer-v2",
+  "citation_choice_prompt": "paper-citation-choices-v1",
+  "review_prompt": "paper-answer-support-v2",
+  "limitations": "Two public papers; provisional labels; observed retrieval corpus; not held-out accuracy. Model review is not independent human verification.",
+  "started_at": "2026-10-21T07:51:16.636992+00:00",
+  "cases": [
+    {
+      "id": "liblinear:multiclass",
+      "question": "How are problems with more than two categories handled?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 1,
+          "start": 1050,
+          "end": 2250,
+          "text": "ssi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and features. We develop LIBLINEAR as an easy-to-use tool\nto deal with such data. It supports L2-regularized logistic regression (LR), L2-loss and L1-loss\nlinear support vector machines (SVMs) (Boser et al., 1992). It inherits many features of the popular\nSVM library LIBSVM (Chang and Lin, 2001) such as simple usage, rich documentation, and open\nsource license (the BSD license1). LIBLINEAR is very ef\ufb01cient for training large-scale problems.\nFor example, it takes only several seconds to train a text classi\ufb01cation problem from the Reuters\nCorpus Volume 1 (rcv1) that has more than 600,000 examples. For the same task, a general SVM\nsolver such as LIBSVM would take several hours. Moreover, LIBLINEAR is competitive with or\neven faster than state of the art linear classi\ufb01ers such as Pegasos (Shalev-Shwartz et al., 2007) and\nSVMperf (Joachims, 2006). The software is available athttp://www.csie.ntu.edu.tw/\u02dccjlin/\nliblinear.\nThis article is organized as follows. In Sections 2 and 3, we discuss the design and implemen-\ntation of LIBLINEAR. We show the"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 1050,
+          "end": 2250,
+          "text": "eparated into source \ufb01les, pre-\nbuilt binaries, documentation, and language bindings. All source codes follow the C/C++ standard,\nand there is no dependency on external libraries. Therefore, LIBLINEAR can run on almost every\nplatform. We provide a simpleMakefile to compile the package from source codes. For Windows\nusers, we include pre-built binaries.\nLibrary calls are implemented in the \ufb01lelinear.cpp. Thetrain() function trains a classi\ufb01er\non the given data and the predict() function predicts a given instance. To handle multi-class\nproblems via the one-vs-the-rest strategy, train() conducts several binary classi\ufb01cations, each\nof which is by calling the train one() function. train one() then invokes the solver of users\u2019\nchoice. Implementations follow the algorithm descriptions in Lin et al. (2008) and Hsieh et al.\n(2008). As LIBLINEAR is written in a modular way, a new solver can be easily plugged in. This\nmakes LIBLINEAR not only a machine learning tool but also an experimental platform.\nMaking extensions of LIBLINEAR to languages other than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the pack"
+        },
+        {
+          "id": "p3",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n2. Large Linear Classi\ufb01cation (Binary and Multi-class)\nLIBLINEAR supports two popular binary linear classi\ufb01ers: LR and linear SVM. Given a set of\ninstance-label pairs (xi;yi);i = 1; : : : ;l; xi2 Rn; yi2f1; +1g, both methods solve the following\nunconstrained optimization problem with different loss functions \u03be(w;xi;yi):\nmin\nw\n1\n2wT w +C\u2211li=1 \u03be(w;xi;yi); (1)\nwhere C > 0 is a penalty parameter. For SVM, the two common loss functions are max(1\nyiwT xi;0) and max(1 yiwT xi;0)2: The former is referred to as L1-SVM, while the latter is L2-\nSVM. For LR, the loss function is log(1 +eyiwT xi), which is derived from a probabilistic model. In\nsome cases, the discriminant function of the classi\ufb01er includes a bias term, b. LIBLINEAR han-\ndles this term by augmenting the vector w and each instance xi with an additional dimension:\nwT [wT ;b];xTi  [xTi ;B], where B is a constant speci\ufb01ed by the user. The approach for L1-\nSVM and L2-SVM is a coordinate descent method (Hsieh et al., 2008). For LR and also L2-SVM,\nLIBLINEAR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phas"
+        },
+        {
+          "id": "p4",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "For multi-class problems, LIBLINEAR implements the one-vs-the-rest strategy and a method by Crammer and Singer.",
+            "citations": [
+              {
+                "page": 2,
+                "start": 1050,
+                "end": 1550,
+                "quote": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis hig"
+              }
+            ]
+          },
+          {
+            "text": "To handle multi-class problems using the one-vs-the-rest strategy, the train() function performs multiple binary classifications by calling the train_one() function.",
+            "citations": [
+              {
+                "page": 3,
+                "start": 1400,
+                "end": 1900,
+                "quote": "ies.\nLibrary calls are implemented in the \ufb01lelinear.cpp. Thetrain() function trains a classi\ufb01er\non the given data and the predict() function predicts a given instance. To handle multi-class\nproblems via the one-vs-the-rest strategy, train() conducts several binary classi\ufb01cations, each\nof which is by calling the train one() function. train one() then invokes the solver of users\u2019\nchoice. Implementations follow the algorithm descriptions in Lin et al. (2008) and Hsieh et al.\n(2008). As LIBLINEAR is"
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 3175.16
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 2078.49
+        }
+      ],
+      "latency_ms": 5254.02
+    },
+    {
+      "id": "liblinear:separate",
+      "question": "Why are LIBLINEAR and LIBSVM kept as separate packages?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p1",
+          "page": 1,
+          "start": 1050,
+          "end": 2250,
+          "text": "ssi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and features. We develop LIBLINEAR as an easy-to-use tool\nto deal with such data. It supports L2-regularized logistic regression (LR), L2-loss and L1-loss\nlinear support vector machines (SVMs) (Boser et al., 1992). It inherits many features of the popular\nSVM library LIBSVM (Chang and Lin, 2001) such as simple usage, rich documentation, and open\nsource license (the BSD license1). LIBLINEAR is very ef\ufb01cient for training large-scale problems.\nFor example, it takes only several seconds to train a text classi\ufb01cation problem from the Reuters\nCorpus Volume 1 (rcv1) that has more than 600,000 examples. For the same task, a general SVM\nsolver such as LIBSVM would take several hours. Moreover, LIBLINEAR is competitive with or\neven faster than state of the art linear classi\ufb01ers such as Pegasos (Shalev-Shwartz et al., 2007) and\nSVMperf (Joachims, 2006). The software is available athttp://www.csie.ntu.edu.tw/\u02dccjlin/\nliblinear.\nThis article is organized as follows. In Sections 2 and 3, we discuss the design and implemen-\ntation of LIBLINEAR. We show the"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "LIBLINEAR: A LIBRARY FOR LARGE LINEAR CLASSIFICATION\n3.2 Documentation\nThe LIBLINEAR package comes with plenty of documentation. TheREADME \ufb01le describes the instal-\nlation process, command-line usage, and the library calls. Users can read the \u201cQuick Start\u201d section,\nand begin within a few minutes. For developers who use LIBLINEAR in their software, the API\ndocument is in the \u201cLibrary Usage\u201d section. All the interface functions and related data structures\nare explained in detail. Programstrain.c andpredict.c are good examples of using LIBLINEAR\nAPIs. If theREADME \ufb01le does not give the information users want, they can check the online FAQ\npage.4 In addition to software documentation, theoretical properties of the algorithms and compar-\nisons to other methods are in Lin et al. (2008) and Hsieh et al. (2008). The authors are also willing\nto answer any further questions.\n3.3 Design\nThe main design principle is to keep the whole package as simple as possible while making the\nsource codes easy to read and maintain. Files in LIBLINEAR can be separated into source \ufb01les, pre-\nbuilt binaries, documentation, and language bindings. All source codes follow the C/C++ standard,\nand there is no depe"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p4",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "LIBLINEAR and LIBSVM are kept as separate packages because their models are quite different after training, specifically regarding how they store the weight vector w.",
+            "citations": [
+              {
+                "page": 2,
+                "start": 1400,
+                "end": 1900,
+                "quote": "eerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these "
+              },
+              {
+                "page": 2,
+                "start": 1750,
+                "end": 2250,
+                "quote": "e quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 3900.12
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 1389.84
+        }
+      ],
+      "latency_ms": 5290.31
+    },
+    {
+      "id": "liblinear:validation",
+      "question": "How is the penalty parameter selected in the comparison experiments?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n2. Large Linear Classi\ufb01cation (Binary and Multi-class)\nLIBLINEAR supports two popular binary linear classi\ufb01ers: LR and linear SVM. Given a set of\ninstance-label pairs (xi;yi);i = 1; : : : ;l; xi2 Rn; yi2f1; +1g, both methods solve the following\nunconstrained optimization problem with different loss functions \u03be(w;xi;yi):\nmin\nw\n1\n2wT w +C\u2211li=1 \u03be(w;xi;yi); (1)\nwhere C > 0 is a penalty parameter. For SVM, the two common loss functions are max(1\nyiwT xi;0) and max(1 yiwT xi;0)2: The former is referred to as L1-SVM, while the latter is L2-\nSVM. For LR, the loss function is log(1 +eyiwT xi), which is derived from a probabilistic model. In\nsome cases, the discriminant function of the classi\ufb01er includes a bias term, b. LIBLINEAR han-\ndles this term by augmenting the vector w and each instance xi with an additional dimension:\nwT [wT ;b];xTi  [xTi ;B], where B is a constant speci\ufb01ed by the user. The approach for L1-\nSVM and L2-SVM is a coordinate descent method (Hsieh et al., 2008). For LR and also L2-SVM,\nLIBLINEAR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phas"
+        },
+        {
+          "id": "p2",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p4",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "In the comparison experiments, five-fold cross validation is conducted to select the best penalty parameter C for each learning method.",
+            "citations": [
+              {
+                "page": 3,
+                "start": 2450,
+                "end": 2950,
+                "quote": "kip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et"
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 4277.51
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 7770.97
+        }
+      ],
+      "latency_ms": 12048.81
+    },
+    {
+      "id": "liblinear:unsupported-gpu",
+      "question": "Which GPU model was used in the training experiments?",
+      "expected_answerable": false,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        },
+        {
+          "id": "p3",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        },
+        {
+          "id": "p4",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "source_insufficient",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 1852.53
+        }
+      ],
+      "latency_ms": 1852.73
+    },
+    {
+      "id": "liblinear:unsupported-transformer",
+      "question": "How many attention heads does the classifier use?",
+      "expected_answerable": false,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p1",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "LIBLINEAR: A LIBRARY FOR LARGE LINEAR CLASSIFICATION\n3.2 Documentation\nThe LIBLINEAR package comes with plenty of documentation. TheREADME \ufb01le describes the instal-\nlation process, command-line usage, and the library calls. Users can read the \u201cQuick Start\u201d section,\nand begin within a few minutes. For developers who use LIBLINEAR in their software, the API\ndocument is in the \u201cLibrary Usage\u201d section. All the interface functions and related data structures\nare explained in detail. Programstrain.c andpredict.c are good examples of using LIBLINEAR\nAPIs. If theREADME \ufb01le does not give the information users want, they can check the online FAQ\npage.4 In addition to software documentation, theoretical properties of the algorithms and compar-\nisons to other methods are in Lin et al. (2008) and Hsieh et al. (2008). The authors are also willing\nto answer any further questions.\n3.3 Design\nThe main design principle is to keep the whole package as simple as possible while making the\nsource codes easy to read and maintain. Files in LIBLINEAR can be separated into source \ufb01les, pre-\nbuilt binaries, documentation, and language bindings. All source codes follow the C/C++ standard,\nand there is no depe"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p4",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "source_insufficient",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 1814.17
+        }
+      ],
+      "latency_ms": 1814.39
+    }
+  ],
+  "complete": true,
+  "continuation_of": "public-answer-pilot-v6.json",
+  "note": "Only previously unattempted questions; prior timeout retained as failure.",
+  "finished_at": "2026-10-21T07:52:13.040082+00:00"
+}

@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -29,6 +30,19 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     demo_owner_id: UUID = UUID("00000000-0000-4000-8000-000000000001")
     supabase_url: str | None = None
+    supabase_storage_service_key: SecretStr | None = None
+    document_storage_bucket: str = Field(
+        default="research-documents", pattern=r"^[a-z0-9][a-z0-9-]{0,62}$"
+    )
+    document_uploads_enabled: bool = False
+    document_indexing_enabled: bool = False
+    document_answers_enabled: bool = False
+    document_answer_daily_call_limit: int = Field(default=30, ge=3, le=300)
+    document_embedding_daily_limit: int = Field(
+        default=1_000_000, ge=1000, le=100_000_000
+    )
+    document_scanner_host: str | None = None
+    document_scanner_port: int = Field(default=3310, ge=1, le=65535)
     supabase_jwt_audience: str = "authenticated"
     supabase_jwks_cache_ttl_seconds: int = Field(default=600, ge=60, le=3600)
     supabase_connect_timeout_seconds: float = Field(default=3.0, ge=0.1, le=30)
@@ -61,6 +75,8 @@ class Settings(BaseSettings):
     greenhouse_backoff_base_seconds: float = Field(default=0.25, ge=0, le=5)
     greenhouse_backoff_cap_seconds: float = Field(default=2.0, ge=0, le=10)
     opportunity_stale_after_hours: int = Field(default=168, ge=1, le=720)
+    document_embedding_provider: Literal["openai", "gemini"] = "openai"
+    gemini_api_key: SecretStr | None = None
     openai_api_key: SecretStr | None = None
     openai_base_url: str = "https://api.openai.com/v1"
     openai_outreach_model: str = "gpt-5.6-terra"

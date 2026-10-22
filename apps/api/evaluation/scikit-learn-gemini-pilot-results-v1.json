@@ -1,0 +1,552 @@
+{
+  "labels": "provisional-single-agent-reviewed-not-human-gold",
+  "dataset": {
+    "name": "scikit-learn-public-pilot-v1",
+    "kind": "labelled-corpus",
+    "passage_ids": [
+      "1:0:1200",
+      "1:1050:1589",
+      "2:0:1200",
+      "2:1050:2250",
+      "2:2100:2760",
+      "3:0:1200",
+      "3:1050:2250",
+      "3:2100:3300",
+      "3:3150:3338",
+      "4:0:1200",
+      "4:1050:2250",
+      "4:2100:3181",
+      "5:0:1200",
+      "5:1050:2250",
+      "5:2100:2863",
+      "6:0:1200",
+      "6:1050:1515"
+    ],
+    "queries": [
+      {
+        "id": "quality",
+        "relevant": [
+          "3:0:1200"
+        ]
+      },
+      {
+        "id": "grid",
+        "relevant": [
+          "4:1050:2250"
+        ]
+      },
+      {
+        "id": "neighbors",
+        "relevant": [
+          "5:0:1200"
+        ]
+      },
+      {
+        "id": "limits",
+        "relevant": [
+          "5:0:1200"
+        ]
+      },
+      {
+        "id": "unsupported-gpu",
+        "relevant": []
+      },
+      {
+        "id": "unsupported-quantum",
+        "relevant": []
+      }
+    ],
+    "runs": [
+      {
+        "query_id": "quality",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:0:1200",
+          "3:2100:3300",
+          "2:0:1200",
+          "4:0:1200",
+          "5:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 19.02150000387337
+      },
+      {
+        "query_id": "quality",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "3:0:1200",
+          "3:2100:3300",
+          "3:1050:2250",
+          "6:1050:1515",
+          "6:0:1200",
+          "5:2100:2863",
+          "4:1050:2250",
+          "2:2100:2760",
+          "1:0:1200",
+          "5:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 24.564000006648712
+      },
+      {
+        "query_id": "quality",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "3:0:1200",
+          "3:2100:3300",
+          "2:0:1200",
+          "4:0:1200",
+          "6:1050:1515",
+          "5:1050:2250",
+          "2:2100:2760",
+          "1:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 45.31459999270737
+      },
+      {
+        "query_id": "grid",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "4:1050:2250",
+          "3:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true
+        ],
+        "latency_ms": 13.211500001489185
+      },
+      {
+        "query_id": "grid",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "4:1050:2250",
+          "4:2100:3181",
+          "4:0:1200",
+          "5:0:1200",
+          "3:3150:3338",
+          "1:0:1200",
+          "2:0:1200",
+          "3:2100:3300",
+          "5:2100:2863",
+          "3:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.98889999918174
+      },
+      {
+        "query_id": "grid",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "4:1050:2250",
+          "3:0:1200",
+          "5:0:1200",
+          "3:3150:3338",
+          "1:0:1200",
+          "2:0:1200",
+          "5:2100:2863"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 45.73839998920448
+      },
+      {
+        "query_id": "neighbors",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:2100:3300",
+          "4:0:1200",
+          "2:0:1200",
+          "4:2100:3181",
+          "5:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 16.048399993451312
+      },
+      {
+        "query_id": "neighbors",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "5:0:1200",
+          "3:3150:3338",
+          "4:2100:3181",
+          "4:1050:2250",
+          "6:0:1200",
+          "1:0:1200",
+          "5:1050:2250",
+          "2:0:1200",
+          "6:1050:1515",
+          "3:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 19.78390000294894
+      },
+      {
+        "query_id": "neighbors",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "4:2100:3181",
+          "2:0:1200",
+          "5:1050:2250",
+          "3:2100:3300",
+          "4:0:1200",
+          "6:0:1200",
+          "1:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 56.51009999564849
+      },
+      {
+        "query_id": "limits",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "5:0:1200",
+          "4:0:1200",
+          "4:2100:3181",
+          "5:2100:2863"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 14.496399991912767
+      },
+      {
+        "query_id": "limits",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "5:0:1200",
+          "4:2100:3181",
+          "4:1050:2250",
+          "5:1050:2250",
+          "4:0:1200",
+          "6:0:1200",
+          "2:0:1200",
+          "3:0:1200",
+          "2:2100:2760",
+          "5:2100:2863"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 19.553599995560944
+      },
+      {
+        "query_id": "limits",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "5:0:1200",
+          "4:2100:3181",
+          "4:0:1200",
+          "5:2100:2863",
+          "6:0:1200",
+          "2:0:1200",
+          "3:0:1200",
+          "2:2100:2760"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 50.53510000288952
+      },
+      {
+        "query_id": "unsupported-gpu",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:1050:2250",
+          "4:0:1200",
+          "2:0:1200",
+          "4:2100:3181",
+          "5:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.743699994753115
+      },
+      {
+        "query_id": "unsupported-gpu",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "4:2100:3181",
+          "4:0:1200",
+          "5:2100:2863",
+          "2:2100:2760",
+          "2:0:1200",
+          "1:0:1200",
+          "6:1050:1515",
+          "6:0:1200",
+          "5:1050:2250",
+          "1:1050:1589"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 24.15479999035597
+      },
+      {
+        "query_id": "unsupported-gpu",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "4:0:1200",
+          "4:2100:3181",
+          "2:0:1200",
+          "5:1050:2250",
+          "3:1050:2250",
+          "2:2100:2760",
+          "1:0:1200",
+          "6:1050:1515"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 53.280899999663234
+      },
+      {
+        "query_id": "unsupported-quantum",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:0:1200",
+          "3:2100:3300",
+          "2:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 16.114700003527105
+      },
+      {
+        "query_id": "unsupported-quantum",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "6:1050:1515",
+          "6:0:1200",
+          "2:2100:2760",
+          "3:3150:3338",
+          "3:2100:3300",
+          "4:2100:3181",
+          "5:2100:2863",
+          "4:1050:2250",
+          "3:0:1200",
+          "4:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.9984999995213
+      },
+      {
+        "query_id": "unsupported-quantum",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "3:2100:3300",
+          "3:0:1200",
+          "6:1050:1515",
+          "2:0:1200",
+          "2:2100:2760",
+          "4:2100:3181",
+          "5:2100:2863",
+          "4:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 40.1650999992853
+      }
+    ]
+  },
+  "report": {
+    "dataset": "scikit-learn-public-pilot-v1",
+    "kind": "labelled-corpus",
+    "engines": {
+      "gemini_hybrid": {
+        "queries": 6,
+        "answerable_queries": 4,
+        "unsupported_queries": 2,
+        "recall_at_5": 0.75,
+        "recall_at_10": 0.75,
+        "mrr": 0.75,
+        "ndcg_at_10": 0.75,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 45.73839998920448,
+        "latency_p95_ms": 56.51009999564849
+      },
+      "gemini_vector": {
+        "queries": 6,
+        "answerable_queries": 4,
+        "unsupported_queries": 2,
+        "recall_at_5": 1.0,
+        "recall_at_10": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_10": 1.0,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 19.553599995560944,
+        "latency_p95_ms": 24.564000006648712
+      },
+      "postgresql_fts": {
+        "queries": 6,
+        "answerable_queries": 4,
+        "unsupported_queries": 2,
+        "recall_at_5": 0.75,
+        "recall_at_10": 0.75,
+        "mrr": 0.75,
+        "ndcg_at_10": 0.75,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 16.048399993451312,
+        "latency_p95_ms": 19.02150000387337
+      }
+    },
+    "notice": "Metrics describe supplied rankings and citation audits only. Synthetic runs do not measure semantic quality. Retrieved passages are not generated claims; unsupported-claim rate is not measured."
+  },
+  "embedding": {
+    "model": "gemini-embedding-2",
+    "dimensions": 1536,
+    "query_latency_ms": {
+      "quality": 623.3920999948168,
+      "grid": 570.6179999979213,
+      "neighbors": 562.6918000052683,
+      "limits": 543.0963999970118,
+      "unsupported-gpu": 609.4136000028811,
+      "unsupported-quantum": 528.3161999977892
+    },
+    "indexing_ms": 46334.70120000129
+  },
+  "limitations": "One paper; provisional labels; retrieval-only timing excludes embedding and PDF processing; exact-slice citation checks are not entailment checks. No generated answers or general accuracy claim.",
+  "evaluated_at": "2026-10-19T18:51:11.122761+00:00",
+  "source_manifest": "scikit-learn-public-pilot-v1.json",
+  "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+  "request_budget": 100,
+  "input_byte_budget_including_retries": 200000
+}

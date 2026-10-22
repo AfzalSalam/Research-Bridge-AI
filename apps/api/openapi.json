@@ -107,6 +107,162 @@
         "title": "AccountProfileReadResponse",
         "type": "object"
       },
+      "AnswerClaim": {
+        "additionalProperties": false,
+        "properties": {
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/PageCitation"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "citations"
+        ],
+        "title": "AnswerClaim",
+        "type": "object"
+      },
+      "AnswerRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "accepted": {
+            "const": true,
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "disclosure_version": {
+            "const": "paper-answer-gemini-v1",
+            "title": "Disclosure Version",
+            "type": "string"
+          },
+          "question": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          },
+          "request_id": {
+            "format": "uuid",
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "question",
+          "accepted",
+          "disclosure_version"
+        ],
+        "title": "AnswerRequest",
+        "type": "object"
+      },
+      "AnswerResult": {
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/AnswerClaim"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "notice": {
+            "default": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper.",
+            "title": "Notice",
+            "type": "string"
+          },
+          "reason": {
+            "enum": [
+              "reviewed",
+              "no_passages",
+              "source_insufficient",
+              "support_not_established",
+              "not_configured",
+              "invalid_provider_output",
+              "provider_unavailable"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "source_scope": {
+            "const": "retrieved_full_text_excerpts",
+            "default": "retrieved_full_text_excerpts",
+            "title": "Source Scope",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "answer",
+              "insufficient_evidence",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "reason"
+        ],
+        "title": "AnswerResult",
+        "type": "object"
+      },
+      "AnswerStatus": {
+        "properties": {
+          "calls_reserved_per_question": {
+            "title": "Calls Reserved Per Question",
+            "type": "integer"
+          },
+          "daily_call_limit": {
+            "title": "Daily Call Limit",
+            "type": "integer"
+          },
+          "disclosure": {
+            "title": "Disclosure",
+            "type": "string"
+          },
+          "disclosure_version": {
+            "title": "Disclosure Version",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "reserved_calls_today": {
+            "title": "Reserved Calls Today",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "enabled",
+          "provider",
+          "model",
+          "disclosure_version",
+          "disclosure",
+          "reserved_calls_today",
+          "daily_call_limit",
+          "calls_reserved_per_question"
+        ],
+        "title": "AnswerStatus",
+        "type": "object"
+      },
       "ApplicationCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -397,6 +553,147 @@
           "label"
         ],
         "title": "ClaimEvidenceReference",
+        "type": "object"
+      },
+      "ContactLookupRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "profileUrl": {
+            "anyOf": [
+              {
+                "maxLength": 1800,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profileurl"
+          },
+          "refresh": {
+            "default": false,
+            "title": "Refresh",
+            "type": "boolean"
+          }
+        },
+        "title": "ContactLookupRequest",
+        "type": "object"
+      },
+      "ContactLookupResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "authorId": {
+            "format": "uuid",
+            "title": "Authorid",
+            "type": "string"
+          },
+          "authorName": {
+            "title": "Authorname",
+            "type": "string"
+          },
+          "cacheHit": {
+            "default": false,
+            "title": "Cachehit",
+            "type": "boolean"
+          },
+          "checkedAt": {
+            "format": "date-time",
+            "title": "Checkedat",
+            "type": "string"
+          },
+          "elapsedSeconds": {
+            "default": 0,
+            "title": "Elapsedseconds",
+            "type": "integer"
+          },
+          "emails": {
+            "items": {
+              "$ref": "#/components/schemas/PublicEmail"
+            },
+            "title": "Emails",
+            "type": "array"
+          },
+          "institutionSources": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Institutionsources",
+            "type": "array"
+          },
+          "lookupUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lookupurl"
+          },
+          "pagesChecked": {
+            "default": 0,
+            "title": "Pageschecked",
+            "type": "integer"
+          },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/ContactProfile"
+            },
+            "title": "Profiles",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "found",
+              "not-found",
+              "needs-review",
+              "unsupported",
+              "blocked"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "verification": {
+            "const": "official-profile-evidence-not-deliverability",
+            "default": "official-profile-evidence-not-deliverability",
+            "title": "Verification",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "authorId",
+          "authorName",
+          "status",
+          "checkedAt"
+        ],
+        "title": "ContactLookupResponse",
+        "type": "object"
+      },
+      "ContactProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceUrl",
+          "reason"
+        ],
+        "title": "ContactProfile",
         "type": "object"
       },
       "DemoBootstrapResponse": {
@@ -732,6 +1029,85 @@
         "title": "DiscoverySource",
         "type": "object"
       },
+      "DocumentCreated": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "DocumentCreated",
+        "type": "object"
+      },
+      "DocumentList": {
+        "properties": {
+          "documents": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentSummary"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "uploads_enabled": {
+            "title": "Uploads Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "uploads_enabled",
+          "documents"
+        ],
+        "title": "DocumentList",
+        "type": "object"
+      },
+      "DocumentSummary": {
+        "properties": {
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "status",
+          "reason",
+          "warnings"
+        ],
+        "title": "DocumentSummary",
+        "type": "object"
+      },
       "DraftClaimEvidence": {
         "additionalProperties": false,
         "properties": {
@@ -755,6 +1131,67 @@
           "references"
         ],
         "title": "DraftClaimEvidence",
+        "type": "object"
+      },
+      "DraftSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "draftVersion": {
+            "title": "Draftversion",
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mentorId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mentorid"
+          },
+          "recipientContact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipientcontact"
+          },
+          "recipientDisplayName": {
+            "title": "Recipientdisplayname",
+            "type": "string"
+          },
+          "subject": {
+            "title": "Subject",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "mentorId",
+          "recipientDisplayName",
+          "recipientContact",
+          "subject",
+          "draftVersion",
+          "updatedAt"
+        ],
+        "title": "DraftSummary",
         "type": "object"
       },
       "ErrorBody": {
@@ -879,6 +1316,132 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "HybridResult": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "notice": {
+            "default": "Keyword and semantic matches are source excerpts, not proof that the paper answers your question.",
+            "title": "Notice",
+            "type": "string"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/PdfChunk"
+            },
+            "title": "Passages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "document_id",
+          "passages"
+        ],
+        "title": "HybridResult",
+        "type": "object"
+      },
+      "IndexConsent": {
+        "properties": {
+          "accepted": {
+            "const": true,
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "disclosure_version": {
+            "enum": [
+              "paper-embeddings-v1",
+              "paper-gemini-v1"
+            ],
+            "title": "Disclosure Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accepted",
+          "disclosure_version"
+        ],
+        "title": "IndexConsent",
+        "type": "object"
+      },
+      "IndexStatus": {
+        "properties": {
+          "daily_limit": {
+            "title": "Daily Limit",
+            "type": "integer"
+          },
+          "disclosure_version": {
+            "title": "Disclosure Version",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "query_disclosure_version": {
+            "title": "Query Disclosure Version",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "reserved_today": {
+            "title": "Reserved Today",
+            "type": "integer"
+          },
+          "retry_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retry At"
+          },
+          "status": {
+            "enum": [
+              "not_started",
+              "queued",
+              "processing",
+              "completed",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "enabled",
+          "status",
+          "reason",
+          "retry_at",
+          "disclosure_version",
+          "query_disclosure_version",
+          "provider",
+          "reserved_today",
+          "daily_limit"
+        ],
+        "title": "IndexStatus",
+        "type": "object"
+      },
       "MentorAuthorship": {
         "additionalProperties": false,
         "properties": {
@@ -969,7 +1532,7 @@
           },
           "paperLimit": {
             "default": 20,
-            "maximum": 25.0,
+            "maximum": 30.0,
             "minimum": 1.0,
             "title": "Paperlimit",
             "type": "integer"
@@ -1025,8 +1588,8 @@
             "$ref": "#/components/schemas/ProfileRelevanceInputs"
           },
           "profileMode": {
-            "const": "saved-or-fictional-fallback",
-            "default": "saved-or-fictional-fallback",
+            "const": "authenticated-account",
+            "default": "authenticated-account",
             "title": "Profilemode",
             "type": "string"
           },
@@ -2075,6 +2638,20 @@
             "title": "Claimevidence",
             "type": "array"
           },
+          "contactProvenance": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contactprovenance"
+          },
           "createdAt": {
             "format": "date-time",
             "title": "Createdat",
@@ -2107,8 +2684,15 @@
             "type": "string"
           },
           "recipientContact": {
-            "title": "Recipientcontact",
-            "type": "null"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipientcontact"
           },
           "recipientDisplayName": {
             "title": "Recipientdisplayname",
@@ -2391,6 +2975,35 @@
         "title": "OutreachPaperEvidence",
         "type": "object"
       },
+      "PageCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "integer"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "start": {
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "page",
+          "start",
+          "end",
+          "quote"
+        ],
+        "title": "PageCitation",
+        "type": "object"
+      },
       "PaperAuthor": {
         "additionalProperties": false,
         "properties": {
@@ -2469,7 +3082,7 @@
         "properties": {
           "limit": {
             "default": 12,
-            "maximum": 25.0,
+            "maximum": 30.0,
             "minimum": 1.0,
             "title": "Limit",
             "type": "integer"
@@ -2774,6 +3387,128 @@
         "title": "PaperTopic",
         "type": "object"
       },
+      "PassageQuery": {
+        "properties": {
+          "limit": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "PassageQuery",
+        "type": "object"
+      },
+      "PassageResult": {
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "engine": {
+            "enum": [
+              "postgresql_fts",
+              "lexical_fallback"
+            ],
+            "title": "Engine",
+            "type": "string"
+          },
+          "notice": {
+            "default": "Matching passages are source excerpts, not an answer or proof of support.",
+            "title": "Notice",
+            "type": "string"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/PdfChunk"
+            },
+            "title": "Passages",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "matches",
+              "no_matches"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "status",
+          "engine",
+          "passages"
+        ],
+        "title": "PassageResult",
+        "type": "object"
+      },
+      "PdfChunk": {
+        "properties": {
+          "end": {
+            "minimum": 0.0,
+            "title": "End",
+            "type": "integer"
+          },
+          "page": {
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Page",
+            "type": "integer"
+          },
+          "start": {
+            "minimum": 0.0,
+            "title": "Start",
+            "type": "integer"
+          },
+          "text": {
+            "maxLength": 1200,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page",
+          "start",
+          "end",
+          "text"
+        ],
+        "title": "PdfChunk",
+        "type": "object"
+      },
+      "PdfPage": {
+        "properties": {
+          "number": {
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Number",
+            "type": "integer"
+          },
+          "text": {
+            "maxLength": 20000,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "text"
+        ],
+        "title": "PdfPage",
+        "type": "object"
+      },
       "PolicyFeature": {
         "enum": [
           "query-evidence",
@@ -2840,6 +3575,119 @@
         "title": "ProfileRelevanceInputs",
         "type": "object"
       },
+      "PublicEmail": {
+        "additionalProperties": false,
+        "properties": {
+          "checkedAt": {
+            "format": "date-time",
+            "title": "Checkedat",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "evidenceUrls": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidenceurls",
+            "type": "array"
+          },
+          "extraction": {
+            "enum": [
+              "mailto",
+              "text",
+              "obfuscated"
+            ],
+            "title": "Extraction",
+            "type": "string"
+          },
+          "identityEvidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Identityevidence",
+            "type": "array"
+          },
+          "sourceUrl": {
+            "title": "Sourceurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "sourceUrl",
+          "identityEvidence",
+          "evidenceUrls",
+          "extraction",
+          "checkedAt"
+        ],
+        "title": "PublicEmail",
+        "type": "object"
+      },
+      "ReadingHistoryEntry": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AnswerResult"
+          }
+        },
+        "required": [
+          "id",
+          "question",
+          "result",
+          "model",
+          "created_at"
+        ],
+        "title": "ReadingHistoryEntry",
+        "type": "object"
+      },
+      "RecipientUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+            "title": "Email",
+            "type": "string"
+          },
+          "expectedVersion": {
+            "minimum": 1.0,
+            "title": "Expectedversion",
+            "type": "integer"
+          },
+          "manuallyConfirmed": {
+            "default": false,
+            "title": "Manuallyconfirmed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email",
+          "expectedVersion"
+        ],
+        "title": "RecipientUpdate",
+        "type": "object"
+      },
       "RelevanceBand": {
         "enum": [
           "strong",
@@ -2881,6 +3729,82 @@
           "weights"
         ],
         "title": "RelevancePolicy",
+        "type": "object"
+      },
+      "ResearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "authorIds": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 30,
+            "title": "Authorids",
+            "type": "array"
+          },
+          "collection": {
+            "default": "My research",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Collection",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 5000,
+            "title": "Note",
+            "type": "string"
+          },
+          "paper": {
+            "$ref": "#/components/schemas/DiscoveredPaper"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "title": "Updatedat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "paper",
+          "updatedAt"
+        ],
+        "title": "ResearchResult",
+        "type": "object"
+      },
+      "ResearchSave": {
+        "additionalProperties": false,
+        "properties": {
+          "authorIds": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 30,
+            "title": "Authorids",
+            "type": "array"
+          },
+          "collection": {
+            "default": "My research",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Collection",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 5000,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "title": "ResearchSave",
         "type": "object"
       },
       "SavedOpportunity": {
@@ -2951,6 +3875,43 @@
           "value"
         ],
         "title": "SelectedStudentFact",
+        "type": "object"
+      },
+      "SemanticQuery": {
+        "properties": {
+          "accepted": {
+            "const": true,
+            "title": "Accepted",
+            "type": "boolean"
+          },
+          "disclosure_version": {
+            "enum": [
+              "paper-query-embeddings-v1",
+              "paper-query-gemini-v1"
+            ],
+            "title": "Disclosure Version",
+            "type": "string"
+          },
+          "limit": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query",
+          "accepted",
+          "disclosure_version"
+        ],
+        "title": "SemanticQuery",
         "type": "object"
       },
       "StudentProfile": {
@@ -3044,6 +4005,303 @@
         "title": "StudentProfile",
         "type": "object"
       },
+      "UniversityProgram": {
+        "additionalProperties": false,
+        "properties": {
+          "applicationNote": {
+            "title": "Applicationnote",
+            "type": "string"
+          },
+          "checkedAt": {
+            "format": "date-time",
+            "title": "Checkedat",
+            "type": "string"
+          },
+          "deadline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline"
+          },
+          "eligibilityEvidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligibilityevidence"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "rolling",
+              "open",
+              "closed",
+              "not-confirmed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "statusEvidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusevidence"
+          },
+          "university": {
+            "title": "University",
+            "type": "string"
+          },
+          "workMode": {
+            "enum": [
+              "remote",
+              "on-site",
+              "hybrid",
+              "not-specified"
+            ],
+            "title": "Workmode",
+            "type": "string"
+          },
+          "workModeEvidence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workmodeevidence"
+          }
+        },
+        "required": [
+          "university",
+          "name",
+          "sourceUrl",
+          "checkedAt",
+          "status",
+          "deadline",
+          "statusEvidence",
+          "workMode",
+          "workModeEvidence",
+          "eligibilityEvidence",
+          "applicationNote"
+        ],
+        "title": "UniversityProgram",
+        "type": "object"
+      },
+      "UniversityScanRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Query",
+            "type": "string"
+          },
+          "region": {
+            "default": "both",
+            "enum": [
+              "both",
+              "india",
+              "international"
+            ],
+            "title": "Region",
+            "type": "string"
+          },
+          "target": {
+            "default": 20,
+            "enum": [
+              10,
+              20,
+              30
+            ],
+            "title": "Target",
+            "type": "integer"
+          },
+          "universities": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "oist",
+                    "kaust",
+                    "ista",
+                    "iitgn",
+                    "iitk",
+                    "iisc",
+                    "epfl"
+                  ],
+                  "type": "string"
+                },
+                "maxItems": 7,
+                "minItems": 1,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Universities"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "UniversityScanRequest",
+        "type": "object"
+      },
+      "UniversityScanSnapshot": {
+        "additionalProperties": false,
+        "properties": {
+          "budgetSeconds": {
+            "default": 120,
+            "title": "Budgetseconds",
+            "type": "integer"
+          },
+          "currentUniversity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currentuniversity"
+          },
+          "elapsedSeconds": {
+            "default": 0,
+            "title": "Elapsedseconds",
+            "type": "integer"
+          },
+          "pagesAttempted": {
+            "default": 0,
+            "title": "Pagesattempted",
+            "type": "integer"
+          },
+          "pagesRead": {
+            "default": 0,
+            "title": "Pagesread",
+            "type": "integer"
+          },
+          "papers": {
+            "items": {
+              "$ref": "#/components/schemas/WebsitePaper"
+            },
+            "title": "Papers",
+            "type": "array"
+          },
+          "programs": {
+            "items": {
+              "$ref": "#/components/schemas/UniversityProgram"
+            },
+            "title": "Programs",
+            "type": "array"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/UniversitySourceSummary"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "state": {
+            "enum": [
+              "scanning",
+              "complete",
+              "partial",
+              "empty",
+              "error"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "stopReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stopreason"
+          },
+          "target": {
+            "title": "Target",
+            "type": "integer"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "state",
+          "query",
+          "target"
+        ],
+        "title": "UniversityScanSnapshot",
+        "type": "object"
+      },
+      "UniversitySourceSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "registryUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registryurl"
+          },
+          "website": {
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "website"
+        ],
+        "title": "UniversitySourceSummary",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -3084,6 +4342,78 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "WebsitePaper": {
+        "additionalProperties": false,
+        "properties": {
+          "checkedAt": {
+            "format": "date-time",
+            "title": "Checkedat",
+            "type": "string"
+          },
+          "citation": {
+            "title": "Citation",
+            "type": "string"
+          },
+          "doi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doi"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "matchedTerms": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Matchedterms",
+            "type": "array"
+          },
+          "publicationUrl": {
+            "title": "Publicationurl",
+            "type": "string"
+          },
+          "sourceUrl": {
+            "title": "Sourceurl",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "university": {
+            "title": "University",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "university",
+          "title",
+          "citation",
+          "doi",
+          "publicationUrl",
+          "sourceUrl",
+          "checkedAt",
+          "matchedTerms"
+        ],
+        "title": "WebsitePaper",
+        "type": "object"
+      },
       "WorkflowResumeRequest": {
         "additionalProperties": false,
         "properties": {
@@ -3097,6 +4427,8 @@
               "format": "uuid",
               "type": "string"
             },
+            "maxItems": 2,
+            "minItems": 1,
             "title": "Selectedpaperids",
             "type": "array"
           }
@@ -3113,16 +4445,24 @@
         "properties": {
           "candidateLimit": {
             "default": 12,
+            "maximum": 20.0,
+            "minimum": 1.0,
             "title": "Candidatelimit",
             "type": "integer"
           },
           "generationPreference": {
             "default": "auto",
+            "enum": [
+              "auto",
+              "deterministic"
+            ],
             "title": "Generationpreference",
             "type": "string"
           },
           "paperLimit": {
             "default": 20,
+            "maximum": 25.0,
+            "minimum": 1.0,
             "title": "Paperlimit",
             "type": "integer"
           },
@@ -3524,6 +4864,64 @@
         ]
       }
     },
+    "/api/v1/authors/{author_id}/public-email": {
+      "post": {
+        "operationId": "lookup_public_email_api_v1_authors__author_id__public_email_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "author_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Author Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactLookupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactLookupResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Find a selected researcher's evidenced public email",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
     "/api/v1/demo/bootstrap": {
       "get": {
         "operationId": "read_demo_bootstrap_api_v1_demo_bootstrap_get",
@@ -3801,6 +5199,26 @@
             },
             "description": "Successful Response"
           },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Sign in to discover mentors."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Save your student profile first."
+          },
           "422": {
             "content": {
               "application/json": {
@@ -3852,6 +5270,11 @@
             "description": "OpenAlex is unreachable, rate limited, or unavailable."
           }
         },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "summary": "Derive explainable professor candidates from paper evidence",
         "tags": [
           "discovery"
@@ -3936,6 +5359,773 @@
         "summary": "Discover and persist normalized OpenAlex papers",
         "tags": [
           "discovery"
+        ]
+      }
+    },
+    "/api/v1/discovery/universities/scan": {
+      "post": {
+        "description": "SSE data events each contain a UniversityScanSnapshot. No arbitrary URLs are accepted.",
+        "operationId": "scan_universities_api_v1_discovery_universities_scan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UniversityScanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Stream a bounded direct-university scan",
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
+    "/api/v1/documents/paper/{paper_id}": {
+      "get": {
+        "operationId": "list_documents_api_v1_documents_paper__paper_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paper_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Paper Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Documents",
+        "tags": [
+          "documents"
+        ]
+      },
+      "post": {
+        "operationId": "upload_document_api_v1_documents_paper__paper_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paper_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Paper Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "filename",
+            "required": false,
+            "schema": {
+              "default": "paper.pdf",
+              "maxLength": 255,
+              "minLength": 1,
+              "title": "Filename",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/pdf": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload Document",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}": {
+      "delete": {
+        "operationId": "delete_document_api_v1_documents__document_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Document",
+        "tags": [
+          "documents"
+        ]
+      },
+      "get": {
+        "operationId": "read_document_api_v1_documents__document_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Document",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/answers": {
+      "get": {
+        "operationId": "answer_status_api_v1_documents__document_id__answers_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Answer Status",
+        "tags": [
+          "documents"
+        ]
+      },
+      "post": {
+        "operationId": "ask_paper_api_v1_documents__document_id__answers_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Ask Paper",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/file": {
+      "get": {
+        "operationId": "read_original_api_v1_documents__document_id__file_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Original",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/index": {
+      "delete": {
+        "operationId": "cancel_indexing_api_v1_documents__document_id__index_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel Indexing",
+        "tags": [
+          "documents"
+        ]
+      },
+      "get": {
+        "operationId": "indexing_status_api_v1_documents__document_id__index_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndexStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Indexing Status",
+        "tags": [
+          "documents"
+        ]
+      },
+      "post": {
+        "operationId": "start_indexing_api_v1_documents__document_id__index_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexConsent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentCreated"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start Indexing",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/pages": {
+      "get": {
+        "operationId": "read_pages_api_v1_documents__document_id__pages_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PdfPage"
+                  },
+                  "title": "Response Read Pages Api V1 Documents  Document Id  Pages Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Pages",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/passages": {
+      "post": {
+        "operationId": "search_passages_api_v1_documents__document_id__passages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PassageQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassageResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search Passages",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/reading-history": {
+      "get": {
+        "operationId": "reading_history_api_v1_documents__document_id__reading_history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReadingHistoryEntry"
+                  },
+                  "title": "Response Reading History Api V1 Documents  Document Id  Reading History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reading History",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/semantic-passages": {
+      "post": {
+        "operationId": "search_semantic_passages_api_v1_documents__document_id__semantic_passages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SemanticQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HybridResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search Semantic Passages",
+        "tags": [
+          "documents"
         ]
       }
     },
@@ -4337,6 +6527,279 @@
         "summary": "Save the signed-in student's private profile",
         "tags": [
           "profile"
+        ]
+      }
+    },
+    "/api/v1/research/drafts": {
+      "get": {
+        "operationId": "list_drafts_api_v1_research_drafts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DraftSummary"
+                  },
+                  "title": "Response List Drafts Api V1 Research Drafts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Drafts",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/research/drafts/{draft_id}/recipient": {
+      "put": {
+        "operationId": "select_recipient_api_v1_research_drafts__draft_id__recipient_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Draft Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipientUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Select Recipient",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/research/papers": {
+      "get": {
+        "operationId": "list_research_api_v1_research_papers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ResearchResult"
+                  },
+                  "title": "Response List Research Api V1 Research Papers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Research",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/research/papers/{paper_id}": {
+      "get": {
+        "operationId": "read_paper_api_v1_research_papers__paper_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paper_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Paper Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveredPaper"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Paper",
+        "tags": [
+          "research"
+        ]
+      },
+      "put": {
+        "operationId": "save_paper_api_v1_research_papers__paper_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paper_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Paper Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearchSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Save Paper",
+        "tags": [
+          "research"
+        ]
+      }
+    },
+    "/api/v1/research/papers/{paper_id}/authors/{author_id}": {
+      "get": {
+        "operationId": "select_author_api_v1_research_papers__paper_id__authors__author_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paper_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Paper Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "author_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Author Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/app__schemas__mentor_discovery__MentorCandidate"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Select Author",
+        "tags": [
+          "research"
         ]
       }
     },

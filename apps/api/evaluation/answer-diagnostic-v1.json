@@ -1,0 +1,17 @@
+{
+  "id": "scikit-learn:grid",
+  "result": {
+    "status": "unavailable",
+    "reason": "invalid_provider_output",
+    "claims": [],
+    "source_scope": "retrieved_full_text_excerpts",
+    "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+  },
+  "provider_calls": [
+    {
+      "stage": "generate",
+      "outcome": "validated",
+      "latency_ms": 19219.56
+    }
+  ]
+}

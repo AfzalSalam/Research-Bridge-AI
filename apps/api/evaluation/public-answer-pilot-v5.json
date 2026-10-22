@@ -1,0 +1,804 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "started_at": "2026-10-21T07:08:26.059479+00:00",
+  "answer_prompt": "paper-cited-answer-v2",
+  "review_prompt": "paper-answer-support-v1",
+  "complete": true,
+  "cases": [
+    {
+      "id": "scikit-learn:quality",
+      "question": "What tools and tests support code quality?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nFurthermore, thanks to its liberal license, it has been widely distributed as pa rt of major free soft-\nware distributions such as Ubuntu, Debian, Mandriva, NetBSD and Macp orts and in commercial\ndistributions such as the \u201cEnthought Python Distribution\u201d.\n2. Project Vision\nCode quality. Rather than providing as many features as possible, the project\u2019s goal ha s been to\nprovide solid implementations. Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8. Finally, we\nstrive to use consistent naming for the functions and parameters used throughout a strict adherence\nto the Python coding guidelines and numpy style documentation.\nBSD licensing. Most of the Python ecosystem is licensed with non-copyleft licenses. While such\npolicy is bene\ufb01cial for adoption of these tools by commercial projects, it does impose some restric-\ntions: we are unable to use some existing scienti\ufb01c code, such as the GSL.\nBare-bone design and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for"
+        },
+        {
+          "id": "p1",
+          "page": 3,
+          "start": 2100,
+          "end": 3300,
+          "text": "rations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bindings for many Fortran-based standard numerical packages,\nsuch as LAPACK. This is important for ease of installation and portability, as p roviding libraries\naround Fortran code can prove challenging on various platforms.\nCython: a language for combining C in Python. Cython makes it easy to reach the perf ormance\nof compiled languages with Python-like syntax and high-level operations. I t is also used to bind\ncompiled libraries, eliminating the boilerplate code of Python/C extensions.\n4. Code Design\nObjects speci\ufb01ed by interface, not by inheritance. To facilitate the use of external objects with\nscikit-learn, inheritance is not enforced; instead, code conventions provide a con sistent interface.\nThe central object is anestimator, that implements afit method, accepting as arguments an input\ndata array and, optionally, an array of labels for supervised problems.Supervised estimators, such as\nSVM classi\ufb01ers, can implement apredict method. Some estimators, that we call transformers,\nfor example, PCA, implement a transform method, returni"
+        },
+        {
+          "id": "p2",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nMatthieu Brucher MATTHIEU .BRUCHER @GMAIL .COM\nTotal SA, CSTJF\navenue Larribau\n64000 Pau \u2013 France\nMatthieu Perrot MATTHIEU .PERROT @CEA .FR\n\u00b4Edouard Duchesnay EDOUARD .DUCHESNAY @CEA .FR\nLNAO\nNeurospin, B\u02c6at 145, CEA Saclay\n91191 Gif sur Yvette \u2013 France\nEditor: Mikio Braun\nAbstract\nScikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algo-\nrithms for medium-scale supervised and unsupervised probl ems. This package focuses on bring-\ning machine learning to non-specialists using a general-pu rpose high-level language. Emphasis is\nput on ease of use, performance, documentation, and API cons istency. It has minimal dependen-\ncies and is distributed under the simpli\ufb01ed BSD license, enc ouraging its use in both academic\nand commercial settings. Source code, binaries, and docume ntation can be downloaded from\nhttp://scikit-learn.sourceforge.net.\nKeywords: Python, supervised learning, unsupervised learning, model selection\n1. Introduction\nThe Python programming language is establishing itself as one of the most popu lar languages for\nscienti\ufb01c computing. Thanks to its high-level interactive nature and its mat"
+        },
+        {
+          "id": "p3",
+          "page": 3,
+          "start": 1050,
+          "end": 2250,
+          "text": "ign and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for data containers.\nCommunity-driven development. We base our development on collaborative tools such as git, github\nand public mailing lists. External contributions are welcome and encouraged.\nDocumentation. Scikit-learn provides a \u223c300 page user guide including narrative documentation,\nclass references, a tutorial, installation instructions, as well as more than 60 examples, some fea-\nturing real-world applications. We try to minimize the use of machine-learning jargon, while main-\ntaining precision with regards to the algorithms employed.\n3. Underlying Technologies\nNumpy: the base data structure used for data and model parameters. Input data is presented as\nnumpy arrays, thus integrating seamlessly with other scienti\ufb01c Python libraries . Numpy\u2019s view-\nbased memory model limits copies, even when binding with compiled code (Van der Walt et al.,\n2011). It also provides basic arithmetic operations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bi"
+        },
+        {
+          "id": "p4",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nscikit-learn mlpy pybrain pymvpa mdp shogun\nSupport Vector Classi\ufb01cation 5.2 9.47 17.5 11.52 40.48 5.63\nLasso (LARS) 1.17 105.3 - 37.35 - -\nElastic Net 0.52 73.7 - 1.44 - -\nk-Nearest Neighbors 0.57 1.41 - 0.56 0.58 1.36\nPCA (9 components) 0.18 - - 8.93 0.47 0.33\nk-Means (9 clusters) 1.34 0.79 \u22c6 - 35.75 0.68\nLicense BSD GPL BSD BSD BSD GPL\n-: Not implemented. \u22c6: Does not converge within 1 hour.\nTable 1: Time in seconds on the Madelon data set for various machine learnin g libraries exposed\nin Python: MLPy (Albanese et al., 2008), PyBrain (Schaul et al., 2010) , pymvpa (Hanke\net al., 2009), MDP (Zito et al., 2008) and Shogun (Sonnenburg et al., 20 10). For more\nbenchmarks seehttp://github.com/scikit-learn.\nmay also provide a score method, which is an increasing evaluation of goodness of \ufb01t: a log-\nlikelihood, or a negated loss function. The other important object is the cross-validation iterator,\nwhich provides pairs of train and test indices to split input data, for example K-fold, leave one out,\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, op"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "Code quality is supported by the use of unit tests and static analysis tools.",
+            "citations": [
+              {
+                "page": 3,
+                "start": 446,
+                "end": 590,
+                "quote": "Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8."
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 2363.78
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 1579.17
+        }
+      ],
+      "latency_ms": 3943.28
+    },
+    {
+      "id": "scikit-learn:grid",
+      "question": "How does GridSearchCV select parameters?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 4,
+          "start": 1050,
+          "end": 2250,
+          "text": ",\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, optionally distributing the computation to several cores. Th is is accomplished by\nwrapping an estimator in a GridSearchCV object, where the \u201cCV\u201d stands for \u201ccross-validated\u201d.\nDuring the call to fit, it selects the parameters on a speci\ufb01ed parameter grid, maximizing a score\n(thescore method of the underlying estimator).predict,score, ortransform are then delegated\nto the tuned estimator. This object can therefore be used transparently as any other estimator. Cross\nvalidation can be made more ef\ufb01cient for certain estimators by exploiting speci\ufb01 c properties, such\nas warm restarts or regularization paths (Friedman et al., 2010). This is su pported through special\nobjects, such as the LassoCV. Finally, aPipeline object can combine several transformers and\nan estimator to create a combined estimator to, for example, apply dimension reduc tion before\n\ufb01tting. It behaves as a standard estimator, and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, an"
+        },
+        {
+          "id": "p1",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nFurthermore, thanks to its liberal license, it has been widely distributed as pa rt of major free soft-\nware distributions such as Ubuntu, Debian, Mandriva, NetBSD and Macp orts and in commercial\ndistributions such as the \u201cEnthought Python Distribution\u201d.\n2. Project Vision\nCode quality. Rather than providing as many features as possible, the project\u2019s goal ha s been to\nprovide solid implementations. Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8. Finally, we\nstrive to use consistent naming for the functions and parameters used throughout a strict adherence\nto the Python coding guidelines and numpy style documentation.\nBSD licensing. Most of the Python ecosystem is licensed with non-copyleft licenses. While such\npolicy is bene\ufb01cial for adoption of these tools by commercial projects, it does impose some restric-\ntions: we are unable to use some existing scienti\ufb01c code, such as the GSL.\nBare-bone design and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for"
+        },
+        {
+          "id": "p2",
+          "page": 4,
+          "start": 2100,
+          "end": 3181,
+          "text": "and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, and is mostly written in a high level language, care has\nbeen taken to maximize computational ef\ufb01ciency. In Table 1, we compare compu tation time for a\nfew algorithms implemented in the major machine learning toolkits accessible in Python. We use\nthe Madelon data set (Guyon et al., 2004), 4400 instances and 500 attribu tes, The data set is quite\nlarge, but small enough for most algorithms to run.\nSVM. While all of the packages compared call libsvm in the background, the performance of scikit-\nlearn can be explained by two factors. First, our bindings avoid memory copies and have up to\n40% less overhead than the original libsvm Python bindings. Second, we p atch libsvm to improve\nef\ufb01ciency on dense data, use a smaller memory footprint, and better use memor y alignment and\npipelining capabilities of modern processors. This patched version also pr ovides unique features,\nsuch as setting weights for individual samples.\n2828"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nscikit-learn mlpy pybrain pymvpa mdp shogun\nSupport Vector Classi\ufb01cation 5.2 9.47 17.5 11.52 40.48 5.63\nLasso (LARS) 1.17 105.3 - 37.35 - -\nElastic Net 0.52 73.7 - 1.44 - -\nk-Nearest Neighbors 0.57 1.41 - 0.56 0.58 1.36\nPCA (9 components) 0.18 - - 8.93 0.47 0.33\nk-Means (9 clusters) 1.34 0.79 \u22c6 - 35.75 0.68\nLicense BSD GPL BSD BSD BSD GPL\n-: Not implemented. \u22c6: Does not converge within 1 hour.\nTable 1: Time in seconds on the Madelon data set for various machine learnin g libraries exposed\nin Python: MLPy (Albanese et al., 2008), PyBrain (Schaul et al., 2010) , pymvpa (Hanke\net al., 2009), MDP (Zito et al., 2008) and Shogun (Sonnenburg et al., 20 10). For more\nbenchmarks seehttp://github.com/scikit-learn.\nmay also provide a score method, which is an increasing evaluation of goodness of \ufb01t: a log-\nlikelihood, or a negated loss function. The other important object is the cross-validation iterator,\nwhich provides pairs of train and test indices to split input data, for example K-fold, leave one out,\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, op"
+        },
+        {
+          "id": "p4",
+          "page": 5,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nLARS. Iteratively re\ufb01ning the residuals instead of recomputing them gives perfo rmance gains of\n2\u201310 times over the reference R implementation (Hastie and Efron, 2004).Pymvpa uses this imple-\nmentation via the Rpy R bindings and pays a heavy price to memory copies.\nElastic Net. We benchmarked thescikit-learn coordinate descent implementations of Elastic Net. It\nachieves the same order of performance as the highly optimized Fortran ver sion glmnet (Friedman\net al., 2010) on medium-scale problems, but performance on very large pr oblems is limited since\nwe do not use the KKT conditions to de\ufb01ne an active set.\nkNN. The k-nearest neighbors classi\ufb01er implementation constructs a ball tree (O mohundro, 1989)\nof the samples, but uses a more ef\ufb01cient brute force search in large dimensions.\nPCA. For medium to large data sets, scikit-learn provides an implementation of a truncated PCA\nbased on random projections (Rokhlin et al., 2009).\nk-means. scikit-learn \u2019s k-means algorithm is implemented in pure Python. Its performance is lim-\nited by the fact that numpy\u2019s array operations take multiple passes over data.\n6. Conclusion\nScikit-learn exposes a wid"
+        }
+      ],
+      "result": {
+        "status": "unavailable",
+        "reason": "invalid_provider_output",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 7080.34
+        }
+      ],
+      "latency_ms": 7081.46
+    },
+    {
+      "id": "scikit-learn:neighbors",
+      "question": "How does the nearest-neighbour method handle high dimensional input?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 4,
+          "start": 2100,
+          "end": 3181,
+          "text": "and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, and is mostly written in a high level language, care has\nbeen taken to maximize computational ef\ufb01ciency. In Table 1, we compare compu tation time for a\nfew algorithms implemented in the major machine learning toolkits accessible in Python. We use\nthe Madelon data set (Guyon et al., 2004), 4400 instances and 500 attribu tes, The data set is quite\nlarge, but small enough for most algorithms to run.\nSVM. While all of the packages compared call libsvm in the background, the performance of scikit-\nlearn can be explained by two factors. First, our bindings avoid memory copies and have up to\n40% less overhead than the original libsvm Python bindings. Second, we p atch libsvm to improve\nef\ufb01ciency on dense data, use a smaller memory footprint, and better use memor y alignment and\npipelining capabilities of modern processors. This patched version also pr ovides unique features,\nsuch as setting weights for individual samples.\n2828"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nMatthieu Brucher MATTHIEU .BRUCHER @GMAIL .COM\nTotal SA, CSTJF\navenue Larribau\n64000 Pau \u2013 France\nMatthieu Perrot MATTHIEU .PERROT @CEA .FR\n\u00b4Edouard Duchesnay EDOUARD .DUCHESNAY @CEA .FR\nLNAO\nNeurospin, B\u02c6at 145, CEA Saclay\n91191 Gif sur Yvette \u2013 France\nEditor: Mikio Braun\nAbstract\nScikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algo-\nrithms for medium-scale supervised and unsupervised probl ems. This package focuses on bring-\ning machine learning to non-specialists using a general-pu rpose high-level language. Emphasis is\nput on ease of use, performance, documentation, and API cons istency. It has minimal dependen-\ncies and is distributed under the simpli\ufb01ed BSD license, enc ouraging its use in both academic\nand commercial settings. Source code, binaries, and docume ntation can be downloaded from\nhttp://scikit-learn.sourceforge.net.\nKeywords: Python, supervised learning, unsupervised learning, model selection\n1. Introduction\nThe Python programming language is establishing itself as one of the most popu lar languages for\nscienti\ufb01c computing. Thanks to its high-level interactive nature and its mat"
+        },
+        {
+          "id": "p2",
+          "page": 5,
+          "start": 1050,
+          "end": 2250,
+          "text": "ython. Its performance is lim-\nited by the fact that numpy\u2019s array operations take multiple passes over data.\n6. Conclusion\nScikit-learn exposes a wide variety of machine learning algorithms, both supervised and unsuper-\nvised, using a consistent, task-oriented interface, thus enabling easy co mparison of methods for a\ngiven application. Since it relies on the scienti\ufb01c Python ecosystem, it can easily be integrated into\napplications outside the traditional range of statistical data analysis. Importan tly, the algorithms,\nimplemented in a high-level language, can be used as building blocks for app roaches speci\ufb01c to\na use case, for example, in medical imaging (Michel et al., 2011). Future wo rk includes online\nlearning, to scale to large data sets.\nReferences\nD. Albanese, G. Merler, S.and Jurman, and R. Visintainer. MLPy: high-p erformance python pack-\nage for predictive modeling. In NIPS, MLOSS Workshop, 2008.\nC.C. Chang and C.J. Lin. LIBSVM: a library for support vector machines . http://www.csie.\nntu.edu.tw/cjlin/libsvm, 2001.\nP.F. Dubois, editor.Python: Batteries Included, volume 9 of Computing in Science & Engineering.\nIEEE/AIP, May 2007.\nR.E. Fan, K.W. Chang, C.J. Hsieh, X.R. "
+        },
+        {
+          "id": "p3",
+          "page": 3,
+          "start": 2100,
+          "end": 3300,
+          "text": "rations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bindings for many Fortran-based standard numerical packages,\nsuch as LAPACK. This is important for ease of installation and portability, as p roviding libraries\naround Fortran code can prove challenging on various platforms.\nCython: a language for combining C in Python. Cython makes it easy to reach the perf ormance\nof compiled languages with Python-like syntax and high-level operations. I t is also used to bind\ncompiled libraries, eliminating the boilerplate code of Python/C extensions.\n4. Code Design\nObjects speci\ufb01ed by interface, not by inheritance. To facilitate the use of external objects with\nscikit-learn, inheritance is not enforced; instead, code conventions provide a con sistent interface.\nThe central object is anestimator, that implements afit method, accepting as arguments an input\ndata array and, optionally, an array of labels for supervised problems.Supervised estimators, such as\nSVM classi\ufb01ers, can implement apredict method. Some estimators, that we call transformers,\nfor example, PCA, implement a transform method, returni"
+        },
+        {
+          "id": "p4",
+          "page": 5,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nLARS. Iteratively re\ufb01ning the residuals instead of recomputing them gives perfo rmance gains of\n2\u201310 times over the reference R implementation (Hastie and Efron, 2004).Pymvpa uses this imple-\nmentation via the Rpy R bindings and pays a heavy price to memory copies.\nElastic Net. We benchmarked thescikit-learn coordinate descent implementations of Elastic Net. It\nachieves the same order of performance as the highly optimized Fortran ver sion glmnet (Friedman\net al., 2010) on medium-scale problems, but performance on very large pr oblems is limited since\nwe do not use the KKT conditions to de\ufb01ne an active set.\nkNN. The k-nearest neighbors classi\ufb01er implementation constructs a ball tree (O mohundro, 1989)\nof the samples, but uses a more ef\ufb01cient brute force search in large dimensions.\nPCA. For medium to large data sets, scikit-learn provides an implementation of a truncated PCA\nbased on random projections (Rokhlin et al., 2009).\nk-means. scikit-learn \u2019s k-means algorithm is implemented in pure Python. Its performance is lim-\nited by the fact that numpy\u2019s array operations take multiple passes over data.\n6. Conclusion\nScikit-learn exposes a wid"
+        }
+      ],
+      "result": {
+        "status": "unavailable",
+        "reason": "invalid_provider_output",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 2199.54
+        }
+      ],
+      "latency_ms": 2200.31
+    },
+    {
+      "id": "scikit-learn:limits",
+      "question": "Why does Elastic Net struggle with very large problems?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 5,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nLARS. Iteratively re\ufb01ning the residuals instead of recomputing them gives perfo rmance gains of\n2\u201310 times over the reference R implementation (Hastie and Efron, 2004).Pymvpa uses this imple-\nmentation via the Rpy R bindings and pays a heavy price to memory copies.\nElastic Net. We benchmarked thescikit-learn coordinate descent implementations of Elastic Net. It\nachieves the same order of performance as the highly optimized Fortran ver sion glmnet (Friedman\net al., 2010) on medium-scale problems, but performance on very large pr oblems is limited since\nwe do not use the KKT conditions to de\ufb01ne an active set.\nkNN. The k-nearest neighbors classi\ufb01er implementation constructs a ball tree (O mohundro, 1989)\nof the samples, but uses a more ef\ufb01cient brute force search in large dimensions.\nPCA. For medium to large data sets, scikit-learn provides an implementation of a truncated PCA\nbased on random projections (Rokhlin et al., 2009).\nk-means. scikit-learn \u2019s k-means algorithm is implemented in pure Python. Its performance is lim-\nited by the fact that numpy\u2019s array operations take multiple passes over data.\n6. Conclusion\nScikit-learn exposes a wid"
+        },
+        {
+          "id": "p1",
+          "page": 4,
+          "start": 2100,
+          "end": 3181,
+          "text": "and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, and is mostly written in a high level language, care has\nbeen taken to maximize computational ef\ufb01ciency. In Table 1, we compare compu tation time for a\nfew algorithms implemented in the major machine learning toolkits accessible in Python. We use\nthe Madelon data set (Guyon et al., 2004), 4400 instances and 500 attribu tes, The data set is quite\nlarge, but small enough for most algorithms to run.\nSVM. While all of the packages compared call libsvm in the background, the performance of scikit-\nlearn can be explained by two factors. First, our bindings avoid memory copies and have up to\n40% less overhead than the original libsvm Python bindings. Second, we p atch libsvm to improve\nef\ufb01ciency on dense data, use a smaller memory footprint, and better use memor y alignment and\npipelining capabilities of modern processors. This patched version also pr ovides unique features,\nsuch as setting weights for individual samples.\n2828"
+        },
+        {
+          "id": "p2",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nscikit-learn mlpy pybrain pymvpa mdp shogun\nSupport Vector Classi\ufb01cation 5.2 9.47 17.5 11.52 40.48 5.63\nLasso (LARS) 1.17 105.3 - 37.35 - -\nElastic Net 0.52 73.7 - 1.44 - -\nk-Nearest Neighbors 0.57 1.41 - 0.56 0.58 1.36\nPCA (9 components) 0.18 - - 8.93 0.47 0.33\nk-Means (9 clusters) 1.34 0.79 \u22c6 - 35.75 0.68\nLicense BSD GPL BSD BSD BSD GPL\n-: Not implemented. \u22c6: Does not converge within 1 hour.\nTable 1: Time in seconds on the Madelon data set for various machine learnin g libraries exposed\nin Python: MLPy (Albanese et al., 2008), PyBrain (Schaul et al., 2010) , pymvpa (Hanke\net al., 2009), MDP (Zito et al., 2008) and Shogun (Sonnenburg et al., 20 10). For more\nbenchmarks seehttp://github.com/scikit-learn.\nmay also provide a score method, which is an increasing evaluation of goodness of \ufb01t: a log-\nlikelihood, or a negated loss function. The other important object is the cross-validation iterator,\nwhich provides pairs of train and test indices to split input data, for example K-fold, leave one out,\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, op"
+        },
+        {
+          "id": "p3",
+          "page": 5,
+          "start": 2100,
+          "end": 2863,
+          "text": "Dubois, editor.Python: Batteries Included, volume 9 of Computing in Science & Engineering.\nIEEE/AIP, May 2007.\nR.E. Fan, K.W. Chang, C.J. Hsieh, X.R. Wang, and C.J. Lin. LIBLINEAR:a library for large linear\nclassi\ufb01cation. The Journal of Machine Learning Research, 9:1871\u20131874, 2008.\nJ. Friedman, T. Hastie, and R. Tibshirani. Regularization paths for gener alized linear models via\ncoordinate descent. Journal of Statistical Software, 33(1):1, 2010.\nI Guyon, S. R. Gunn, A. Ben-Hur, and G. Dror. Result analysis of the NIPS 2003 feature selection\nchallenge, 2004.\nM. Hanke, Y .O. Halchenko, P.B. Sederberg, S.J. Hanson, J.V . Haxby, and S. Pollmann. PyMVPA:\nA Python toolbox for multivariate pattern analysis of fMRI data. Neuroinformatics, 7(1):37\u201353,\n2009.\n2829"
+        },
+        {
+          "id": "p4",
+          "page": 4,
+          "start": 1050,
+          "end": 2250,
+          "text": ",\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, optionally distributing the computation to several cores. Th is is accomplished by\nwrapping an estimator in a GridSearchCV object, where the \u201cCV\u201d stands for \u201ccross-validated\u201d.\nDuring the call to fit, it selects the parameters on a speci\ufb01ed parameter grid, maximizing a score\n(thescore method of the underlying estimator).predict,score, ortransform are then delegated\nto the tuned estimator. This object can therefore be used transparently as any other estimator. Cross\nvalidation can be made more ef\ufb01cient for certain estimators by exploiting speci\ufb01 c properties, such\nas warm restarts or regularization paths (Friedman et al., 2010). This is su pported through special\nobjects, such as the LassoCV. Finally, aPipeline object can combine several transformers and\nan estimator to create a combined estimator to, for example, apply dimension reduc tion before\n\ufb01tting. It behaves as a standard estimator, and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, an"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "The scikit-learn implementation of Elastic Net is limited on very large problems because it does not use KKT conditions to define an active set.",
+            "citations": [
+              {
+                "page": 5,
+                "start": 310,
+                "end": 658,
+                "quote": "Elastic Net. We benchmarked thescikit-learn coordinate descent implementations of Elastic Net. It\nachieves the same order of performance as the highly optimized Fortran ver sion glmnet (Friedman\net al., 2010) on medium-scale problems, but performance on very large pr oblems is limited since\nwe do not use the KKT conditions to de\ufb01ne an active set."
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 4680.11
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 7045.64
+        }
+      ],
+      "latency_ms": 11726.76
+    },
+    {
+      "id": "scikit-learn:unsupported-gpu",
+      "question": "Which GPU model was used for the Madelon benchmarks?",
+      "expected_answerable": false,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nscikit-learn mlpy pybrain pymvpa mdp shogun\nSupport Vector Classi\ufb01cation 5.2 9.47 17.5 11.52 40.48 5.63\nLasso (LARS) 1.17 105.3 - 37.35 - -\nElastic Net 0.52 73.7 - 1.44 - -\nk-Nearest Neighbors 0.57 1.41 - 0.56 0.58 1.36\nPCA (9 components) 0.18 - - 8.93 0.47 0.33\nk-Means (9 clusters) 1.34 0.79 \u22c6 - 35.75 0.68\nLicense BSD GPL BSD BSD BSD GPL\n-: Not implemented. \u22c6: Does not converge within 1 hour.\nTable 1: Time in seconds on the Madelon data set for various machine learnin g libraries exposed\nin Python: MLPy (Albanese et al., 2008), PyBrain (Schaul et al., 2010) , pymvpa (Hanke\net al., 2009), MDP (Zito et al., 2008) and Shogun (Sonnenburg et al., 20 10). For more\nbenchmarks seehttp://github.com/scikit-learn.\nmay also provide a score method, which is an increasing evaluation of goodness of \ufb01t: a log-\nlikelihood, or a negated loss function. The other important object is the cross-validation iterator,\nwhich provides pairs of train and test indices to split input data, for example K-fold, leave one out,\nor strati\ufb01ed cross-validation.\nModel selection. Scikit-learn can evaluate an estimator\u2019s performance or select parameters using\ncross-validation, op"
+        },
+        {
+          "id": "p1",
+          "page": 4,
+          "start": 2100,
+          "end": 3181,
+          "text": "and GridSearchCV therefore tune the parameters of all\nsteps.\n5. High-level yet Ef\ufb01cient: Some Trade Offs\nWhile scikit-learn focuses on ease of use, and is mostly written in a high level language, care has\nbeen taken to maximize computational ef\ufb01ciency. In Table 1, we compare compu tation time for a\nfew algorithms implemented in the major machine learning toolkits accessible in Python. We use\nthe Madelon data set (Guyon et al., 2004), 4400 instances and 500 attribu tes, The data set is quite\nlarge, but small enough for most algorithms to run.\nSVM. While all of the packages compared call libsvm in the background, the performance of scikit-\nlearn can be explained by two factors. First, our bindings avoid memory copies and have up to\n40% less overhead than the original libsvm Python bindings. Second, we p atch libsvm to improve\nef\ufb01ciency on dense data, use a smaller memory footprint, and better use memor y alignment and\npipelining capabilities of modern processors. This patched version also pr ovides unique features,\nsuch as setting weights for individual samples.\n2828"
+        },
+        {
+          "id": "p2",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nMatthieu Brucher MATTHIEU .BRUCHER @GMAIL .COM\nTotal SA, CSTJF\navenue Larribau\n64000 Pau \u2013 France\nMatthieu Perrot MATTHIEU .PERROT @CEA .FR\n\u00b4Edouard Duchesnay EDOUARD .DUCHESNAY @CEA .FR\nLNAO\nNeurospin, B\u02c6at 145, CEA Saclay\n91191 Gif sur Yvette \u2013 France\nEditor: Mikio Braun\nAbstract\nScikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algo-\nrithms for medium-scale supervised and unsupervised probl ems. This package focuses on bring-\ning machine learning to non-specialists using a general-pu rpose high-level language. Emphasis is\nput on ease of use, performance, documentation, and API cons istency. It has minimal dependen-\ncies and is distributed under the simpli\ufb01ed BSD license, enc ouraging its use in both academic\nand commercial settings. Source code, binaries, and docume ntation can be downloaded from\nhttp://scikit-learn.sourceforge.net.\nKeywords: Python, supervised learning, unsupervised learning, model selection\n1. Introduction\nThe Python programming language is establishing itself as one of the most popu lar languages for\nscienti\ufb01c computing. Thanks to its high-level interactive nature and its mat"
+        },
+        {
+          "id": "p3",
+          "page": 5,
+          "start": 1050,
+          "end": 2250,
+          "text": "ython. Its performance is lim-\nited by the fact that numpy\u2019s array operations take multiple passes over data.\n6. Conclusion\nScikit-learn exposes a wide variety of machine learning algorithms, both supervised and unsuper-\nvised, using a consistent, task-oriented interface, thus enabling easy co mparison of methods for a\ngiven application. Since it relies on the scienti\ufb01c Python ecosystem, it can easily be integrated into\napplications outside the traditional range of statistical data analysis. Importan tly, the algorithms,\nimplemented in a high-level language, can be used as building blocks for app roaches speci\ufb01c to\na use case, for example, in medical imaging (Michel et al., 2011). Future wo rk includes online\nlearning, to scale to large data sets.\nReferences\nD. Albanese, G. Merler, S.and Jurman, and R. Visintainer. MLPy: high-p erformance python pack-\nage for predictive modeling. In NIPS, MLOSS Workshop, 2008.\nC.C. Chang and C.J. Lin. LIBSVM: a library for support vector machines . http://www.csie.\nntu.edu.tw/cjlin/libsvm, 2001.\nP.F. Dubois, editor.Python: Batteries Included, volume 9 of Computing in Science & Engineering.\nIEEE/AIP, May 2007.\nR.E. Fan, K.W. Chang, C.J. Hsieh, X.R. "
+        },
+        {
+          "id": "p4",
+          "page": 3,
+          "start": 1050,
+          "end": 2250,
+          "text": "ign and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for data containers.\nCommunity-driven development. We base our development on collaborative tools such as git, github\nand public mailing lists. External contributions are welcome and encouraged.\nDocumentation. Scikit-learn provides a \u223c300 page user guide including narrative documentation,\nclass references, a tutorial, installation instructions, as well as more than 60 examples, some fea-\nturing real-world applications. We try to minimize the use of machine-learning jargon, while main-\ntaining precision with regards to the algorithms employed.\n3. Underlying Technologies\nNumpy: the base data structure used for data and model parameters. Input data is presented as\nnumpy arrays, thus integrating seamlessly with other scienti\ufb01c Python libraries . Numpy\u2019s view-\nbased memory model limits copies, even when binding with compiled code (Van der Walt et al.,\n2011). It also provides basic arithmetic operations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bi"
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "source_insufficient",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 6934.76
+        }
+      ],
+      "latency_ms": 6934.95
+    },
+    {
+      "id": "scikit-learn:unsupported-quantum",
+      "question": "What quantum error correction code is evaluated?",
+      "expected_answerable": false,
+      "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+      "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 3,
+          "start": 2100,
+          "end": 3300,
+          "text": "rations.\nScipy: ef\ufb01cient algorithms for linear algebra, sparse matrix representation, spe cial functions and\nbasic statistical functions. Scipy has bindings for many Fortran-based standard numerical packages,\nsuch as LAPACK. This is important for ease of installation and portability, as p roviding libraries\naround Fortran code can prove challenging on various platforms.\nCython: a language for combining C in Python. Cython makes it easy to reach the perf ormance\nof compiled languages with Python-like syntax and high-level operations. I t is also used to bind\ncompiled libraries, eliminating the boilerplate code of Python/C extensions.\n4. Code Design\nObjects speci\ufb01ed by interface, not by inheritance. To facilitate the use of external objects with\nscikit-learn, inheritance is not enforced; instead, code conventions provide a con sistent interface.\nThe central object is anestimator, that implements afit method, accepting as arguments an input\ndata array and, optionally, an array of labels for supervised problems.Supervised estimators, such as\nSVM classi\ufb01ers, can implement apredict method. Some estimators, that we call transformers,\nfor example, PCA, implement a transform method, returni"
+        },
+        {
+          "id": "p1",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "SCIKIT -LEARN : M ACHINE LEARNING IN PYTHON\nFurthermore, thanks to its liberal license, it has been widely distributed as pa rt of major free soft-\nware distributions such as Ubuntu, Debian, Mandriva, NetBSD and Macp orts and in commercial\ndistributions such as the \u201cEnthought Python Distribution\u201d.\n2. Project Vision\nCode quality. Rather than providing as many features as possible, the project\u2019s goal ha s been to\nprovide solid implementations. Code quality is ensured with unit tests\u2014as of relea se 0.8, test\ncoverage is 81%\u2014and the use of static analysis tools such as pyflakes and pep8. Finally, we\nstrive to use consistent naming for the functions and parameters used throughout a strict adherence\nto the Python coding guidelines and numpy style documentation.\nBSD licensing. Most of the Python ecosystem is licensed with non-copyleft licenses. While such\npolicy is bene\ufb01cial for adoption of these tools by commercial projects, it does impose some restric-\ntions: we are unable to use some existing scienti\ufb01c code, such as the GSL.\nBare-bone design and API. To lower the barrier of entry, we avoid framework code and keep the\nnumber of different objects to a minimum, relying on numpy arrays for"
+        },
+        {
+          "id": "p2",
+          "page": 6,
+          "start": 1050,
+          "end": 1515,
+          "text": "a, A. Binder, C. Gehl,\nand V . Franc. The SHOGUN machine learning toolbox.Journal of Machine Learning Research,\n11:1799\u20131802, 2010.\nS. Van der Walt, S.C Colbert, and G. Varoquaux. The NumPy array: A stru cture for ef\ufb01cient\nnumerical computation. Computing in Science and Engineering, 11, 2011.\nT. Zito, N. Wilbert, L. Wiskott, and P. Berkes. Modular toolkit for data processing (MDP): A Python\ndata processing framework. Frontiers in Neuroinformatics, 2, 2008.\n2830"
+        },
+        {
+          "id": "p3",
+          "page": 6,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nT. Hastie and B. Efron. Least Angle Regression, Lasso and Forward Stagewise. http://cran.\nr-project.org/web/packages/lars/lars.pdf, 2004.\nV . Michel, A. Gramfort, G. Varoquaux, E. Eger, C. Keribin, and B. Thirion. A supervised clustering\napproach for fMRI-based inference of brain states. Patt Rec, page epub ahead of print, April\n2011. doi: 10.1016/j.patcog.2011.04.006.\nK.J. Milmann and M. Avaizis, editors. Scienti\ufb01c Python, volume 11 of Computing in Science &\nEngineering. IEEE/AIP, March 2011.\nS.M. Omohundro. Five balltree construction algorithms. ICSI Technical Report TR-89-063, 1989.\nV . Rokhlin, A. Szlam, and M. Tygert. A randomized algorithm for principal c omponent analysis.\nSIAM Journal on Matrix Analysis and Applications, 31(3):1100\u20131124, 2009.\nT. Schaul, J. Bayer, D. Wierstra, Y . Sun, M. Felder, F. Sehnke, T. R\u00a8uckstie\u00df, and J. Schmidhuber.\nPyBrain. The Journal of Machine Learning Research, 11:743\u2013746, 2010.\nS. Sonnenburg, G. R\u00a8atsch, S. Henschel, C. Widmer, J. Behr, A. Zien, F. de Bona, A. Binder, C. Gehl,\nand V . Franc. The SHOGUN machine learning toolbox.Journal of Machine Learning Research,\n11:1799\u20131802, 2010.\nS. Van der Walt, S"
+        },
+        {
+          "id": "p4",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "PEDREGOSA , VAROQUAUX , GRAMFORT ET AL .\nMatthieu Brucher MATTHIEU .BRUCHER @GMAIL .COM\nTotal SA, CSTJF\navenue Larribau\n64000 Pau \u2013 France\nMatthieu Perrot MATTHIEU .PERROT @CEA .FR\n\u00b4Edouard Duchesnay EDOUARD .DUCHESNAY @CEA .FR\nLNAO\nNeurospin, B\u02c6at 145, CEA Saclay\n91191 Gif sur Yvette \u2013 France\nEditor: Mikio Braun\nAbstract\nScikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algo-\nrithms for medium-scale supervised and unsupervised probl ems. This package focuses on bring-\ning machine learning to non-specialists using a general-pu rpose high-level language. Emphasis is\nput on ease of use, performance, documentation, and API cons istency. It has minimal dependen-\ncies and is distributed under the simpli\ufb01ed BSD license, enc ouraging its use in both academic\nand commercial settings. Source code, binaries, and docume ntation can be downloaded from\nhttp://scikit-learn.sourceforge.net.\nKeywords: Python, supervised learning, unsupervised learning, model selection\n1. Introduction\nThe Python programming language is establishing itself as one of the most popu lar languages for\nscienti\ufb01c computing. Thanks to its high-level interactive nature and its mat"
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "source_insufficient",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 1947.92
+        }
+      ],
+      "latency_ms": 1948.12
+    },
+    {
+      "id": "liblinear:solver",
+      "question": "Which optimization method is used for logistic regression?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n2. Large Linear Classi\ufb01cation (Binary and Multi-class)\nLIBLINEAR supports two popular binary linear classi\ufb01ers: LR and linear SVM. Given a set of\ninstance-label pairs (xi;yi);i = 1; : : : ;l; xi2 Rn; yi2f1; +1g, both methods solve the following\nunconstrained optimization problem with different loss functions \u03be(w;xi;yi):\nmin\nw\n1\n2wT w +C\u2211li=1 \u03be(w;xi;yi); (1)\nwhere C > 0 is a penalty parameter. For SVM, the two common loss functions are max(1\nyiwT xi;0) and max(1 yiwT xi;0)2: The former is referred to as L1-SVM, while the latter is L2-\nSVM. For LR, the loss function is log(1 +eyiwT xi), which is derived from a probabilistic model. In\nsome cases, the discriminant function of the classi\ufb01er includes a bias term, b. LIBLINEAR han-\ndles this term by augmenting the vector w and each instance xi with an additional dimension:\nwT [wT ;b];xTi  [xTi ;B], where B is a constant speci\ufb01ed by the user. The approach for L1-\nSVM and L2-SVM is a coordinate descent method (Hsieh et al., 2008). For LR and also L2-SVM,\nLIBLINEAR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phas"
+        },
+        {
+          "id": "p1",
+          "page": 4,
+          "start": 1050,
+          "end": 2027,
+          "text": "d suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A training algorithm for optimal margin classi\ufb01ers. In COLT,\n1992.\nC.-C. Chang and C.-J. Lin. LIBSVM: a library for support vector machines, 2001. Software avail-\nable athttp://www.csie.ntu.edu.tw/\u02dccjlin/libsvm.\nC.-J. Hsieh, K.-W. Chang, C.-J. Lin, S. S. Keerthi, and S. Sundararajan. A dual coordinate descent\nmethod for large-scale linear SVM. In ICML, 2008.\nT. Joachims. Training linear SVMs in linear time. In ACM KDD, 2006.\nS. S. Keerthi, S. Sundararajan, K.-W. Chang, C.-J. Hsieh, and C.-J. Lin. A sequential dual method\nfor large scale multi-class linear SVMs. In ACM KDD, 2008.\nC.-J. Lin, R. C. Weng, and S. S. Keerthi. Trust region Newton method for large-scale logistic\nregression. JMLR, 9:627\u2013650, 2008.\nS. Shalev-Shwartz, Y. Singer, and N. Srebro. Pegasos: primal estimated sub-gradient solver for\nSVM. In ICML, 2007.\n1874"
+        },
+        {
+          "id": "p2",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        },
+        {
+          "id": "p3",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        },
+        {
+          "id": "p4",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "For logistic regression, LIBLINEAR implements a trust region Newton method.",
+            "citations": [
+              {
+                "page": 2,
+                "start": 1019,
+                "end": 1112,
+                "quote": "For LR and also L2-SVM,\nLIBLINEAR implements a trust region Newton method (Lin et al., 2008)."
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 6689.04
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 5634.78
+        }
+      ],
+      "latency_ms": 12324.19
+    },
+    {
+      "id": "liblinear:multiclass",
+      "question": "How are problems with more than two categories handled?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 1,
+          "start": 1050,
+          "end": 2250,
+          "text": "ssi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and features. We develop LIBLINEAR as an easy-to-use tool\nto deal with such data. It supports L2-regularized logistic regression (LR), L2-loss and L1-loss\nlinear support vector machines (SVMs) (Boser et al., 1992). It inherits many features of the popular\nSVM library LIBSVM (Chang and Lin, 2001) such as simple usage, rich documentation, and open\nsource license (the BSD license1). LIBLINEAR is very ef\ufb01cient for training large-scale problems.\nFor example, it takes only several seconds to train a text classi\ufb01cation problem from the Reuters\nCorpus Volume 1 (rcv1) that has more than 600,000 examples. For the same task, a general SVM\nsolver such as LIBSVM would take several hours. Moreover, LIBLINEAR is competitive with or\neven faster than state of the art linear classi\ufb01ers such as Pegasos (Shalev-Shwartz et al., 2007) and\nSVMperf (Joachims, 2006). The software is available athttp://www.csie.ntu.edu.tw/\u02dccjlin/\nliblinear.\nThis article is organized as follows. In Sections 2 and 3, we discuss the design and implemen-\ntation of LIBLINEAR. We show the"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 1050,
+          "end": 2250,
+          "text": "eparated into source \ufb01les, pre-\nbuilt binaries, documentation, and language bindings. All source codes follow the C/C++ standard,\nand there is no dependency on external libraries. Therefore, LIBLINEAR can run on almost every\nplatform. We provide a simpleMakefile to compile the package from source codes. For Windows\nusers, we include pre-built binaries.\nLibrary calls are implemented in the \ufb01lelinear.cpp. Thetrain() function trains a classi\ufb01er\non the given data and the predict() function predicts a given instance. To handle multi-class\nproblems via the one-vs-the-rest strategy, train() conducts several binary classi\ufb01cations, each\nof which is by calling the train one() function. train one() then invokes the solver of users\u2019\nchoice. Implementations follow the algorithm descriptions in Lin et al. (2008) and Hsieh et al.\n(2008). As LIBLINEAR is written in a modular way, a new solver can be easily plugged in. This\nmakes LIBLINEAR not only a machine learning tool but also an experimental platform.\nMaking extensions of LIBLINEAR to languages other than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the pack"
+        },
+        {
+          "id": "p3",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n2. Large Linear Classi\ufb01cation (Binary and Multi-class)\nLIBLINEAR supports two popular binary linear classi\ufb01ers: LR and linear SVM. Given a set of\ninstance-label pairs (xi;yi);i = 1; : : : ;l; xi2 Rn; yi2f1; +1g, both methods solve the following\nunconstrained optimization problem with different loss functions \u03be(w;xi;yi):\nmin\nw\n1\n2wT w +C\u2211li=1 \u03be(w;xi;yi); (1)\nwhere C > 0 is a penalty parameter. For SVM, the two common loss functions are max(1\nyiwT xi;0) and max(1 yiwT xi;0)2: The former is referred to as L1-SVM, while the latter is L2-\nSVM. For LR, the loss function is log(1 +eyiwT xi), which is derived from a probabilistic model. In\nsome cases, the discriminant function of the classi\ufb01er includes a bias term, b. LIBLINEAR han-\ndles this term by augmenting the vector w and each instance xi with an additional dimension:\nwT [wT ;b];xTi  [xTi ;B], where B is a constant speci\ufb01ed by the user. The approach for L1-\nSVM and L2-SVM is a coordinate descent method (Hsieh et al., 2008). For LR and also L2-SVM,\nLIBLINEAR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phas"
+        },
+        {
+          "id": "p4",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        }
+      ],
+      "result": {
+        "status": "unavailable",
+        "reason": "invalid_provider_output",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 6148.35
+        }
+      ],
+      "latency_ms": 6149.5
+    },
+    {
+      "id": "liblinear:separate",
+      "question": "Why are LIBLINEAR and LIBSVM kept as separate packages?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p1",
+          "page": 1,
+          "start": 1050,
+          "end": 2250,
+          "text": "ssi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and features. We develop LIBLINEAR as an easy-to-use tool\nto deal with such data. It supports L2-regularized logistic regression (LR), L2-loss and L1-loss\nlinear support vector machines (SVMs) (Boser et al., 1992). It inherits many features of the popular\nSVM library LIBSVM (Chang and Lin, 2001) such as simple usage, rich documentation, and open\nsource license (the BSD license1). LIBLINEAR is very ef\ufb01cient for training large-scale problems.\nFor example, it takes only several seconds to train a text classi\ufb01cation problem from the Reuters\nCorpus Volume 1 (rcv1) that has more than 600,000 examples. For the same task, a general SVM\nsolver such as LIBSVM would take several hours. Moreover, LIBLINEAR is competitive with or\neven faster than state of the art linear classi\ufb01ers such as Pegasos (Shalev-Shwartz et al., 2007) and\nSVMperf (Joachims, 2006). The software is available athttp://www.csie.ntu.edu.tw/\u02dccjlin/\nliblinear.\nThis article is organized as follows. In Sections 2 and 3, we discuss the design and implemen-\ntation of LIBLINEAR. We show the"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "LIBLINEAR: A LIBRARY FOR LARGE LINEAR CLASSIFICATION\n3.2 Documentation\nThe LIBLINEAR package comes with plenty of documentation. TheREADME \ufb01le describes the instal-\nlation process, command-line usage, and the library calls. Users can read the \u201cQuick Start\u201d section,\nand begin within a few minutes. For developers who use LIBLINEAR in their software, the API\ndocument is in the \u201cLibrary Usage\u201d section. All the interface functions and related data structures\nare explained in detail. Programstrain.c andpredict.c are good examples of using LIBLINEAR\nAPIs. If theREADME \ufb01le does not give the information users want, they can check the online FAQ\npage.4 In addition to software documentation, theoretical properties of the algorithms and compar-\nisons to other methods are in Lin et al. (2008) and Hsieh et al. (2008). The authors are also willing\nto answer any further questions.\n3.3 Design\nThe main design principle is to keep the whole package as simple as possible while making the\nsource codes easy to read and maintain. Files in LIBLINEAR can be separated into source \ufb01les, pre-\nbuilt binaries, documentation, and language bindings. All source codes follow the C/C++ standard,\nand there is no depe"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p4",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "LIBLINEAR and LIBSVM are kept as separate packages because their models differ significantly after training, specifically regarding how they store the weight vector w.",
+            "citations": [
+              {
+                "page": 2,
+                "start": 1711,
+                "end": 1922,
+                "quote": "However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together."
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 1837.2
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 1289.55
+        }
+      ],
+      "latency_ms": 3127.04
+    },
+    {
+      "id": "liblinear:validation",
+      "question": "How is the penalty parameter selected in the comparison experiments?",
+      "expected_answerable": true,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n2. Large Linear Classi\ufb01cation (Binary and Multi-class)\nLIBLINEAR supports two popular binary linear classi\ufb01ers: LR and linear SVM. Given a set of\ninstance-label pairs (xi;yi);i = 1; : : : ;l; xi2 Rn; yi2f1; +1g, both methods solve the following\nunconstrained optimization problem with different loss functions \u03be(w;xi;yi):\nmin\nw\n1\n2wT w +C\u2211li=1 \u03be(w;xi;yi); (1)\nwhere C > 0 is a penalty parameter. For SVM, the two common loss functions are max(1\nyiwT xi;0) and max(1 yiwT xi;0)2: The former is referred to as L1-SVM, while the latter is L2-\nSVM. For LR, the loss function is log(1 +eyiwT xi), which is derived from a probabilistic model. In\nsome cases, the discriminant function of the classi\ufb01er includes a bias term, b. LIBLINEAR han-\ndles this term by augmenting the vector w and each instance xi with an additional dimension:\nwT [wT ;b];xTi  [xTi ;B], where B is a constant speci\ufb01ed by the user. The approach for L1-\nSVM and L2-SVM is a coordinate descent method (Hsieh et al., 2008). For LR and also L2-SVM,\nLIBLINEAR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phas"
+        },
+        {
+          "id": "p2",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p4",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        }
+      ],
+      "result": {
+        "status": "answer",
+        "reason": "reviewed",
+        "claims": [
+          {
+            "text": "In the comparison experiments, five-fold cross validation is used to select the best penalty parameter C for each learning method.",
+            "citations": [
+              {
+                "page": 3,
+                "start": 2651,
+                "end": 2834,
+                "quote": "We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set."
+              }
+            ]
+          }
+        ],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 1919.78
+        },
+        {
+          "stage": "review",
+          "outcome": "validated",
+          "latency_ms": 1516.0
+        }
+      ],
+      "latency_ms": 3436.5
+    },
+    {
+      "id": "liblinear:unsupported-gpu",
+      "question": "Which GPU model was used in the training experiments?",
+      "expected_answerable": false,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p1",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        },
+        {
+          "id": "p3",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        },
+        {
+          "id": "p4",
+          "page": 2,
+          "start": 2100,
+          "end": 2914,
+          "text": "e million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model prediction\nAccuracy = 96.575% (3863/4000)\nThe whole procedure (training and testing) takes less than 15 seconds on a modern computer. The\ntraining time without including disk I/O is less than one second. Beyond this simple way of running\nLIBLINEAR, several parameters are available for advanced use. For example, one may specify a\nparameter to obtain probability outputs for logistic regression. Details can be found in theREADME\n\ufb01le.\n2. The guide can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/papers/guide/guide.pdf.\n3. This is the news20.binary set from http://www.csie.ntu.edu.tw/\u02dccjlin/libsvmtools/datasets. We use a\n80/20 split for training and testing.\n1872"
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "source_insufficient",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 2653.25
+        }
+      ],
+      "latency_ms": 2653.41
+    },
+    {
+      "id": "liblinear:unsupported-transformer",
+      "question": "How many attention heads does the classifier use?",
+      "expected_answerable": false,
+      "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+      "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+      "evidence": [
+        {
+          "id": "p0",
+          "page": 2,
+          "start": 1050,
+          "end": 2250,
+          "text": "AR implements a trust region Newton method (Lin et al., 2008). The Appendix of our SVM\nguide.2 discusses when to use which method. In the testing phase, we predict a data point x as posi-\ntive if wT x > 0, and negative otherwise. For multi-class problems, we implement the one-vs-the-rest\nstrategy and a method by Crammer and Singer. Details are in Keerthi et al. (2008).\n3. The Software Package\nThe LIBLINEAR package includes a library and command-line tools for the learning task. The design\nis highly inspired by the LIBSVM package. They share similar usage as well as application program\ninterfaces (APIs), so users/developers can easily use both packages. However, their models after\ntraining are quite different (in particular, LIBLINEAR stores w in the model, but LIBSVM does not.).\nBecause of such differences, we decide not to combine these two packages together. In this section,\nwe show various aspects of LIBLINEAR.\n3.1 Practical Usage\nTo illustrate the training and testing procedure, we take the data set news20,3 which has more than\none million features. We use the default classi\ufb01er L2-SVM.\n$ train news20.binary.tr\n[output skipped]\n$ predict news20.binary.t news20.binary.tr.model pr"
+        },
+        {
+          "id": "p1",
+          "page": 1,
+          "start": 0,
+          "end": 1200,
+          "text": "Journal of Machine Learning Research 9 (2008) 1871-1874 Submitted 5/08; Published 8/08\nLIBLINEAR: A Library for Large Linear Classi\ufb01cation\nRong-En Fan B90098@CSIE.NTU.EDU.TW\nKai-Wei Chang B92084@CSIE.NTU.EDU.TW\nCho-Jui Hsieh B92085@CSIE.NTU.EDU.TW\nXiang-Rui Wang R95073@CSIE.NTU.EDU.TW\nChih-Jen Lin CJLIN@CSIE.NTU.EDU.TW\nDepartment of Computer Science\nNational Taiwan University\nTaipei 106, Taiwan\nEditor: Soeren Sonnenburg\nAbstract\nLIBLINEAR is an open source library for large-scale linear classi\ufb01cation. It supports logistic regres-\nsion and linear support vector machines. We provide easy-to-use command-line tools and library\ncalls for users and developers. Comprehensive documents are available for both beginners and\nadvanced users. Experiments demonstrate that LIBLINEAR is very ef\ufb01cient on large sparse data\nsets.\nKeywords: large-scale linear classi\ufb01cation, logistic regression, support vector machines, open\nsource, machine learning\n1. Introduction\nSolving large-scale classi\ufb01cation problems is crucial in many applications such as text classi\ufb01cation.\nLinear classi\ufb01cation has become one of the most promising learning techniques for large sparse\ndata with a huge number of instances and fe"
+        },
+        {
+          "id": "p2",
+          "page": 3,
+          "start": 0,
+          "end": 1200,
+          "text": "LIBLINEAR: A LIBRARY FOR LARGE LINEAR CLASSIFICATION\n3.2 Documentation\nThe LIBLINEAR package comes with plenty of documentation. TheREADME \ufb01le describes the instal-\nlation process, command-line usage, and the library calls. Users can read the \u201cQuick Start\u201d section,\nand begin within a few minutes. For developers who use LIBLINEAR in their software, the API\ndocument is in the \u201cLibrary Usage\u201d section. All the interface functions and related data structures\nare explained in detail. Programstrain.c andpredict.c are good examples of using LIBLINEAR\nAPIs. If theREADME \ufb01le does not give the information users want, they can check the online FAQ\npage.4 In addition to software documentation, theoretical properties of the algorithms and compar-\nisons to other methods are in Lin et al. (2008) and Hsieh et al. (2008). The authors are also willing\nto answer any further questions.\n3.3 Design\nThe main design principle is to keep the whole package as simple as possible while making the\nsource codes easy to read and maintain. Files in LIBLINEAR can be separated into source \ufb01les, pre-\nbuilt binaries, documentation, and language bindings. All source codes follow the C/C++ standard,\nand there is no depe"
+        },
+        {
+          "id": "p3",
+          "page": 4,
+          "start": 0,
+          "end": 1200,
+          "text": "FAN, CHANG, HSIEH, WANG AND LIN\n0 2 4 6 8 100.955\n0.96\n0.965\n0.97\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(a) news20, l: 19,996, n: 1,355,191, #nz: 9,097,916\n0 5 10 15 20 25 300.97\n0.971\n0.972\n0.973\n0.974\n0.975\n0.976\n0.977\n0.978\n0.979\nTraining Time (s)\nTesting accuracy (%)\n \n \nLIBLINEAR\u2212L1\nLIBLINEAR\u2212L2\nLIBLINEAR\u2212LR\nPEGASOS\nSVMperf\n(b) rcv1, l: 677,399, n: 47,236, #nz: 156,436,656\nFigure 1: Testing accuracy versus training time (in seconds). Data statistics are listed after the data\nset name. l: number of instances, n: number of features, #nz: number of nonzero feature\nvalues. We split each set to 4/5 training and 1/5 testing.\n5. Conclusions\nLIBLINEAR is a simple and easy-to-use open source package for large linear classi\ufb01cation. Exper-\niments and analysis in Lin et al. (2008), Hsieh et al. (2008) and Keerthi et al. (2008) conclude that\nsolvers in LIBLINEAR perform well in practice and have good theoretical properties. LIBLINEAR\nis still being improved by new research results and suggestions from users. The ultimate goal is to\nmake easy learning with huge data possible.\nReferences\nB. E. Boser, I. Guyon, and V. Vapnik. A train"
+        },
+        {
+          "id": "p4",
+          "page": 3,
+          "start": 2100,
+          "end": 3254,
+          "text": "ther than C/C++ is easy. Following the same\nsetting of the LIBSVM MATLAB/Octave interface, we have a MATLAB/Octave extension available\nwithin the package. Many tools designed for LIBSVM can be reused with small modi\ufb01cations. Some\nexamples are the parameter selection tool and the data format checking tool.\n4. Comparison\nDue to space limitation, we skip here the full details, which are in Lin et al. (2008) and Hsieh et al.\n(2008). We only demonstrate that LIBLINEAR quickly reaches the testing accuracy corresponding\nto the optimal solution of (1). We conduct \ufb01ve-fold cross validation to select the best parameter\nC for each learning method (L1-SVM, L2-SVM, LR); then we train on the whole training set and\npredict the testing set. Figure 1 shows the comparison between LIBLINEAR and two state of the art\nL1-SVM solvers: Pegasos (Shalev-Shwartz et al., 2007) and SVMperf (Joachims, 2006). Clearly,\nLIBLINEAR is ef\ufb01cient.\nTo make the comparison reproducible, codes used for experiments in Lin et al. (2008) and Hsieh\net al. (2008) are available at the LIBLINEAR web page.\n4. FAQ can be found athttp://www.csie.ntu.edu.tw/\u02dccjlin/liblinear/FAQ.html.\n1873"
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "source_insufficient",
+        "claims": [],
+        "source_scope": "retrieved_full_text_excerpts",
+        "notice": "Based on retrieved paper excerpts, not an exhaustive review of the whole paper."
+      },
+      "provider_calls": [
+        {
+          "stage": "generate",
+          "outcome": "validated",
+          "latency_ms": 1503.18
+        }
+      ],
+      "latency_ms": 1503.32
+    }
+  ],
+  "limitations": "Two public papers; provisional labels; observed retrieval corpus; not held-out accuracy. Model review is not independent human verification.",
+  "finished_at": "2026-10-21T07:10:35.293701+00:00"
+}

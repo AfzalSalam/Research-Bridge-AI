@@ -29,7 +29,7 @@ describe("LiveMentorDiscovery", () => {
     fireEvent.click(screen.getByRole("button", { name: "Find researchers" }));
 
     expect(
-      await screen.findByRole("heading", { name: "Reviewable researcher evidence" }),
+      await screen.findByRole("heading", { name: "People working on your topic" }),
     ).toBeInTheDocument();
     expect(screen.getAllByText("Mira Sen").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Why this candidate appears here" })).toBeInTheDocument();

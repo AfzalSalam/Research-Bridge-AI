@@ -1,10 +1,13 @@
 "use client";
 
+import { z } from "zod";
+import { useEarlyContacts, hasPublicContact, PaperContactSummary, EarlyContactProgress, type EarlyContacts } from "./early-contacts";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useResearchTask, useResearchValue } from "@/features/discovery/research-session";
 import { BookOpen, Database, FileSearch, RefreshCw, Search, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { DataState } from "@/components/states/data-state";
@@ -21,12 +24,13 @@ import { EvidenceLink } from "@/features/demo/components/evidence-link";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import {
   livePaperSearchFormSchema,
+  paperDiscoveryResponseSchema,
   type DiscoveredPaper,
   type LivePaperSearchForm,
   type LivePaperSearchFormInput,
 } from "@/features/discovery/contracts";
 import { discoverOpenAlexPapers } from "@/lib/api/discovery";
-import { ApiError } from "@/lib/api/result";
+
 
 const defaultQuery = "interpretable machine learning for clinical decision support";
 
@@ -46,7 +50,7 @@ function metadataLabel(paper: DiscoveredPaper): string {
   ].join(" · ");
 }
 
-function PaperResult({ index, paper }: { index: number; paper: DiscoveredPaper }) {
+function PaperResult({ index, paper, contacts, queued, pending }: { index: number; paper: DiscoveredPaper; contacts: EarlyContacts; queued: string[]; pending: boolean }) {
   return (
     <article className="grid gap-5 py-8 md:grid-cols-[3rem_minmax(0,1fr)]">
       <span className="grid size-10 place-items-center rounded-full bg-brand-indigo-soft text-sm font-bold text-brand-indigo">
@@ -76,11 +80,11 @@ function PaperResult({ index, paper }: { index: number; paper: DiscoveredPaper }
           </p>
         )}
 
+        <PaperContactSummary paper={paper} results={contacts} queued={queued} pending={pending} />
         <div className="mt-5 grid gap-4 lg:grid-cols-2">
           <div>
-            <h4 className="text-xs font-bold tracking-[0.12em] text-muted-foreground uppercase">
-              Paper authorships
-            </h4>
+            <h4 className="text-xs font-bold tracking-[0.12em] text-muted-foreground uppercase">Authors of this paper</h4>
+            <p className="mt-2 text-xs text-muted-foreground">Authors may be students or researchers. A paper does not confirm a professor role or internship opening.</p>
             {paper.authors.length ? (
               <ul className="mt-3 space-y-3">
                 {paper.authors.map((author) => (
@@ -103,7 +107,7 @@ function PaperResult({ index, paper }: { index: number; paper: DiscoveredPaper }
           </div>
           <div>
             <h4 className="text-xs font-bold tracking-[0.12em] text-muted-foreground uppercase">
-              OpenAlex topic metadata
+              Research topics
             </h4>
             {paper.topics.length ? (
               <ul className="mt-3 flex flex-wrap gap-2">
@@ -122,6 +126,7 @@ function PaperResult({ index, paper }: { index: number; paper: DiscoveredPaper }
 
         <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 border-t border-border pt-5">
           <EvidenceLink href={paper.sourceUrl}>OpenAlex work record</EvidenceLink>
+          <Link className="text-sm underline" href={`/research/papers/${paper.id}`}>Read, save, and contact authors</Link>
           {paper.doi ? (
             <EvidenceLink href={`https://doi.org/${paper.doi}`}>DOI record</EvidenceLink>
           ) : (
@@ -133,28 +138,31 @@ function PaperResult({ index, paper }: { index: number; paper: DiscoveredPaper }
   );
 }
 
+const persistedFormSchema = livePaperSearchFormSchema.extend({ query: z.string().max(300) });
+
 export function LivePaperDiscovery() {
-  const [activeController, setActiveController] = useState<AbortController | null>(null);
-  const mutation = useMutation({ mutationFn: discoverOpenAlexPapers });
+  const mutation = useResearchTask("paper-search", paperDiscoveryResponseSchema, livePaperSearchFormSchema, (values, signal) => discoverOpenAlexPapers({ ...values, signal }));
+  const [savedForm, setSavedForm] = useResearchValue("paper-search-form", persistedFormSchema, { query: defaultQuery, limit: 20 });
   const {
+    subscribe,
     formState: { errors },
     handleSubmit,
     register,
   } = useForm<LivePaperSearchFormInput, unknown, LivePaperSearchForm>({
-    defaultValues: { query: defaultQuery, limit: 12 },
+    defaultValues: savedForm,
     resolver: zodResolver(livePaperSearchFormSchema),
   });
 
-  useEffect(() => () => activeController?.abort(), [activeController]);
+  useEffect(() => subscribe({ formState: { values: true }, callback: ({ values }) => { const parsed = persistedFormSchema.safeParse(values); if (parsed.success) setSavedForm(parsed.data); } }), [subscribe, setSavedForm]);
 
   function submit(values: LivePaperSearchForm) {
-    const controller = new AbortController();
-    setActiveController(controller);
-    mutation.mutate({ ...values, signal: controller.signal });
+    mutation.mutate(values);
   }
 
-  const error = mutation.error instanceof ApiError ? mutation.error : null;
+  const error = mutation.error;
   const result = mutation.data;
+  const contacts = useEarlyContacts(result?.papers ?? []);
+  const [contactableOnly, setContactableOnly] = useResearchValue("papers-contactable-only", z.boolean(), false);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
@@ -166,7 +174,7 @@ export function LivePaperDiscovery() {
         >
           <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_8rem_auto] md:items-end">
             <Field data-invalid={Boolean(errors.query)}>
-              <FieldLabel htmlFor="live-paper-query">Topic, DOI, or OpenAlex Work ID</FieldLabel>
+              <FieldLabel htmlFor="live-paper-query">What topic interests you?</FieldLabel>
               <Input
                 aria-invalid={Boolean(errors.query)}
                 id="live-paper-query"
@@ -176,25 +184,30 @@ export function LivePaperDiscovery() {
               <FieldError errors={[errors.query]} />
             </Field>
             <Field data-invalid={Boolean(errors.limit)}>
-              <FieldLabel htmlFor="live-paper-limit">Result limit</FieldLabel>
+              <FieldLabel htmlFor="live-paper-limit">Number of papers</FieldLabel>
               <NativeSelect id="live-paper-limit" {...register("limit")}>
-                <option value="6">6 papers</option>
-                <option value="12">12 papers</option>
+                <option value="10">10 papers</option>
                 <option value="20">20 papers</option>
+                <option value="30">30 papers</option>
               </NativeSelect>
               <FieldError errors={[errors.limit]} />
             </Field>
             <Button disabled={mutation.isPending} type="submit" variant="evidence">
               <Search aria-hidden="true" />
-              {mutation.isPending ? "Searching…" : "Search OpenAlex"}
+              {mutation.isPending ? "Searching…" : "Search papers"}
             </Button>
           </div>
           <FieldDescription className="mt-4 border-t border-border pt-4">
-            Real provider retrieval. Results are validated, deduplicated, persisted with provenance, and shown in OpenAlex order—not Research Bridge ranked.
+            Search academic papers through OpenAlex. Read a paper, explore its authors, then choose someone to contact.
           </FieldDescription>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {mutation.isPending && <Button type="button" variant="outline" onClick={mutation.cancel}>Cancel search</Button>}
+            {mutation.data && !mutation.isPending && <Button type="button" variant="outline" onClick={mutation.clear}>Clear results</Button>}
+          </div>
         </form>
 
         <div aria-live="polite" className="mt-8">
+          {mutation.status === "interrupted" && <p className="mb-4 text-sm">Search interrupted by refresh. Received results are kept; search again when ready.</p>}
           {!mutation.isPending && !mutation.isError && !result ? (
             <DataState
               description="Search a focused topic, paste a DOI, or enter an OpenAlex Work ID. No LLM rewrites the query or invents publication details."
@@ -218,8 +231,8 @@ export function LivePaperDiscovery() {
                   <Button
                     onClick={() =>
                       submit({
-                        limit: mutation.variables.limit,
-                        query: mutation.variables.query,
+                        limit: mutation.variables!.limit,
+                        query: mutation.variables!.query,
                       })
                     }
                     variant="outline"
@@ -229,7 +242,7 @@ export function LivePaperDiscovery() {
                   </Button>
                 ) : null
               }
-              description={`${error?.message ?? "The live paper request could not be completed."}${error?.requestId ? ` Request reference: ${error.requestId}.` : ""}`}
+              description={`${error ?? "The live paper request could not be completed."}`}
               kind="error"
               title="OpenAlex evidence is unavailable"
             />
@@ -257,10 +270,10 @@ export function LivePaperDiscovery() {
               <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
                 <div>
                   <p className="text-xs font-bold tracking-[0.12em] text-brand-indigo uppercase">
-                    OpenAlex provider order · not Research Bridge ranked
+                    Academic database results
                   </p>
                   <h2 className="mt-2 text-3xl font-medium" id="live-results-title">
-                    Reviewable publication evidence
+                    Papers on your topic
                   </h2>
                   <p className="mt-2 text-sm text-muted-foreground">
                     Query type: {result.queryKind} · Retrieved {formatRetrievedAt(result.source.retrievedAt)} UTC
@@ -271,14 +284,17 @@ export function LivePaperDiscovery() {
                   <StatusBadge>{result.source.cacheStatus === "hit" ? "Provider cache hit" : "Fresh provider response"}</StatusBadge>
                   <Button asChild size="sm" variant="outline">
                     <Link href={`/mentors?query=${encodeURIComponent(result.query)}`}>
-                      Find researchers
+                      Find Professors
                     </Link>
                   </Button>
                 </div>
               </div>
+              <EarlyContactProgress task={contacts} />
+              <label className="mb-4 flex items-center gap-2 text-sm"><input type="checkbox" checked={contactableOnly} onChange={e => setContactableOnly(e.target.checked)} />Only papers with a public email found</label>
+              {contactableOnly && !result.papers.some(p => hasPublicContact(p, contacts.results)) && <p role="status">No papers match this filter yet. Checks may be incomplete; turn off the filter to see all relevant papers.</p>}
               <div className="divide-y divide-border border-b border-border">
-                {result.papers.map((paper, index) => (
-                  <PaperResult index={index} key={paper.id} paper={paper} />
+                {result.papers.filter(paper => !contactableOnly || hasPublicContact(paper, contacts.results)).map((paper, index) => (
+                  <PaperResult index={index} key={paper.id} paper={paper} contacts={contacts.results} queued={contacts.authors} pending={contacts.isPending} />
                 ))}
               </div>
             </section>
@@ -290,12 +306,12 @@ export function LivePaperDiscovery() {
         <div className="grid size-10 place-items-center rounded-full bg-brand-teal-soft text-brand-teal-strong">
           <Database aria-hidden="true" className="size-5" />
         </div>
-        <h2 className="mt-5 text-xl font-medium">What live discovery proves</h2>
+        <h2 className="mt-5 text-xl font-medium">What to do next</h2>
         <ul className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">
-          <li className="flex gap-2"><FileSearch aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Typed OpenAlex retrieval with bounded retries and visible partial failures.</li>
-          <li className="flex gap-2"><Database aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Normalized papers, authors, affiliations, topics, and provenance persist in PostgreSQL.</li>
+          <li className="flex gap-2"><FileSearch aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Start with a specific topic, such as computer vision for medical images.</li>
+          <li className="flex gap-2"><Database aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Open a paper and review the authors together, including their affiliations at publication.</li>
           <li className="flex gap-2"><ShieldCheck aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Unknown fields stay unknown; retracted and invalid records are not silently recommended.</li>
-          <li className="flex gap-2"><BookOpen aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Mentor derivation and transparent relevance arrive in Phase 7.</li>
+          <li className="flex gap-2"><BookOpen aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-teal" />Use Find Professors to review an author’s work and prepare an email draft.</li>
         </ul>
         <p className="mt-6 border-t border-border pt-5 text-xs leading-5 text-muted-foreground">
           {result?.source.accessMode === "limited-anonymous"

@@ -1,11 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Save, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 
+import { DataState } from "@/components/states/data-state";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -16,95 +17,47 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { DemoDataBoundary } from "@/features/demo/components/demo-data-boundary";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import {
-  profileFormSchema,
-  studentProfileSchema,
-  type DemoBootstrap,
-  type ProfileFormValues,
-  type StudentProfile,
-} from "@/features/demo/contracts";
+  accountProfileFormSchema,
+  accountProfileToFormValues,
+  profileFormValuesToAccountProfile,
+  profileErrorMessage,
+  type AccountProfileFormValues,
+  type AccountProfile,
+} from "@/lib/api/profile";
 import {
-  DEMO_BOOTSTRAP_QUERY_KEY,
-  useReadyDemoStore,
-} from "@/features/demo/demo-store";
-import { DemoApiError, updateDemoProfile } from "@/lib/api/demo";
+  useAccountProfile,
+  useSaveAccountProfile,
+} from "@/features/profile/use-account-profile";
 
-function toFormValues(profile: StudentProfile): ProfileFormValues {
-  return {
-    name: profile.name,
-    program: profile.program,
-    institution: profile.institution,
-    graduationYear: profile.graduationYear,
-    researchInterests: profile.researchInterests.join(", "),
-    skills: profile.skills.join(", "),
-    projectTitle: profile.projectTitle,
-    projectSummary: profile.projectSummary,
-    weeklyAvailability: profile.weeklyAvailability,
-  };
-}
-
-function commaSeparatedValues(value: string): string[] {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function ProfileForm() {
-  const { dispatch, state } = useReadyDemoStore();
-  const queryClient = useQueryClient();
+function ProfileForm({ profile, userId }: { profile: AccountProfile; userId: string }) {
   const [savedMessage, setSavedMessage] = useState("");
   const [saveError, setSaveError] = useState("");
-  const updateProfile = useMutation({
-    mutationFn: (profile: StudentProfile) => updateDemoProfile(profile),
-  });
+  const updateProfile = useSaveAccountProfile(userId);
   const {
     formState: { errors, isDirty, isSubmitting },
     handleSubmit,
     register,
     reset,
-  } = useForm<ProfileFormValues>({
-    defaultValues: toFormValues(state.profile),
-    resolver: zodResolver(profileFormSchema),
+  } = useForm<AccountProfileFormValues>({
+    defaultValues: accountProfileToFormValues(profile),
+    resolver: zodResolver(accountProfileFormSchema),
   });
 
   useEffect(() => {
-    reset(toFormValues(state.profile));
-  }, [reset, state.profile]);
+    reset(accountProfileToFormValues(profile));
+  }, [reset, profile]);
 
-  async function saveProfile(values: ProfileFormValues) {
+  async function saveProfile(values: AccountProfileFormValues) {
     setSavedMessage("");
     setSaveError("");
-    const profile = studentProfileSchema.parse({
-      ...values,
-      id: "demo-student",
-      researchInterests: commaSeparatedValues(values.researchInterests),
-      skills: commaSeparatedValues(values.skills),
-    });
-
     try {
-      const savedProfile = await updateProfile.mutateAsync(profile);
-      queryClient.setQueryData<DemoBootstrap>(DEMO_BOOTSTRAP_QUERY_KEY, (current) => {
-        if (!current) return current;
-        return { ...current, profile: savedProfile };
-      });
-      dispatch({ type: "save-profile", profile: savedProfile });
-      reset(toFormValues(savedProfile));
-      setSavedMessage("Fictional profile saved to the demo database.");
+      const savedProfile = await updateProfile.mutateAsync(profileFormValuesToAccountProfile(values));
+      reset(accountProfileToFormValues(savedProfile));
+      setSavedMessage("Your research profile has been saved.");
     } catch (error) {
-      const apiError =
-        error instanceof DemoApiError
-          ? error
-          : new DemoApiError({
-              code: "unexpected_client_error",
-              message: "The demo profile could not be saved.",
-            });
-      const requestReference = apiError.requestId
-        ? ` Request reference: ${apiError.requestId}.`
-        : "";
-      setSaveError(`${apiError.message}${requestReference}`);
+      setSaveError(profileErrorMessage(error));
     }
   }
 
@@ -117,13 +70,12 @@ function ProfileForm() {
       >
         <div className="border-b border-border pb-6">
           <p className="text-xs font-bold tracking-[0.14em] text-brand-teal uppercase">
-            Verified student context
+            Your research background
           </p>
           <h2 className="mt-3 text-2xl font-medium">Facts the product may reuse</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
             These fields are the allowed evidence boundary for live matching and
-            outreach. Until authentication, this phase stores only fictional profile
-            data.
+            outreach. Save accurate information about your own experience.
           </p>
         </div>
 
@@ -159,7 +111,7 @@ function ProfileForm() {
               id="institution"
               {...register("institution")}
             />
-            <FieldDescription>Keep “fictional” in the demo institution name.</FieldDescription>
+            <FieldDescription>Enter the institution you currently attend.</FieldDescription>
             <FieldError errors={[errors.institution]} />
           </Field>
 
@@ -231,7 +183,7 @@ function ProfileForm() {
         <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-border pt-6">
           <Button disabled={isSubmitting} type="submit" variant="evidence">
             <Save aria-hidden="true" />
-            {isSubmitting ? "Saving profile..." : "Save demo profile"}
+            {isSubmitting ? "Saving profile..." : "Save profile"}
           </Button>
           <p
             aria-live="polite"
@@ -249,8 +201,8 @@ function ProfileForm() {
         <h2 className="mt-5 text-xl font-medium">Why this boundary matters</h2>
         <ul className="mt-4 space-y-3 text-sm leading-6 text-muted-foreground">
           <li>Drafts may reuse only facts visible here and selected paper evidence.</li>
-          <li>No resume upload exists in this phase, so no private file is collected.</li>
-          <li>The API stores this fictional profile; browser storage keeps only workflow state.</li>
+          <li>Only add experience and skills you can explain and support.</li>
+          <li>Your profile is saved to your account. You can return here to update it.</li>
         </ul>
       </aside>
     </div>
@@ -258,12 +210,15 @@ function ProfileForm() {
 }
 
 export function ProfileExperience() {
-  return (
-    <DemoDataBoundary
-      loadingDescription="Loading the validated fictional profile from the API, then restoring compatible browser workflow state."
-      loadingTitle="Loading the demo profile"
-    >
-      <ProfileForm />
-    </DemoDataBoundary>
-  );
+  const profile = useAccountProfile();
+  if (profile.authLoading || profile.isPending) {
+    return <DataState kind="loading" title="Loading your profile" description="Retrieving your saved research background." />;
+  }
+  if (profile.isError) {
+    return <DataState kind="error" title="Your profile is unavailable" description={profileErrorMessage(profile.error)} action={<Button onClick={() => void profile.refetch()}>Retry profile</Button>} />;
+  }
+  if (!profile.data || !profile.userId) {
+    return <DataState kind="empty" title="Create your research profile" description="Add your background before finding mentors." action={<Link href="/onboarding" className="text-brand-teal underline">Complete your profile</Link>} />;
+  }
+  return <ProfileForm key={profile.userId} profile={profile.data} userId={profile.userId} />;
 }

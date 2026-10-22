@@ -10,7 +10,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { SiteHeader } from "@/components/navigation/site-header";
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/mentors",
+  usePathname: () => "/research",
+}));
+vi.mock("@/features/auth/use-auth", () => ({
+  useAuth: () => ({ user: null, loading: false }),
+}));
+vi.mock("@/features/theme/theme-provider", () => ({
+  useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 
 describe("SiteHeader", () => {
@@ -22,7 +28,7 @@ describe("SiteHeader", () => {
     const primaryNavigation = screen.getByRole("navigation", {
       name: "Primary",
     });
-    const mentorLink = screen.getByRole("link", { name: "Mentors" });
+    const mentorLink = screen.getByRole("link", { name: "My Research" });
 
     expect(primaryNavigation).toContainElement(mentorLink);
     expect(mentorLink).toHaveAttribute("aria-current", "page");

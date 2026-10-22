@@ -44,6 +44,7 @@ from app.schemas.outreach import (
 )
 from app.services.mentor_discovery import MentorDiscoveryReader
 from app.services.profile import ProfileReader
+from app.services.research import ResearchService
 
 logger = logging.getLogger(__name__)
 _FACT_LIST_ADAPTER = TypeAdapter(list[SelectedStudentFact])
@@ -73,45 +74,64 @@ class OutreachService:
         mentors: MentorDiscoveryReader,
         profiles: ProfileReader,
         generator: OutreachDraftGenerator | None,
+        selection: ResearchService | None = None,
     ) -> None:
         self._owner_id = owner_id
         self._repository = repository
         self._mentors = mentors
         self._profiles = profiles
         self._generator = generator
+        self._selection = selection
 
     async def create(
         self, request: OutreachDraftCreateRequest
     ) -> OutreachDraftResponse:
-        discovery = await self._mentors.search(
-            MentorDiscoveryRequest(
-                query=request.query, paper_limit=25, candidate_limit=20
+        mentor: MentorCandidate | None
+        if self._selection is not None:
+            try:
+                mentor = await self._selection.selection(
+                    request.mentor_id, request.paper_ids, request.query
+                )
+            except AppError as error:
+                if error.code in {"paper_not_found", "invalid_authorship"}:
+                    raise AppError(
+                        code="outreach_paper_not_found"
+                        if error.code == "paper_not_found"
+                        else "outreach_mentor_not_found",
+                        message=error.message,
+                        status_code=422,
+                    ) from error
+                raise
+        else:
+            discovery = await self._mentors.search(
+                MentorDiscoveryRequest(
+                    query=request.query, paper_limit=25, candidate_limit=20
+                )
             )
-        )
-        mentor = next(
-            (
-                candidate
-                for candidate in discovery.candidates
-                if candidate.id == request.mentor_id
-            ),
-            None,
-        )
-        if mentor is None:
-            raise AppError(
-                code="outreach_mentor_not_found",
-                message=(
-                    "The selected researcher is not present in the verified "
-                    "discovery result."
+            mentor = next(
+                (
+                    candidate
+                    for candidate in discovery.candidates
+                    if candidate.id == request.mentor_id
                 ),
-                status_code=422,
-                details=[
-                    {
-                        "field": "mentorId",
-                        "message": "Select a researcher returned for this query.",
-                        "type": "value_error.outreach_mentor",
-                    }
-                ],
+                None,
             )
+            if mentor is None:
+                raise AppError(
+                    code="outreach_mentor_not_found",
+                    message=(
+                        "The selected researcher is not present in the verified "
+                        "discovery result."
+                    ),
+                    status_code=422,
+                    details=[
+                        {
+                            "field": "mentorId",
+                            "message": "Select a researcher returned for this query.",
+                            "type": "value_error.outreach_mentor",
+                        }
+                    ],
+                )
         papers = _selected_papers(mentor, request.paper_ids)
         profile = await self._profiles.get_profile()
         evidence = build_evidence_package(mentor=mentor, papers=papers, profile=profile)
@@ -257,6 +277,8 @@ def _response(record: OutreachDraft) -> OutreachDraftResponse:
         id=record.id,
         mentor_id=record.recipient_author.id,
         recipient_display_name=record.recipient_display_name,
+        recipient_contact=record.recipient_contact,
+        contact_provenance=record.contact_provenance,
         recipient_source_url=record.recipient_author.source_url,
         recipient_last_verified_at=_as_utc(record.recipient_author.last_verified_at),
         subject=record.subject,

@@ -12,10 +12,12 @@ from app.dependencies.database import get_session
 from app.dependencies.mentor_discovery import get_mentor_discovery_service
 from app.outreach.drafting import OutreachDraftGenerator
 from app.repositories.outreach import SqlAlchemyOutreachRepository
+from app.repositories.research import ResearchRepository
 from app.runtime import OutreachRuntime
 from app.services.account_profile import AccountProfileService
 from app.services.mentor_discovery import MentorDiscoveryReader
 from app.services.outreach import OutreachReader, OutreachService
+from app.services.research import ResearchService
 
 
 def get_outreach_service(
@@ -40,4 +42,7 @@ def get_outreach_service(
         mentors=mentors,
         profiles=profiles,
         generator=generator,
+        selection=ResearchService(
+            ResearchRepository(session), profiles, principal.owner_id
+        ),
     )

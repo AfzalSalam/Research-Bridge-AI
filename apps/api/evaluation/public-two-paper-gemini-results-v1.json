@@ -1,0 +1,976 @@
+{
+  "dataset": {
+    "name": "public-two-paper-gemini-pilot-v1",
+    "kind": "labelled-corpus",
+    "passage_ids": [
+      "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"1:1050:1589\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"2:1050:2250\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"3:1050:2250\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"3:3150:3338\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+      "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+      "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+      "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+      "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+      "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+      "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+      "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+      "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+      "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+      "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+      "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+      "[\"liblinear-public-pilot-v1\", \"4:1050:2027\"]"
+    ],
+    "queries": [
+      {
+        "id": "[\"scikit-learn-public-pilot-v1\", \"quality\"]",
+        "relevant": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]"
+        ]
+      },
+      {
+        "id": "[\"scikit-learn-public-pilot-v1\", \"grid\"]",
+        "relevant": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]"
+        ]
+      },
+      {
+        "id": "[\"scikit-learn-public-pilot-v1\", \"neighbors\"]",
+        "relevant": [
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]"
+        ]
+      },
+      {
+        "id": "[\"scikit-learn-public-pilot-v1\", \"limits\"]",
+        "relevant": [
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]"
+        ]
+      },
+      {
+        "id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-gpu\"]",
+        "relevant": []
+      },
+      {
+        "id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-quantum\"]",
+        "relevant": []
+      },
+      {
+        "id": "[\"liblinear-public-pilot-v1\", \"solver\"]",
+        "relevant": [
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]"
+        ]
+      },
+      {
+        "id": "[\"liblinear-public-pilot-v1\", \"multiclass\"]",
+        "relevant": [
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]"
+        ]
+      },
+      {
+        "id": "[\"liblinear-public-pilot-v1\", \"separate\"]",
+        "relevant": [
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]"
+        ]
+      },
+      {
+        "id": "[\"liblinear-public-pilot-v1\", \"validation\"]",
+        "relevant": [
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]"
+        ]
+      },
+      {
+        "id": "[\"liblinear-public-pilot-v1\", \"unsupported-gpu\"]",
+        "relevant": []
+      },
+      {
+        "id": "[\"liblinear-public-pilot-v1\", \"unsupported-transformer\"]",
+        "relevant": []
+      }
+    ],
+    "runs": [
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"quality\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 19.02150000387337
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"quality\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 24.564000006648712
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"quality\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 45.31459999270737
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"grid\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true
+        ],
+        "latency_ms": 13.211500001489185
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"grid\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:3150:3338\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.98889999918174
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"grid\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:3150:3338\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 45.73839998920448
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"neighbors\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 16.048399993451312
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"neighbors\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:3150:3338\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:1050:2250\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 19.78390000294894
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"neighbors\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 56.51009999564849
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"limits\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 14.496399991912767
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"limits\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 19.553599995560944
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"limits\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"5:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 50.53510000288952
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-gpu\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.743699994753115
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-gpu\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:1050:1589\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 24.15479999035597
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-gpu\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 53.280899999663234
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-quantum\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 16.114700003527105
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-quantum\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:3150:3338\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:1050:2250\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.9984999995213
+      },
+      {
+        "query_id": "[\"scikit-learn-public-pilot-v1\", \"unsupported-quantum\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"scikit-learn-public-pilot-v1\", \"3:2100:3300\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"6:1050:1515\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"2:2100:2760\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:2100:3181\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"5:2100:2863\"]",
+          "[\"scikit-learn-public-pilot-v1\", \"4:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 40.1650999992853
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"solver\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"4:1050:2027\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 18.963399998028763
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"solver\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:1050:2027\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 28.606200008653104
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"solver\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:1050:2027\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 57.7183999994304
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"multiclass\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 18.744300003163517
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"multiclass\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 26.522399988607503
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"multiclass\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 52.460799997788854
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"separate\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.89049999206327
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"separate\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 22.743800000171177
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"separate\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 54.753999997046776
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"validation\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 15.491400001337752
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"validation\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:1050:2027\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 21.99049999762792
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"validation\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 51.89079999399837
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"unsupported-gpu\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.54149999760557
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"unsupported-gpu\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:1050:2027\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 21.174099994823337
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"unsupported-gpu\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 59.07709999883082
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"unsupported-transformer\"]",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 21.440799988340586
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"unsupported-transformer\"]",
+        "engine": "gemini_vector",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:2100:2914\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"2:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 17.844999994849786
+      },
+      {
+        "query_id": "[\"liblinear-public-pilot-v1\", \"unsupported-transformer\"]",
+        "engine": "gemini_hybrid",
+        "retrieved": [
+          "[\"liblinear-public-pilot-v1\", \"2:1050:2250\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"4:0:1200\"]",
+          "[\"liblinear-public-pilot-v1\", \"3:2100:3254\"]",
+          "[\"liblinear-public-pilot-v1\", \"1:2100:2468\"]"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 39.092000006348826
+      }
+    ]
+  },
+  "report": {
+    "dataset": "public-two-paper-gemini-pilot-v1",
+    "kind": "labelled-corpus",
+    "engines": {
+      "gemini_hybrid": {
+        "queries": 12,
+        "answerable_queries": 8,
+        "unsupported_queries": 4,
+        "recall_at_5": 0.875,
+        "recall_at_10": 0.875,
+        "mrr": 0.8125,
+        "ndcg_at_10": 0.8288662191964322,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 51.89079999399837,
+        "latency_p95_ms": 59.07709999883082
+      },
+      "gemini_vector": {
+        "queries": 12,
+        "answerable_queries": 8,
+        "unsupported_queries": 4,
+        "recall_at_5": 1.0,
+        "recall_at_10": 1.0,
+        "mrr": 0.875,
+        "ndcg_at_10": 0.9077324383928644,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 21.174099994823337,
+        "latency_p95_ms": 28.606200008653104
+      },
+      "postgresql_fts": {
+        "queries": 12,
+        "answerable_queries": 8,
+        "unsupported_queries": 4,
+        "recall_at_5": 0.875,
+        "recall_at_10": 0.875,
+        "mrr": 0.6875,
+        "ndcg_at_10": 0.7365986575892965,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 17.54149999760557,
+        "latency_p95_ms": 21.440799988340586
+      }
+    },
+    "notice": "Metrics describe supplied rankings and citation audits only. Synthetic runs do not measure semantic quality. Retrieved passages are not generated claims; unsupported-claim rate is not measured."
+  },
+  "limitations": "Two same-domain public papers; provisional agent labels. Retrieval-only latency excludes Gemini calls. Exact slice support is not claim entailment. No generated answers."
+}

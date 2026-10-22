@@ -15,3 +15,22 @@ class StaticAccessTokenVerifier:
         if subject is None:
             raise AccessTokenInvalidError
         return VerifiedIdentity(subject=subject)
+
+
+def account_profile_payload(name: str = "Asha") -> dict[str, object]:
+    """Explicit student input for authenticated integration test accounts."""
+
+    return {
+        "name": name,
+        "program": "BTech Computer Science",
+        "institution": "Research Bridge Institute",
+        "graduationYear": "2027",
+        "researchInterests": ["human-centred AI", "digital health"],
+        "skills": ["Python", "FastAPI"],
+        "projectTitle": "Clinical decision support",
+        "projectSummary": (
+            "Built a clinical decision support prototype that displays uncertainty "
+            "and records evidence supplied by healthcare workers."
+        ),
+        "weeklyAvailability": "10-15 hours",
+    }

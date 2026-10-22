@@ -7,7 +7,7 @@ export const completeMentorResponse: MentorDiscoveryResponse = {
   query: "clinical AI",
   queryKind: "text",
   ordering: "deterministic-evidence-policy",
-  profileMode: "saved-or-fictional-fallback",
+  profileMode: "authenticated-account",
   profileInputs: {
     researchInterests: ["human-centred AI", "digital health"],
     skills: ["Python"],

@@ -9,7 +9,8 @@
  * No auto-send. Human approves every step.
  */
 
-import { useState } from "react";
+import { z } from "zod";
+import { useResearchValue } from "@/features/discovery/research-session";
 import { useWorkflow } from "@/features/workflow/use-workflow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,9 +18,9 @@ import { Loader2, RefreshCw, ChevronRight, Mail } from "lucide-react";
 
 export function WorkflowPanel() {
   const { state, start, resume, reset } = useWorkflow();
-  const [query, setQuery] = useState("");
-  const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
-  const [selectedPaperIds, setSelectedPaperIds] = useState<string[]>([]);
+  const [query, setQuery] = useResearchValue("workflow-query", z.string(), "");
+  const [selectedMentorId, setSelectedMentorId] = useResearchValue("workflow-mentor", z.string().nullable(), null);
+  const [selectedPaperIds, setSelectedPaperIds] = useResearchValue("workflow-papers", z.array(z.string()), []);
 
   // Phase 1 submit
   function handleSearch(e: React.FormEvent) {
@@ -47,26 +48,16 @@ export function WorkflowPanel() {
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
-  const candidates = (state.discoveryResponse?.["candidates"] ?? []) as {
-    mentor_id: string;
-    display_name: string;
-    current_affiliation: string | null;
-    relevance_band: string;
-    score: number;
-    supporting_papers: { id: string; title: string; publication_year: number }[];
-  }[];
-
-  const selectedMentor = candidates.find((c) => c.mentor_id === selectedMentorId);
-
-  const draft = state.draftResponse as
-    | { subject: string; body: string; mentor_name: string }
-    | null;
+  const candidates = state.discoveryResponse?.candidates ?? [];
+  const selectedMentor = candidates.find((c) => c.id === selectedMentorId);
+  const draft = state.draftResponse;
 
   return (
     <div className="space-y-6">
       {/* ── Query bar ─────────────────────────────────────────────────── */}
       <form onSubmit={handleSearch} className="flex gap-2">
         <Input
+          aria-label="Guided research topic"
           placeholder="e.g. transformer efficiency in edge devices"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -91,6 +82,7 @@ export function WorkflowPanel() {
         {state.phase !== "idle" && (
           <Button
             type="button"
+            aria-label="Reset guided journey"
             variant="outline"
             onClick={() => {
               reset();
@@ -122,6 +114,12 @@ export function WorkflowPanel() {
       )}
 
       {/* ── Candidate list (Phase 1 done) ─────────────────────────────── */}
+      {state.phase === "awaiting_selection" && candidates.length === 0 && (
+        <p role="status" className="text-sm text-muted-foreground">No mentor evidence was found. Reset the journey and try a broader topic.</p>
+      )}
+      {state.discoveryResponse?.status === "partial" && (
+        <p role="status" className="text-sm text-muted-foreground">Some source records were unavailable. {state.discoveryResponse.warnings.join(" ")}</p>
+      )}
       {(state.phase === "awaiting_selection" ||
         state.phase === "generating" ||
         state.phase === "done") &&
@@ -132,13 +130,13 @@ export function WorkflowPanel() {
             </p>
             <div className="divide-y rounded-lg border">
               {candidates.slice(0, 8).map((c) => {
-                const isSelected = c.mentor_id === selectedMentorId;
+                const isSelected = c.id === selectedMentorId;
                 return (
                   <button
-                    key={c.mentor_id}
+                    key={c.id}
                     onClick={() => {
                       if (state.phase !== "awaiting_selection") return;
-                      setSelectedMentorId(isSelected ? null : c.mentor_id);
+                      setSelectedMentorId(isSelected ? null : c.id);
                       setSelectedPaperIds([]);
                     }}
                     disabled={state.phase !== "awaiting_selection"}
@@ -148,23 +146,16 @@ export function WorkflowPanel() {
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">
-                        {c.display_name}
+                        {c.displayName}
                       </p>
-                      {c.current_affiliation && (
-                        <p className="text-xs text-muted-foreground truncate">
-                          {c.current_affiliation}
-                        </p>
-                      )}
                       <span
                         className={`mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                          c.relevance_band === "strong"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : c.relevance_band === "moderate"
-                              ? "bg-amber-100 text-amber-700"
-                              : "bg-slate-100 text-slate-600"
+                          c.relevanceBand === "strong"
+                            ? "bg-brand-teal-soft text-brand-teal-strong"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
-                        {c.relevance_band}
+                        {c.relevanceBand}
                       </span>
                     </div>
                   </button>
@@ -181,7 +172,7 @@ export function WorkflowPanel() {
             Select 1–2 supporting papers (your evidence for the email)
           </p>
           <div className="space-y-2">
-            {selectedMentor.supporting_papers.slice(0, 5).map((p) => {
+            {selectedMentor.supportingPapers.slice(0, 5).map((p) => {
               const checked = selectedPaperIds.includes(p.id);
               return (
                 <label
@@ -199,7 +190,7 @@ export function WorkflowPanel() {
                   <div>
                     <p className="text-sm font-medium leading-snug">{p.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {p.publication_year}
+                      {p.publicationYear}
                     </p>
                   </div>
                 </label>
@@ -249,8 +240,7 @@ export function WorkflowPanel() {
             {draft.body}
           </pre>
           <p className="text-xs text-muted-foreground">
-            ✓ All claims are grounded in evidence you selected. Review and personalise
-            before sending.
+            Review the wording against your selected evidence before using this draft.
           </p>
         </div>
       )}

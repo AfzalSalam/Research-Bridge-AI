@@ -26,7 +26,7 @@ class MentorDiscoveryRequest(ApiModel):
     """Bounded request for paper-backed candidate derivation."""
 
     query: DiscoveryText
-    paper_limit: int = Field(default=20, ge=1, le=25)
+    paper_limit: int = Field(default=20, ge=1, le=30)
     candidate_limit: int = Field(default=12, ge=1, le=20)
 
 
@@ -129,7 +129,7 @@ class MentorDiscoveryResponse(ApiModel):
     query: str
     query_kind: Literal["text", "doi", "openalex-id"]
     ordering: Literal["deterministic-evidence-policy"] = "deterministic-evidence-policy"
-    profile_mode: Literal["saved-or-fictional-fallback"] = "saved-or-fictional-fallback"
+    profile_mode: Literal["authenticated-account"] = "authenticated-account"
     profile_inputs: ProfileRelevanceInputs
     policy: RelevancePolicy
     source: DiscoverySource

@@ -3,21 +3,21 @@ import { supabase } from "@/lib/supabase/client";
 
 let isConfigured = false;
 
+export async function getAccessToken(): Promise<string | null> {
+  if (process.env.NEXT_PUBLIC_E2E_TEST === "true") return "e2e-token";
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token ?? null;
+}
+
 export function configureApiClient() {
   if (isConfigured) return;
   
   client.setConfig({ baseUrl: "/backend" });
 
   client.interceptors.request.use(async (request) => {
-    if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
-      request.headers.set("Authorization", "Bearer e2e-token");
-      return request;
-    }
-    
-    // Inject Supabase session token into headers
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.access_token) {
-      request.headers.set("Authorization", `Bearer ${session.access_token}`);
+    const token = await getAccessToken();
+    if (token) {
+      request.headers.set("Authorization", `Bearer ${token}`);
     }
     return request;
   });

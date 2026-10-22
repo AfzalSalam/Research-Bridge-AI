@@ -58,6 +58,106 @@ export type AccountProfileReadResponse = {
 };
 
 /**
+ * AnswerClaim
+ */
+export type AnswerClaim = {
+    /**
+     * Citations
+     */
+    citations: Array<PageCitation>;
+    /**
+     * Text
+     */
+    text: string;
+};
+
+/**
+ * AnswerRequest
+ */
+export type AnswerRequest = {
+    /**
+     * Accepted
+     */
+    accepted: true;
+    /**
+     * Disclosure Version
+     */
+    disclosure_version: 'paper-answer-gemini-v1';
+    /**
+     * Question
+     */
+    question: string;
+    /**
+     * Request Id
+     */
+    request_id: string;
+};
+
+/**
+ * AnswerResult
+ */
+export type AnswerResult = {
+    /**
+     * Claims
+     */
+    claims?: Array<AnswerClaim>;
+    /**
+     * Notice
+     */
+    notice?: string;
+    /**
+     * Reason
+     */
+    reason: 'reviewed' | 'no_passages' | 'source_insufficient' | 'support_not_established' | 'not_configured' | 'invalid_provider_output' | 'provider_unavailable';
+    /**
+     * Source Scope
+     */
+    source_scope?: 'retrieved_full_text_excerpts';
+    /**
+     * Status
+     */
+    status: 'answer' | 'insufficient_evidence' | 'unavailable';
+};
+
+/**
+ * AnswerStatus
+ */
+export type AnswerStatus = {
+    /**
+     * Calls Reserved Per Question
+     */
+    calls_reserved_per_question: number;
+    /**
+     * Daily Call Limit
+     */
+    daily_call_limit: number;
+    /**
+     * Disclosure
+     */
+    disclosure: string;
+    /**
+     * Disclosure Version
+     */
+    disclosure_version: string;
+    /**
+     * Enabled
+     */
+    enabled: boolean;
+    /**
+     * Model
+     */
+    model: string;
+    /**
+     * Provider
+     */
+    provider: string;
+    /**
+     * Reserved Calls Today
+     */
+    reserved_calls_today: number;
+};
+
+/**
  * ApplicationCreateRequest
  */
 export type ApplicationCreateRequest = {
@@ -212,6 +312,92 @@ export type ClaimEvidenceReference = {
      * Type
      */
     type: 'student-fact' | 'paper';
+};
+
+/**
+ * ContactLookupRequest
+ */
+export type ContactLookupRequest = {
+    /**
+     * Profileurl
+     */
+    profileUrl?: string | null;
+    /**
+     * Refresh
+     */
+    refresh?: boolean;
+};
+
+/**
+ * ContactLookupResponse
+ */
+export type ContactLookupResponse = {
+    /**
+     * Authorid
+     */
+    authorId: string;
+    /**
+     * Authorname
+     */
+    authorName: string;
+    /**
+     * Cachehit
+     */
+    cacheHit?: boolean;
+    /**
+     * Checkedat
+     */
+    checkedAt: string;
+    /**
+     * Elapsedseconds
+     */
+    elapsedSeconds?: number;
+    /**
+     * Emails
+     */
+    emails?: Array<PublicEmail>;
+    /**
+     * Institutionsources
+     */
+    institutionSources?: Array<string>;
+    /**
+     * Lookupurl
+     */
+    lookupUrl?: string | null;
+    /**
+     * Pageschecked
+     */
+    pagesChecked?: number;
+    /**
+     * Profiles
+     */
+    profiles?: Array<ContactProfile>;
+    /**
+     * Status
+     */
+    status: 'found' | 'not-found' | 'needs-review' | 'unsupported' | 'blocked';
+    /**
+     * Verification
+     */
+    verification?: 'official-profile-evidence-not-deliverability';
+    /**
+     * Warnings
+     */
+    warnings?: Array<string>;
+};
+
+/**
+ * ContactProfile
+ */
+export type ContactProfile = {
+    /**
+     * Reason
+     */
+    reason: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
 };
 
 /**
@@ -380,6 +566,56 @@ export type DiscoverySource = {
 };
 
 /**
+ * DocumentCreated
+ */
+export type DocumentCreated = {
+    /**
+     * Id
+     */
+    id: string;
+};
+
+/**
+ * DocumentList
+ */
+export type DocumentList = {
+    /**
+     * Documents
+     */
+    documents: Array<DocumentSummary>;
+    /**
+     * Uploads Enabled
+     */
+    uploads_enabled: boolean;
+};
+
+/**
+ * DocumentSummary
+ */
+export type DocumentSummary = {
+    /**
+     * Filename
+     */
+    filename: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Reason
+     */
+    reason: string | null;
+    /**
+     * Status
+     */
+    status: string;
+    /**
+     * Warnings
+     */
+    warnings: Array<string>;
+};
+
+/**
  * DraftClaimEvidence
  */
 export type DraftClaimEvidence = {
@@ -391,6 +627,40 @@ export type DraftClaimEvidence = {
      * References
      */
     references: Array<ClaimEvidenceReference>;
+};
+
+/**
+ * DraftSummary
+ */
+export type DraftSummary = {
+    /**
+     * Draftversion
+     */
+    draftVersion: number;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Mentorid
+     */
+    mentorId: string | null;
+    /**
+     * Recipientcontact
+     */
+    recipientContact: string | null;
+    /**
+     * Recipientdisplayname
+     */
+    recipientDisplayName: string;
+    /**
+     * Subject
+     */
+    subject: string;
+    /**
+     * Updatedat
+     */
+    updatedAt: string;
 };
 
 /**
@@ -480,6 +750,80 @@ export type HealthResponse = {
      * Version
      */
     version: string;
+};
+
+/**
+ * HybridResult
+ */
+export type HybridResult = {
+    /**
+     * Document Id
+     */
+    document_id: string;
+    /**
+     * Notice
+     */
+    notice?: string;
+    /**
+     * Passages
+     */
+    passages: Array<PdfChunk>;
+};
+
+/**
+ * IndexConsent
+ */
+export type IndexConsent = {
+    /**
+     * Accepted
+     */
+    accepted: true;
+    /**
+     * Disclosure Version
+     */
+    disclosure_version: 'paper-embeddings-v1' | 'paper-gemini-v1';
+};
+
+/**
+ * IndexStatus
+ */
+export type IndexStatus = {
+    /**
+     * Daily Limit
+     */
+    daily_limit: number;
+    /**
+     * Disclosure Version
+     */
+    disclosure_version: string;
+    /**
+     * Enabled
+     */
+    enabled: boolean;
+    /**
+     * Provider
+     */
+    provider: string;
+    /**
+     * Query Disclosure Version
+     */
+    query_disclosure_version: string;
+    /**
+     * Reason
+     */
+    reason: string | null;
+    /**
+     * Reserved Today
+     */
+    reserved_today: number;
+    /**
+     * Retry At
+     */
+    retry_at: string | null;
+    /**
+     * Status
+     */
+    status: 'not_started' | 'queued' | 'processing' | 'completed' | 'failed' | 'cancelled';
 };
 
 /**
@@ -575,7 +919,7 @@ export type MentorDiscoveryResponse = {
     /**
      * Profilemode
      */
-    profileMode?: 'saved-or-fictional-fallback';
+    profileMode?: 'authenticated-account';
     quality: MentorDerivationQuality;
     /**
      * Query
@@ -1127,6 +1471,12 @@ export type OutreachDraftResponse = {
      */
     claimEvidence: Array<DraftClaimEvidence>;
     /**
+     * Contactprovenance
+     */
+    contactProvenance?: {
+        [key: string]: string;
+    } | null;
+    /**
      * Createdat
      */
     createdAt: string;
@@ -1150,7 +1500,7 @@ export type OutreachDraftResponse = {
     /**
      * Recipientcontact
      */
-    recipientContact?: null;
+    recipientContact?: string | null;
     /**
      * Recipientdisplayname
      */
@@ -1287,6 +1637,28 @@ export type OutreachPaperEvidence = {
      * Venue
      */
     venue: string | null;
+};
+
+/**
+ * PageCitation
+ */
+export type PageCitation = {
+    /**
+     * End
+     */
+    end: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Quote
+     */
+    quote: string;
+    /**
+     * Start
+     */
+    start: number;
 };
 
 /**
@@ -1482,6 +1854,82 @@ export type PaperTopic = {
     score?: number | null;
 };
 
+/**
+ * PassageQuery
+ */
+export type PassageQuery = {
+    /**
+     * Limit
+     */
+    limit?: number;
+    /**
+     * Query
+     */
+    query: string;
+};
+
+/**
+ * PassageResult
+ */
+export type PassageResult = {
+    /**
+     * Document Id
+     */
+    document_id: string;
+    /**
+     * Engine
+     */
+    engine: 'postgresql_fts' | 'lexical_fallback';
+    /**
+     * Notice
+     */
+    notice?: string;
+    /**
+     * Passages
+     */
+    passages: Array<PdfChunk>;
+    /**
+     * Status
+     */
+    status: 'matches' | 'no_matches';
+};
+
+/**
+ * PdfChunk
+ */
+export type PdfChunk = {
+    /**
+     * End
+     */
+    end: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Start
+     */
+    start: number;
+    /**
+     * Text
+     */
+    text: string;
+};
+
+/**
+ * PdfPage
+ */
+export type PdfPage = {
+    /**
+     * Number
+     */
+    number: number;
+    /**
+     * Text
+     */
+    text: string;
+};
+
 export type PolicyFeature = 'query-evidence' | 'profile-alignment' | 'supporting-depth' | 'recent-activity' | 'evidence-completeness';
 
 /**
@@ -1519,6 +1967,77 @@ export type ProfileRelevanceInputs = {
     skills: Array<string>;
 };
 
+/**
+ * PublicEmail
+ */
+export type PublicEmail = {
+    /**
+     * Checkedat
+     */
+    checkedAt: string;
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Evidenceurls
+     */
+    evidenceUrls: Array<string>;
+    /**
+     * Extraction
+     */
+    extraction: 'mailto' | 'text' | 'obfuscated';
+    /**
+     * Identityevidence
+     */
+    identityEvidence: Array<string>;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+};
+
+/**
+ * ReadingHistoryEntry
+ */
+export type ReadingHistoryEntry = {
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Model
+     */
+    model: string;
+    /**
+     * Question
+     */
+    question: string;
+    result: AnswerResult;
+};
+
+/**
+ * RecipientUpdate
+ */
+export type RecipientUpdate = {
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Expectedversion
+     */
+    expectedVersion: number;
+    /**
+     * Manuallyconfirmed
+     */
+    manuallyConfirmed?: boolean;
+};
+
 export type RelevanceBand = 'strong' | 'promising' | 'exploratory';
 
 /**
@@ -1541,6 +2060,51 @@ export type RelevancePolicy = {
      * Weights
      */
     weights: Array<PolicyWeight>;
+};
+
+/**
+ * ResearchResult
+ */
+export type ResearchResult = {
+    /**
+     * Authorids
+     */
+    authorIds?: Array<string>;
+    /**
+     * Collection
+     */
+    collection?: string;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Note
+     */
+    note?: string;
+    paper: DiscoveredPaper;
+    /**
+     * Updatedat
+     */
+    updatedAt: string;
+};
+
+/**
+ * ResearchSave
+ */
+export type ResearchSave = {
+    /**
+     * Authorids
+     */
+    authorIds?: Array<string>;
+    /**
+     * Collection
+     */
+    collection?: string;
+    /**
+     * Note
+     */
+    note?: string;
 };
 
 /**
@@ -1580,6 +2144,28 @@ export type SelectedStudentFact = {
      * Value
      */
     value: string;
+};
+
+/**
+ * SemanticQuery
+ */
+export type SemanticQuery = {
+    /**
+     * Accepted
+     */
+    accepted: true;
+    /**
+     * Disclosure Version
+     */
+    disclosure_version: 'paper-query-embeddings-v1' | 'paper-query-gemini-v1';
+    /**
+     * Limit
+     */
+    limit?: number;
+    /**
+     * Query
+     */
+    query: string;
 };
 
 /**
@@ -1631,6 +2217,154 @@ export type StudentProfile = {
 };
 
 /**
+ * UniversityProgram
+ */
+export type UniversityProgram = {
+    /**
+     * Applicationnote
+     */
+    applicationNote: string;
+    /**
+     * Checkedat
+     */
+    checkedAt: string;
+    /**
+     * Deadline
+     */
+    deadline: string | null;
+    /**
+     * Eligibilityevidence
+     */
+    eligibilityEvidence: string | null;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    /**
+     * Status
+     */
+    status: 'rolling' | 'open' | 'closed' | 'not-confirmed';
+    /**
+     * Statusevidence
+     */
+    statusEvidence: string | null;
+    /**
+     * University
+     */
+    university: string;
+    /**
+     * Workmode
+     */
+    workMode: 'remote' | 'on-site' | 'hybrid' | 'not-specified';
+    /**
+     * Workmodeevidence
+     */
+    workModeEvidence: string | null;
+};
+
+/**
+ * UniversityScanRequest
+ */
+export type UniversityScanRequest = {
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Region
+     */
+    region?: 'both' | 'india' | 'international';
+    /**
+     * Target
+     */
+    target?: 10 | 20 | 30;
+    /**
+     * Universities
+     */
+    universities?: Array<'oist' | 'kaust' | 'ista' | 'iitgn' | 'iitk' | 'iisc' | 'epfl'> | null;
+};
+
+/**
+ * UniversityScanSnapshot
+ */
+export type UniversityScanSnapshot = {
+    /**
+     * Budgetseconds
+     */
+    budgetSeconds?: number;
+    /**
+     * Currentuniversity
+     */
+    currentUniversity?: string | null;
+    /**
+     * Elapsedseconds
+     */
+    elapsedSeconds?: number;
+    /**
+     * Pagesattempted
+     */
+    pagesAttempted?: number;
+    /**
+     * Pagesread
+     */
+    pagesRead?: number;
+    /**
+     * Papers
+     */
+    papers?: Array<WebsitePaper>;
+    /**
+     * Programs
+     */
+    programs?: Array<UniversityProgram>;
+    /**
+     * Query
+     */
+    query: string;
+    /**
+     * Sources
+     */
+    sources?: Array<UniversitySourceSummary>;
+    /**
+     * State
+     */
+    state: 'scanning' | 'complete' | 'partial' | 'empty' | 'error';
+    /**
+     * Stopreason
+     */
+    stopReason?: string | null;
+    /**
+     * Target
+     */
+    target: number;
+    /**
+     * Warnings
+     */
+    warnings?: Array<string>;
+};
+
+/**
+ * UniversitySourceSummary
+ */
+export type UniversitySourceSummary = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Registryurl
+     */
+    registryUrl?: string | null;
+    /**
+     * Website
+     */
+    website: string;
+};
+
+/**
  * ValidationError
  */
 export type ValidationError = {
@@ -1659,6 +2393,48 @@ export type ValidationError = {
 };
 
 /**
+ * WebsitePaper
+ */
+export type WebsitePaper = {
+    /**
+     * Checkedat
+     */
+    checkedAt: string;
+    /**
+     * Citation
+     */
+    citation: string;
+    /**
+     * Doi
+     */
+    doi: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Matchedterms
+     */
+    matchedTerms: Array<string>;
+    /**
+     * Publicationurl
+     */
+    publicationUrl: string;
+    /**
+     * Sourceurl
+     */
+    sourceUrl: string;
+    /**
+     * Title
+     */
+    title: string | null;
+    /**
+     * University
+     */
+    university: string;
+};
+
+/**
  * WorkflowResumeRequest
  */
 export type WorkflowResumeRequest = {
@@ -1683,7 +2459,7 @@ export type WorkflowStartRequest = {
     /**
      * Generationpreference
      */
-    generationPreference?: string;
+    generationPreference?: 'auto' | 'deterministic';
     /**
      * Paperlimit
      */
@@ -1903,6 +2679,36 @@ export type UpdateApplicationApiV1ApplicationsApplicationIdPutResponses = {
 
 export type UpdateApplicationApiV1ApplicationsApplicationIdPutResponse = UpdateApplicationApiV1ApplicationsApplicationIdPutResponses[keyof UpdateApplicationApiV1ApplicationsApplicationIdPutResponses];
 
+export type LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostData = {
+    body: ContactLookupRequest;
+    path: {
+        /**
+         * Author Id
+         */
+        author_id: string;
+    };
+    query?: never;
+    url: '/api/v1/authors/{author_id}/public-email';
+};
+
+export type LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostError = LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostErrors[keyof LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostErrors];
+
+export type LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ContactLookupResponse;
+};
+
+export type LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostResponse = LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostResponses[keyof LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostResponses];
+
 export type ReadDemoBootstrapApiV1DemoBootstrapGetData = {
     body?: never;
     path?: never;
@@ -2065,6 +2871,14 @@ export type DiscoverMentorsApiV1DiscoveryMentorsPostData = {
 
 export type DiscoverMentorsApiV1DiscoveryMentorsPostErrors = {
     /**
+     * Sign in to discover mentors.
+     */
+    401: ErrorResponse;
+    /**
+     * Save your student profile first.
+     */
+    409: ErrorResponse;
+    /**
      * The paper query could not be validated or classified.
      */
     422: ErrorResponse;
@@ -2137,6 +2951,460 @@ export type DiscoverPapersApiV1DiscoveryPapersPostResponses = {
 };
 
 export type DiscoverPapersApiV1DiscoveryPapersPostResponse = DiscoverPapersApiV1DiscoveryPapersPostResponses[keyof DiscoverPapersApiV1DiscoveryPapersPostResponses];
+
+export type ScanUniversitiesApiV1DiscoveryUniversitiesScanPostData = {
+    body: UniversityScanRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/discovery/universities/scan';
+};
+
+export type ScanUniversitiesApiV1DiscoveryUniversitiesScanPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ScanUniversitiesApiV1DiscoveryUniversitiesScanPostError = ScanUniversitiesApiV1DiscoveryUniversitiesScanPostErrors[keyof ScanUniversitiesApiV1DiscoveryUniversitiesScanPostErrors];
+
+export type ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: string;
+};
+
+export type ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponse = ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponses[keyof ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponses];
+
+export type ListDocumentsApiV1DocumentsPaperPaperIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Paper Id
+         */
+        paper_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/paper/{paper_id}';
+};
+
+export type ListDocumentsApiV1DocumentsPaperPaperIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListDocumentsApiV1DocumentsPaperPaperIdGetError = ListDocumentsApiV1DocumentsPaperPaperIdGetErrors[keyof ListDocumentsApiV1DocumentsPaperPaperIdGetErrors];
+
+export type ListDocumentsApiV1DocumentsPaperPaperIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DocumentList;
+};
+
+export type ListDocumentsApiV1DocumentsPaperPaperIdGetResponse = ListDocumentsApiV1DocumentsPaperPaperIdGetResponses[keyof ListDocumentsApiV1DocumentsPaperPaperIdGetResponses];
+
+export type UploadDocumentApiV1DocumentsPaperPaperIdPostData = {
+    body: Blob | File;
+    path: {
+        /**
+         * Paper Id
+         */
+        paper_id: string;
+    };
+    query?: {
+        /**
+         * Filename
+         */
+        filename?: string;
+    };
+    url: '/api/v1/documents/paper/{paper_id}';
+};
+
+export type UploadDocumentApiV1DocumentsPaperPaperIdPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UploadDocumentApiV1DocumentsPaperPaperIdPostError = UploadDocumentApiV1DocumentsPaperPaperIdPostErrors[keyof UploadDocumentApiV1DocumentsPaperPaperIdPostErrors];
+
+export type UploadDocumentApiV1DocumentsPaperPaperIdPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: DocumentCreated;
+};
+
+export type UploadDocumentApiV1DocumentsPaperPaperIdPostResponse = UploadDocumentApiV1DocumentsPaperPaperIdPostResponses[keyof UploadDocumentApiV1DocumentsPaperPaperIdPostResponses];
+
+export type DeleteDocumentApiV1DocumentsDocumentIdDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}';
+};
+
+export type DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteDocumentApiV1DocumentsDocumentIdDeleteError = DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors[keyof DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors];
+
+export type DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteDocumentApiV1DocumentsDocumentIdDeleteResponse = DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses[keyof DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses];
+
+export type ReadDocumentApiV1DocumentsDocumentIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}';
+};
+
+export type ReadDocumentApiV1DocumentsDocumentIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadDocumentApiV1DocumentsDocumentIdGetError = ReadDocumentApiV1DocumentsDocumentIdGetErrors[keyof ReadDocumentApiV1DocumentsDocumentIdGetErrors];
+
+export type ReadDocumentApiV1DocumentsDocumentIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DocumentSummary;
+};
+
+export type ReadDocumentApiV1DocumentsDocumentIdGetResponse = ReadDocumentApiV1DocumentsDocumentIdGetResponses[keyof ReadDocumentApiV1DocumentsDocumentIdGetResponses];
+
+export type AnswerStatusApiV1DocumentsDocumentIdAnswersGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/answers';
+};
+
+export type AnswerStatusApiV1DocumentsDocumentIdAnswersGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AnswerStatusApiV1DocumentsDocumentIdAnswersGetError = AnswerStatusApiV1DocumentsDocumentIdAnswersGetErrors[keyof AnswerStatusApiV1DocumentsDocumentIdAnswersGetErrors];
+
+export type AnswerStatusApiV1DocumentsDocumentIdAnswersGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AnswerStatus;
+};
+
+export type AnswerStatusApiV1DocumentsDocumentIdAnswersGetResponse = AnswerStatusApiV1DocumentsDocumentIdAnswersGetResponses[keyof AnswerStatusApiV1DocumentsDocumentIdAnswersGetResponses];
+
+export type AskPaperApiV1DocumentsDocumentIdAnswersPostData = {
+    body: AnswerRequest;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/answers';
+};
+
+export type AskPaperApiV1DocumentsDocumentIdAnswersPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AskPaperApiV1DocumentsDocumentIdAnswersPostError = AskPaperApiV1DocumentsDocumentIdAnswersPostErrors[keyof AskPaperApiV1DocumentsDocumentIdAnswersPostErrors];
+
+export type AskPaperApiV1DocumentsDocumentIdAnswersPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AnswerResult;
+};
+
+export type AskPaperApiV1DocumentsDocumentIdAnswersPostResponse = AskPaperApiV1DocumentsDocumentIdAnswersPostResponses[keyof AskPaperApiV1DocumentsDocumentIdAnswersPostResponses];
+
+export type ReadOriginalApiV1DocumentsDocumentIdFileGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/file';
+};
+
+export type ReadOriginalApiV1DocumentsDocumentIdFileGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadOriginalApiV1DocumentsDocumentIdFileGetError = ReadOriginalApiV1DocumentsDocumentIdFileGetErrors[keyof ReadOriginalApiV1DocumentsDocumentIdFileGetErrors];
+
+export type ReadOriginalApiV1DocumentsDocumentIdFileGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Blob | File;
+};
+
+export type ReadOriginalApiV1DocumentsDocumentIdFileGetResponse = ReadOriginalApiV1DocumentsDocumentIdFileGetResponses[keyof ReadOriginalApiV1DocumentsDocumentIdFileGetResponses];
+
+export type CancelIndexingApiV1DocumentsDocumentIdIndexDeleteData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/index';
+};
+
+export type CancelIndexingApiV1DocumentsDocumentIdIndexDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelIndexingApiV1DocumentsDocumentIdIndexDeleteError = CancelIndexingApiV1DocumentsDocumentIdIndexDeleteErrors[keyof CancelIndexingApiV1DocumentsDocumentIdIndexDeleteErrors];
+
+export type CancelIndexingApiV1DocumentsDocumentIdIndexDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type CancelIndexingApiV1DocumentsDocumentIdIndexDeleteResponse = CancelIndexingApiV1DocumentsDocumentIdIndexDeleteResponses[keyof CancelIndexingApiV1DocumentsDocumentIdIndexDeleteResponses];
+
+export type IndexingStatusApiV1DocumentsDocumentIdIndexGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/index';
+};
+
+export type IndexingStatusApiV1DocumentsDocumentIdIndexGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IndexingStatusApiV1DocumentsDocumentIdIndexGetError = IndexingStatusApiV1DocumentsDocumentIdIndexGetErrors[keyof IndexingStatusApiV1DocumentsDocumentIdIndexGetErrors];
+
+export type IndexingStatusApiV1DocumentsDocumentIdIndexGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: IndexStatus;
+};
+
+export type IndexingStatusApiV1DocumentsDocumentIdIndexGetResponse = IndexingStatusApiV1DocumentsDocumentIdIndexGetResponses[keyof IndexingStatusApiV1DocumentsDocumentIdIndexGetResponses];
+
+export type StartIndexingApiV1DocumentsDocumentIdIndexPostData = {
+    body: IndexConsent;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/index';
+};
+
+export type StartIndexingApiV1DocumentsDocumentIdIndexPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type StartIndexingApiV1DocumentsDocumentIdIndexPostError = StartIndexingApiV1DocumentsDocumentIdIndexPostErrors[keyof StartIndexingApiV1DocumentsDocumentIdIndexPostErrors];
+
+export type StartIndexingApiV1DocumentsDocumentIdIndexPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: DocumentCreated;
+};
+
+export type StartIndexingApiV1DocumentsDocumentIdIndexPostResponse = StartIndexingApiV1DocumentsDocumentIdIndexPostResponses[keyof StartIndexingApiV1DocumentsDocumentIdIndexPostResponses];
+
+export type ReadPagesApiV1DocumentsDocumentIdPagesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/pages';
+};
+
+export type ReadPagesApiV1DocumentsDocumentIdPagesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPagesApiV1DocumentsDocumentIdPagesGetError = ReadPagesApiV1DocumentsDocumentIdPagesGetErrors[keyof ReadPagesApiV1DocumentsDocumentIdPagesGetErrors];
+
+export type ReadPagesApiV1DocumentsDocumentIdPagesGetResponses = {
+    /**
+     * Response Read Pages Api V1 Documents  Document Id  Pages Get
+     *
+     * Successful Response
+     */
+    200: Array<PdfPage>;
+};
+
+export type ReadPagesApiV1DocumentsDocumentIdPagesGetResponse = ReadPagesApiV1DocumentsDocumentIdPagesGetResponses[keyof ReadPagesApiV1DocumentsDocumentIdPagesGetResponses];
+
+export type SearchPassagesApiV1DocumentsDocumentIdPassagesPostData = {
+    body: PassageQuery;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/passages';
+};
+
+export type SearchPassagesApiV1DocumentsDocumentIdPassagesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SearchPassagesApiV1DocumentsDocumentIdPassagesPostError = SearchPassagesApiV1DocumentsDocumentIdPassagesPostErrors[keyof SearchPassagesApiV1DocumentsDocumentIdPassagesPostErrors];
+
+export type SearchPassagesApiV1DocumentsDocumentIdPassagesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PassageResult;
+};
+
+export type SearchPassagesApiV1DocumentsDocumentIdPassagesPostResponse = SearchPassagesApiV1DocumentsDocumentIdPassagesPostResponses[keyof SearchPassagesApiV1DocumentsDocumentIdPassagesPostResponses];
+
+export type ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetData = {
+    body?: never;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/reading-history';
+};
+
+export type ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetError = ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetErrors[keyof ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetErrors];
+
+export type ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetResponses = {
+    /**
+     * Response Reading History Api V1 Documents  Document Id  Reading History Get
+     *
+     * Successful Response
+     */
+    200: Array<ReadingHistoryEntry>;
+};
+
+export type ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetResponse = ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetResponses[keyof ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetResponses];
+
+export type SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostData = {
+    body: SemanticQuery;
+    path: {
+        /**
+         * Document Id
+         */
+        document_id: string;
+    };
+    query?: never;
+    url: '/api/v1/documents/{document_id}/semantic-passages';
+};
+
+export type SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostError = SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostErrors[keyof SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostErrors];
+
+export type SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: HybridResult;
+};
+
+export type SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostResponse = SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostResponses[keyof SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostResponses];
 
 export type ReadHealthApiV1HealthGetData = {
     body?: never;
@@ -2380,6 +3648,166 @@ export type UpdateAccountProfileApiV1ProfilePutResponses = {
 };
 
 export type UpdateAccountProfileApiV1ProfilePutResponse = UpdateAccountProfileApiV1ProfilePutResponses[keyof UpdateAccountProfileApiV1ProfilePutResponses];
+
+export type ListDraftsApiV1ResearchDraftsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/research/drafts';
+};
+
+export type ListDraftsApiV1ResearchDraftsGetResponses = {
+    /**
+     * Response List Drafts Api V1 Research Drafts Get
+     *
+     * Successful Response
+     */
+    200: Array<DraftSummary>;
+};
+
+export type ListDraftsApiV1ResearchDraftsGetResponse = ListDraftsApiV1ResearchDraftsGetResponses[keyof ListDraftsApiV1ResearchDraftsGetResponses];
+
+export type SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutData = {
+    body: RecipientUpdate;
+    path: {
+        /**
+         * Draft Id
+         */
+        draft_id: string;
+    };
+    query?: never;
+    url: '/api/v1/research/drafts/{draft_id}/recipient';
+};
+
+export type SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutError = SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutErrors[keyof SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutErrors];
+
+export type SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutResponse = SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutResponses[keyof SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutResponses];
+
+export type ListResearchApiV1ResearchPapersGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/research/papers';
+};
+
+export type ListResearchApiV1ResearchPapersGetResponses = {
+    /**
+     * Response List Research Api V1 Research Papers Get
+     *
+     * Successful Response
+     */
+    200: Array<ResearchResult>;
+};
+
+export type ListResearchApiV1ResearchPapersGetResponse = ListResearchApiV1ResearchPapersGetResponses[keyof ListResearchApiV1ResearchPapersGetResponses];
+
+export type ReadPaperApiV1ResearchPapersPaperIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Paper Id
+         */
+        paper_id: string;
+    };
+    query?: never;
+    url: '/api/v1/research/papers/{paper_id}';
+};
+
+export type ReadPaperApiV1ResearchPapersPaperIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReadPaperApiV1ResearchPapersPaperIdGetError = ReadPaperApiV1ResearchPapersPaperIdGetErrors[keyof ReadPaperApiV1ResearchPapersPaperIdGetErrors];
+
+export type ReadPaperApiV1ResearchPapersPaperIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: DiscoveredPaper;
+};
+
+export type ReadPaperApiV1ResearchPapersPaperIdGetResponse = ReadPaperApiV1ResearchPapersPaperIdGetResponses[keyof ReadPaperApiV1ResearchPapersPaperIdGetResponses];
+
+export type SavePaperApiV1ResearchPapersPaperIdPutData = {
+    body: ResearchSave;
+    path: {
+        /**
+         * Paper Id
+         */
+        paper_id: string;
+    };
+    query?: never;
+    url: '/api/v1/research/papers/{paper_id}';
+};
+
+export type SavePaperApiV1ResearchPapersPaperIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SavePaperApiV1ResearchPapersPaperIdPutError = SavePaperApiV1ResearchPapersPaperIdPutErrors[keyof SavePaperApiV1ResearchPapersPaperIdPutErrors];
+
+export type SavePaperApiV1ResearchPapersPaperIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: ResearchResult;
+};
+
+export type SavePaperApiV1ResearchPapersPaperIdPutResponse = SavePaperApiV1ResearchPapersPaperIdPutResponses[keyof SavePaperApiV1ResearchPapersPaperIdPutResponses];
+
+export type SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Paper Id
+         */
+        paper_id: string;
+        /**
+         * Author Id
+         */
+        author_id: string;
+    };
+    query?: never;
+    url: '/api/v1/research/papers/{paper_id}/authors/{author_id}';
+};
+
+export type SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetError = SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetErrors[keyof SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetErrors];
+
+export type SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AppSchemasMentorDiscoveryMentorCandidate;
+};
+
+export type SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetResponse = SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetResponses[keyof SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetResponses];
 
 export type StartWorkflowApiV1WorkflowStartPostData = {
     body: WorkflowStartRequest;

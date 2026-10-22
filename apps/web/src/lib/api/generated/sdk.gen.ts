@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateApplicationApiV1ApplicationsPostData, CreateApplicationApiV1ApplicationsPostErrors, CreateApplicationApiV1ApplicationsPostResponses, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DeleteAccountApiV1AccountDeleteData, DeleteAccountApiV1AccountDeleteResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, ListApplicationsApiV1ApplicationsGetData, ListApplicationsApiV1ApplicationsGetResponses, ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, ReadAccountProfileApiV1ProfileGetData, ReadAccountProfileApiV1ProfileGetResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, ResumeWorkflowApiV1WorkflowThreadIdResumePostData, ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors, ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostData, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, StartWorkflowApiV1WorkflowStartPostData, StartWorkflowApiV1WorkflowStartPostErrors, StartWorkflowApiV1WorkflowStartPostResponses, StreamWorkflowApiV1WorkflowThreadIdStreamGetData, StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors, StreamWorkflowApiV1WorkflowThreadIdStreamGetResponses, UpdateAccountProfileApiV1ProfilePutData, UpdateAccountProfileApiV1ProfilePutErrors, UpdateAccountProfileApiV1ProfilePutResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutData, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses } from './types.gen';
+import type { AnswerStatusApiV1DocumentsDocumentIdAnswersGetData, AnswerStatusApiV1DocumentsDocumentIdAnswersGetErrors, AnswerStatusApiV1DocumentsDocumentIdAnswersGetResponses, AskPaperApiV1DocumentsDocumentIdAnswersPostData, AskPaperApiV1DocumentsDocumentIdAnswersPostErrors, AskPaperApiV1DocumentsDocumentIdAnswersPostResponses, CancelIndexingApiV1DocumentsDocumentIdIndexDeleteData, CancelIndexingApiV1DocumentsDocumentIdIndexDeleteErrors, CancelIndexingApiV1DocumentsDocumentIdIndexDeleteResponses, CreateApplicationApiV1ApplicationsPostData, CreateApplicationApiV1ApplicationsPostErrors, CreateApplicationApiV1ApplicationsPostResponses, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostData, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostErrors, CreateDemoOutreachDraftApiV1DemoOutreachDraftsPostResponses, CreateOutreachDraftApiV1OutreachDraftsPostData, CreateOutreachDraftApiV1OutreachDraftsPostErrors, CreateOutreachDraftApiV1OutreachDraftsPostResponses, DeleteAccountApiV1AccountDeleteData, DeleteAccountApiV1AccountDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteData, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, DiscoverMentorsApiV1DiscoveryMentorsPostData, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverPapersApiV1DiscoveryPapersPostData, DiscoverPapersApiV1DiscoveryPapersPostErrors, DiscoverPapersApiV1DiscoveryPapersPostResponses, IndexingStatusApiV1DocumentsDocumentIdIndexGetData, IndexingStatusApiV1DocumentsDocumentIdIndexGetErrors, IndexingStatusApiV1DocumentsDocumentIdIndexGetResponses, ListApplicationsApiV1ApplicationsGetData, ListApplicationsApiV1ApplicationsGetResponses, ListDocumentsApiV1DocumentsPaperPaperIdGetData, ListDocumentsApiV1DocumentsPaperPaperIdGetErrors, ListDocumentsApiV1DocumentsPaperPaperIdGetResponses, ListDraftsApiV1ResearchDraftsGetData, ListDraftsApiV1ResearchDraftsGetResponses, ListResearchApiV1ResearchPapersGetData, ListResearchApiV1ResearchPapersGetResponses, ListSavedOpportunitiesApiV1OpportunitiesSavedGetData, ListSavedOpportunitiesApiV1OpportunitiesSavedGetResponses, LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostData, LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostErrors, LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostResponses, ReadAccountProfileApiV1ProfileGetData, ReadAccountProfileApiV1ProfileGetResponses, ReadDemoBootstrapApiV1DemoBootstrapGetData, ReadDemoBootstrapApiV1DemoBootstrapGetErrors, ReadDemoBootstrapApiV1DemoBootstrapGetResponses, ReadDemoProfileApiV1DemoProfileGetData, ReadDemoProfileApiV1DemoProfileGetErrors, ReadDemoProfileApiV1DemoProfileGetResponses, ReadDocumentApiV1DocumentsDocumentIdGetData, ReadDocumentApiV1DocumentsDocumentIdGetErrors, ReadDocumentApiV1DocumentsDocumentIdGetResponses, ReadHealthApiV1HealthGetData, ReadHealthApiV1HealthGetResponses, ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetData, ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetErrors, ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetResponses, ReadOriginalApiV1DocumentsDocumentIdFileGetData, ReadOriginalApiV1DocumentsDocumentIdFileGetErrors, ReadOriginalApiV1DocumentsDocumentIdFileGetResponses, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetData, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetErrors, ReadOutreachDraftApiV1OutreachDraftsDraftIdGetResponses, ReadPagesApiV1DocumentsDocumentIdPagesGetData, ReadPagesApiV1DocumentsDocumentIdPagesGetErrors, ReadPagesApiV1DocumentsDocumentIdPagesGetResponses, ReadPaperApiV1ResearchPapersPaperIdGetData, ReadPaperApiV1ResearchPapersPaperIdGetErrors, ReadPaperApiV1ResearchPapersPaperIdGetResponses, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteData, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteErrors, RemoveSavedOpportunityApiV1OpportunitiesOpportunityIdSaveDeleteResponses, ResumeWorkflowApiV1WorkflowThreadIdResumePostData, ResumeWorkflowApiV1WorkflowThreadIdResumePostErrors, ResumeWorkflowApiV1WorkflowThreadIdResumePostResponses, RunDemoDiscoveryApiV1DemoDiscoveryPostData, RunDemoDiscoveryApiV1DemoDiscoveryPostErrors, RunDemoDiscoveryApiV1DemoDiscoveryPostResponses, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostData, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostErrors, SaveOpportunityApiV1OpportunitiesOpportunityIdSavePostResponses, SavePaperApiV1ResearchPapersPaperIdPutData, SavePaperApiV1ResearchPapersPaperIdPutErrors, SavePaperApiV1ResearchPapersPaperIdPutResponses, ScanUniversitiesApiV1DiscoveryUniversitiesScanPostData, ScanUniversitiesApiV1DiscoveryUniversitiesScanPostErrors, ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponse, ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponses, SearchOpportunitiesApiV1OpportunitiesSearchPostData, SearchOpportunitiesApiV1OpportunitiesSearchPostErrors, SearchOpportunitiesApiV1OpportunitiesSearchPostResponses, SearchPassagesApiV1DocumentsDocumentIdPassagesPostData, SearchPassagesApiV1DocumentsDocumentIdPassagesPostErrors, SearchPassagesApiV1DocumentsDocumentIdPassagesPostResponses, SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostData, SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostErrors, SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostResponses, SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetData, SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetErrors, SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetResponses, SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutData, SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutErrors, SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutResponses, StartIndexingApiV1DocumentsDocumentIdIndexPostData, StartIndexingApiV1DocumentsDocumentIdIndexPostErrors, StartIndexingApiV1DocumentsDocumentIdIndexPostResponses, StartWorkflowApiV1WorkflowStartPostData, StartWorkflowApiV1WorkflowStartPostErrors, StartWorkflowApiV1WorkflowStartPostResponses, StreamWorkflowApiV1WorkflowThreadIdStreamGetData, StreamWorkflowApiV1WorkflowThreadIdStreamGetErrors, StreamWorkflowApiV1WorkflowThreadIdStreamGetResponses, UpdateAccountProfileApiV1ProfilePutData, UpdateAccountProfileApiV1ProfilePutErrors, UpdateAccountProfileApiV1ProfilePutResponses, UpdateApplicationApiV1ApplicationsApplicationIdPutData, UpdateApplicationApiV1ApplicationsApplicationIdPutErrors, UpdateApplicationApiV1ApplicationsApplicationIdPutResponses, UpdateDemoProfileApiV1DemoProfilePutData, UpdateDemoProfileApiV1DemoProfilePutErrors, UpdateDemoProfileApiV1DemoProfilePutResponses, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutData, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutErrors, UpdateOutreachDraftApiV1OutreachDraftsDraftIdPutResponses, UploadDocumentApiV1DocumentsPaperPaperIdPostData, UploadDocumentApiV1DocumentsPaperPaperIdPostErrors, UploadDocumentApiV1DocumentsPaperPaperIdPostResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -112,6 +112,21 @@ export class Sdk extends HeyApiClient {
     }
 
     /**
+     * Find a selected researcher's evidenced public email
+     */
+    public lookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPost<ThrowOnError extends boolean = false>(options: Options<LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostResponses, LookupPublicEmailApiV1AuthorsAuthorIdPublicEmailPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/authors/{author_id}/public-email',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
      * Load the fictional demo catalog
      */
     public readDemoBootstrapApiV1DemoBootstrapGet<ThrowOnError extends boolean = false>(options?: Options<ReadDemoBootstrapApiV1DemoBootstrapGetData, ThrowOnError>) {
@@ -172,6 +187,7 @@ export class Sdk extends HeyApiClient {
      */
     public discoverMentorsApiV1DiscoveryMentorsPost<ThrowOnError extends boolean = false>(options: Options<DiscoverMentorsApiV1DiscoveryMentorsPostData, ThrowOnError>) {
         return (options.client ?? this.client).post<DiscoverMentorsApiV1DiscoveryMentorsPostResponses, DiscoverMentorsApiV1DiscoveryMentorsPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/discovery/mentors',
             ...options,
             headers: {
@@ -187,6 +203,198 @@ export class Sdk extends HeyApiClient {
     public discoverPapersApiV1DiscoveryPapersPost<ThrowOnError extends boolean = false>(options: Options<DiscoverPapersApiV1DiscoveryPapersPostData, ThrowOnError>) {
         return (options.client ?? this.client).post<DiscoverPapersApiV1DiscoveryPapersPostResponses, DiscoverPapersApiV1DiscoveryPapersPostErrors, ThrowOnError>({
             url: '/api/v1/discovery/papers',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Stream a bounded direct-university scan
+     *
+     * SSE data events each contain a UniversityScanSnapshot. No arbitrary URLs are accepted.
+     */
+    public scanUniversitiesApiV1DiscoveryUniversitiesScanPost<ThrowOnError extends boolean = false>(options: Options<ScanUniversitiesApiV1DiscoveryUniversitiesScanPostData, ThrowOnError, ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponse>) {
+        return (options.client ?? this.client).sse.post<ScanUniversitiesApiV1DiscoveryUniversitiesScanPostResponses, ScanUniversitiesApiV1DiscoveryUniversitiesScanPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/discovery/universities/scan',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * List Documents
+     */
+    public listDocumentsApiV1DocumentsPaperPaperIdGet<ThrowOnError extends boolean = false>(options: Options<ListDocumentsApiV1DocumentsPaperPaperIdGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ListDocumentsApiV1DocumentsPaperPaperIdGetResponses, ListDocumentsApiV1DocumentsPaperPaperIdGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/paper/{paper_id}',
+            ...options
+        });
+    }
+
+    /**
+     * Upload Document
+     */
+    public uploadDocumentApiV1DocumentsPaperPaperIdPost<ThrowOnError extends boolean = false>(options: Options<UploadDocumentApiV1DocumentsPaperPaperIdPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<UploadDocumentApiV1DocumentsPaperPaperIdPostResponses, UploadDocumentApiV1DocumentsPaperPaperIdPostErrors, ThrowOnError>({
+            bodySerializer: null,
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/paper/{paper_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/pdf',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Delete Document
+     */
+    public deleteDocumentApiV1DocumentsDocumentIdDelete<ThrowOnError extends boolean = false>(options: Options<DeleteDocumentApiV1DocumentsDocumentIdDeleteData, ThrowOnError>) {
+        return (options.client ?? this.client).delete<DeleteDocumentApiV1DocumentsDocumentIdDeleteResponses, DeleteDocumentApiV1DocumentsDocumentIdDeleteErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}',
+            ...options
+        });
+    }
+
+    /**
+     * Read Document
+     */
+    public readDocumentApiV1DocumentsDocumentIdGet<ThrowOnError extends boolean = false>(options: Options<ReadDocumentApiV1DocumentsDocumentIdGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ReadDocumentApiV1DocumentsDocumentIdGetResponses, ReadDocumentApiV1DocumentsDocumentIdGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}',
+            ...options
+        });
+    }
+
+    /**
+     * Answer Status
+     */
+    public answerStatusApiV1DocumentsDocumentIdAnswersGet<ThrowOnError extends boolean = false>(options: Options<AnswerStatusApiV1DocumentsDocumentIdAnswersGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<AnswerStatusApiV1DocumentsDocumentIdAnswersGetResponses, AnswerStatusApiV1DocumentsDocumentIdAnswersGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/answers',
+            ...options
+        });
+    }
+
+    /**
+     * Ask Paper
+     */
+    public askPaperApiV1DocumentsDocumentIdAnswersPost<ThrowOnError extends boolean = false>(options: Options<AskPaperApiV1DocumentsDocumentIdAnswersPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<AskPaperApiV1DocumentsDocumentIdAnswersPostResponses, AskPaperApiV1DocumentsDocumentIdAnswersPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/answers',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Read Original
+     */
+    public readOriginalApiV1DocumentsDocumentIdFileGet<ThrowOnError extends boolean = false>(options: Options<ReadOriginalApiV1DocumentsDocumentIdFileGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ReadOriginalApiV1DocumentsDocumentIdFileGetResponses, ReadOriginalApiV1DocumentsDocumentIdFileGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/file',
+            ...options
+        });
+    }
+
+    /**
+     * Cancel Indexing
+     */
+    public cancelIndexingApiV1DocumentsDocumentIdIndexDelete<ThrowOnError extends boolean = false>(options: Options<CancelIndexingApiV1DocumentsDocumentIdIndexDeleteData, ThrowOnError>) {
+        return (options.client ?? this.client).delete<CancelIndexingApiV1DocumentsDocumentIdIndexDeleteResponses, CancelIndexingApiV1DocumentsDocumentIdIndexDeleteErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/index',
+            ...options
+        });
+    }
+
+    /**
+     * Indexing Status
+     */
+    public indexingStatusApiV1DocumentsDocumentIdIndexGet<ThrowOnError extends boolean = false>(options: Options<IndexingStatusApiV1DocumentsDocumentIdIndexGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<IndexingStatusApiV1DocumentsDocumentIdIndexGetResponses, IndexingStatusApiV1DocumentsDocumentIdIndexGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/index',
+            ...options
+        });
+    }
+
+    /**
+     * Start Indexing
+     */
+    public startIndexingApiV1DocumentsDocumentIdIndexPost<ThrowOnError extends boolean = false>(options: Options<StartIndexingApiV1DocumentsDocumentIdIndexPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<StartIndexingApiV1DocumentsDocumentIdIndexPostResponses, StartIndexingApiV1DocumentsDocumentIdIndexPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/index',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Read Pages
+     */
+    public readPagesApiV1DocumentsDocumentIdPagesGet<ThrowOnError extends boolean = false>(options: Options<ReadPagesApiV1DocumentsDocumentIdPagesGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ReadPagesApiV1DocumentsDocumentIdPagesGetResponses, ReadPagesApiV1DocumentsDocumentIdPagesGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/pages',
+            ...options
+        });
+    }
+
+    /**
+     * Search Passages
+     */
+    public searchPassagesApiV1DocumentsDocumentIdPassagesPost<ThrowOnError extends boolean = false>(options: Options<SearchPassagesApiV1DocumentsDocumentIdPassagesPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<SearchPassagesApiV1DocumentsDocumentIdPassagesPostResponses, SearchPassagesApiV1DocumentsDocumentIdPassagesPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/passages',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Reading History
+     */
+    public readingHistoryApiV1DocumentsDocumentIdReadingHistoryGet<ThrowOnError extends boolean = false>(options: Options<ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetResponses, ReadingHistoryApiV1DocumentsDocumentIdReadingHistoryGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/reading-history',
+            ...options
+        });
+    }
+
+    /**
+     * Search Semantic Passages
+     */
+    public searchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPost<ThrowOnError extends boolean = false>(options: Options<SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostData, ThrowOnError>) {
+        return (options.client ?? this.client).post<SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostResponses, SearchSemanticPassagesApiV1DocumentsDocumentIdSemanticPassagesPostErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/documents/{document_id}/semantic-passages',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
@@ -316,6 +524,80 @@ export class Sdk extends HeyApiClient {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
+        });
+    }
+
+    /**
+     * List Drafts
+     */
+    public listDraftsApiV1ResearchDraftsGet<ThrowOnError extends boolean = false>(options?: Options<ListDraftsApiV1ResearchDraftsGetData, ThrowOnError>) {
+        return (options?.client ?? this.client).get<ListDraftsApiV1ResearchDraftsGetResponses, unknown, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/research/drafts',
+            ...options
+        });
+    }
+
+    /**
+     * Select Recipient
+     */
+    public selectRecipientApiV1ResearchDraftsDraftIdRecipientPut<ThrowOnError extends boolean = false>(options: Options<SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutData, ThrowOnError>) {
+        return (options.client ?? this.client).put<SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutResponses, SelectRecipientApiV1ResearchDraftsDraftIdRecipientPutErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/research/drafts/{draft_id}/recipient',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * List Research
+     */
+    public listResearchApiV1ResearchPapersGet<ThrowOnError extends boolean = false>(options?: Options<ListResearchApiV1ResearchPapersGetData, ThrowOnError>) {
+        return (options?.client ?? this.client).get<ListResearchApiV1ResearchPapersGetResponses, unknown, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/research/papers',
+            ...options
+        });
+    }
+
+    /**
+     * Read Paper
+     */
+    public readPaperApiV1ResearchPapersPaperIdGet<ThrowOnError extends boolean = false>(options: Options<ReadPaperApiV1ResearchPapersPaperIdGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<ReadPaperApiV1ResearchPapersPaperIdGetResponses, ReadPaperApiV1ResearchPapersPaperIdGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/research/papers/{paper_id}',
+            ...options
+        });
+    }
+
+    /**
+     * Save Paper
+     */
+    public savePaperApiV1ResearchPapersPaperIdPut<ThrowOnError extends boolean = false>(options: Options<SavePaperApiV1ResearchPapersPaperIdPutData, ThrowOnError>) {
+        return (options.client ?? this.client).put<SavePaperApiV1ResearchPapersPaperIdPutResponses, SavePaperApiV1ResearchPapersPaperIdPutErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/research/papers/{paper_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+
+    /**
+     * Select Author
+     */
+    public selectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGet<ThrowOnError extends boolean = false>(options: Options<SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetData, ThrowOnError>) {
+        return (options.client ?? this.client).get<SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetResponses, SelectAuthorApiV1ResearchPapersPaperIdAuthorsAuthorIdGetErrors, ThrowOnError>({
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/research/papers/{paper_id}/authors/{author_id}',
+            ...options
         });
     }
 

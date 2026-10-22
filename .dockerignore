@@ -1,0 +1,16 @@
+# Frontend context: allow only workspace manifests and frontend source.
+**
+!package.json
+!package-lock.json
+!apps/
+!apps/web/
+!apps/web/**
+**/node_modules
+**/.next
+**/.env
+**/.env.*
+**/*.log
+**/test-results
+**/playwright-report
+**/*.tsbuildinfo
+apps/web/package-lock.json

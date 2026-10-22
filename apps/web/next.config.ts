@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
+  // Allow the bounded university scan to finish through the same-origin proxy.
+  experimental: { proxyTimeout: 150_000 },
   async rewrites() {
     return [
       {

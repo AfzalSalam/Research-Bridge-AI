@@ -10,7 +10,7 @@ from app.schemas.profile import StudentProfileFacts
 
 
 class ProfileReader(Protocol):
-    """Read boundary used when composing the demo bootstrap."""
+    """Profile facts consumed by discovery, with ownership set by composition."""
 
     async def get_profile(self) -> StudentProfileFacts: ...
 

@@ -184,7 +184,9 @@ try {
   
   const webEnvironmentWithE2E = {
     ...webEnvironment,
-    NEXT_PUBLIC_E2E_TEST: "true"
+    NEXT_PUBLIC_E2E_TEST: "true",
+    NEXT_PUBLIC_SUPABASE_URL: "https://e2e.example.supabase.co",
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: "e2e-public-placeholder",
   };
   
   await runCommand(process.execPath, [nextCli, "build"], {

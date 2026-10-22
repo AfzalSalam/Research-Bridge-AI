@@ -1,0 +1,18 @@
+{
+  "artifacts": [
+    "public-answer-pilot-v6.json",
+    "public-answer-pilot-v6-continuation.json"
+  ],
+  "attempted": 12,
+  "answers": 7,
+  "abstentions": 4,
+  "unavailable": 1,
+  "exact_source_citations": 17,
+  "retained_failure": "liblinear:solver: generation timeout",
+  "audit_limitations": [
+    "Provisional agent review, not human gold",
+    "LIBLINEAR validation claim calls C a penalty parameter without citing its definition",
+    "Model reconstruction of extracted function name train one() as train_one() is not independently verified",
+    "Observed development corpus, not held-out accuracy"
+  ]
+}

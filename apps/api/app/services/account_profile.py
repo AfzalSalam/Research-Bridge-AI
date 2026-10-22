@@ -26,7 +26,9 @@ class AccountProfileService:
         if profile is None:
             raise AppError(
                 code="profile_required",
-                message="Save your profile before using it as outreach evidence.",
+                message=(
+                    "Save your profile before matching mentors or drafting outreach."
+                ),
                 status_code=409,
             )
         return profile

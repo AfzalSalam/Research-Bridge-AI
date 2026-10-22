@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/layout/page-header";
-import { DemoNotice } from "@/features/demo/components/demo-notice";
 import { WorkflowSteps } from "@/features/demo/components/workflow-steps";
 import { ProfileExperience } from "@/features/profile/profile-experience";
 
@@ -16,12 +15,11 @@ export default function ProfilePage() {
     <main id="main-content">
       <Container className="py-10 sm:py-14 lg:py-16">
         <PageHeader
-          description="Edit a fictional student profile and establish exactly which facts later explanations and drafts may reuse."
+          description="Keep your research interests, skills, and experience up to date for mentor matching and personalized outreach."
           eyebrow="Step 1 · Profile"
           title="Your research profile, grounded in facts"
         />
         <WorkflowSteps current="Profile" />
-        <DemoNotice className="mt-8" />
         <div className="mt-8">
           <ProfileExperience />
         </div>

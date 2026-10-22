@@ -15,7 +15,7 @@ class PaperDiscoveryRequest(ApiModel):
     """Bounded paper query for the real OpenAlex discovery boundary."""
 
     query: DiscoveryText
-    limit: int = Field(default=12, ge=1, le=25)
+    limit: int = Field(default=12, ge=1, le=30)
 
 
 class PaperInstitution(ApiModel):

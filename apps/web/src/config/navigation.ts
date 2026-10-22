@@ -22,10 +22,16 @@ export const primaryNavigation: readonly NavigationItem[] = [
     icon: Compass,
   },
   {
-    label: "Mentors",
-    href: "/mentors",
-    description: "Review plausible mentors and the papers behind each match.",
+    label: "My Research",
+    href: "/research",
+    description: "Keep papers, reading notes, and researcher shortlists together.",
     icon: UsersRound,
+  },
+  {
+    label: "Conversations",
+    href: "/conversations",
+    description: "Continue saved outreach drafts with their paper evidence.",
+    icon: ClipboardList,
   },
   {
     label: "Opportunities",
@@ -33,16 +39,10 @@ export const primaryNavigation: readonly NavigationItem[] = [
     description: "Find research opportunities with visible source evidence.",
     icon: BriefcaseBusiness,
   },
-  {
-    label: "Applications",
-    href: "/applications",
-    description: "Keep saved opportunities and follow-ups organized.",
-    icon: ClipboardList,
-  },
 ] as const;
 
 export const profileNavigation: NavigationItem = {
-  label: "Profile",
+  label: "Profile & Settings",
   href: "/profile",
   description: "Manage the student facts used for matching and outreach.",
   icon: UserRound,

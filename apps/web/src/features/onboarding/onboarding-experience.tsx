@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,26 +16,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/features/demo/components/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  updateAccountProfile, 
-  accountProfileSchema, 
+import {
   accountProfileFormSchema,
-  type AccountProfile,
+  profileFormValuesToAccountProfile,
+  profileErrorMessage,
   type AccountProfileFormValues
 } from "@/lib/api/profile";
+import { useAuth } from "@/features/auth/use-auth";
+import { useSaveAccountProfile } from "@/features/profile/use-account-profile";
 import { ShieldCheck, ArrowRight } from "lucide-react";
-
-function commaSeparatedValues(value: string | string[]): string[] {
-  if (Array.isArray(value)) return value;
-  return value
-    .split(",")
-    .map((v) => v.trim())
-    .filter(Boolean);
-}
 
 export function OnboardingExperience() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const updateProfile = useSaveAccountProfile(user?.id ?? "");
   const [saveError, setSaveError] = useState("");
 
   const {
@@ -58,26 +51,15 @@ export function OnboardingExperience() {
     },
   });
 
-  const updateProfile = useMutation({
-    mutationFn: (data: AccountProfile) => updateAccountProfile(data),
-    onSuccess: (savedProfile) => {
-      queryClient.setQueryData(["profile"], savedProfile);
-      router.push("/discover");
-    },
-    onError: (error) => {
-      setSaveError(error instanceof Error ? error.message : "Failed to save profile.");
-    },
-  });
-
   async function saveProfile(values: AccountProfileFormValues) {
     setSaveError("");
-    const profile = accountProfileSchema.parse({
-      ...values,
-      researchInterests: commaSeparatedValues(values.researchInterests),
-      skills: commaSeparatedValues(values.skills),
-    });
-
-    await updateProfile.mutateAsync(profile);
+    if (!user) return;
+    try {
+      await updateProfile.mutateAsync(profileFormValuesToAccountProfile(values));
+      router.replace("/discover");
+    } catch (error) {
+      setSaveError(profileErrorMessage(error));
+    }
   }
 
   return (
@@ -199,7 +181,7 @@ export function OnboardingExperience() {
         </FieldGroup>
 
         <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-border pt-6">
-          <Button disabled={isSubmitting} type="submit" variant="evidence">
+          <Button disabled={isSubmitting || !user} type="submit" variant="evidence">
             {isSubmitting ? "Saving profile..." : "Continue to Dashboard"}
             {!isSubmitting && <ArrowRight aria-hidden="true" className="ml-2 size-4" />}
           </Button>

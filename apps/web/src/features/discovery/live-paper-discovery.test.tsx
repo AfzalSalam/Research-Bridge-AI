@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const api = vi.hoisted(() => ({ discover: vi.fn() }));
+vi.mock("@/lib/api/contact", () => ({ findPublicEmail: vi.fn().mockRejectedValue(new Error("Fixture lookup unavailable")) }));
 
 vi.mock("@/lib/api/discovery", () => ({
   discoverOpenAlexPapers: api.discover,
@@ -95,12 +96,12 @@ describe("LivePaperDiscovery", () => {
     api.discover.mockResolvedValue(completeResponse);
     renderDiscovery();
 
-    fireEvent.click(screen.getByRole("button", { name: "Search OpenAlex" }));
+    fireEvent.click(screen.getByRole("button", { name: "Search papers" }));
 
     expect(
-      await screen.findByRole("heading", { name: "Reviewable publication evidence" }),
+      await screen.findByRole("heading", { name: "Papers on your topic" }),
     ).toBeInTheDocument();
-    expect(screen.getAllByText(/not Research Bridge ranked/i)).toHaveLength(2);
+    expect(screen.getByText("Academic database results")).toBeInTheDocument();
     expect(screen.getByText("Mira Sen")).toBeInTheDocument();
     expect(screen.getByText(/0.94 provider score/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /DOI record/ })).toHaveAttribute(
@@ -118,7 +119,7 @@ describe("LivePaperDiscovery", () => {
     });
     renderDiscovery();
 
-    fireEvent.click(screen.getByRole("button", { name: "Search OpenAlex" }));
+    fireEvent.click(screen.getByRole("button", { name: "Search papers" }));
 
     expect(await screen.findByText("OpenAlex returned partial evidence")).toBeInTheDocument();
     expect(screen.getByText("Human-centred AI for clinical decisions")).toBeInTheDocument();

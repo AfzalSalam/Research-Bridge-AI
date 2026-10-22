@@ -1,0 +1,91 @@
+{
+  "name": "scikit-learn-public-pilot-v1",
+  "title": "Scikit-learn: Machine Learning in Python",
+  "authors": "Fabian Pedregosa et al.",
+  "year": 2011,
+  "source_url": "https://www.jmlr.org/papers/volume12/pedregosa11a/pedregosa11a.pdf",
+  "landing_url": "https://www.jmlr.org/papers/v12/pedregosa11a.html",
+  "license_evidence_url": "https://jmlr.org/author-info.html",
+  "license_note": "Publisher author guidance states CC-BY; no PDF redistribution in this fixture.",
+  "pdf_sha256": "1c338a6b3c6c1dcafda3990a8098b8b50dd6c77616361396fb75f6822c6e0778",
+  "label_status": "provisional-single-agent-reviewed-not-human-gold",
+  "extraction": "pypdf 6.20.0; strip/NUL removal; 1200 chars stride 1050; physical PDF pages",
+  "queries": [
+    {
+      "id": "quality",
+      "question": "What tools and tests support code quality?",
+      "evidence": [
+        {
+          "page": 3,
+          "start": 446,
+          "end": 591
+        }
+      ],
+      "relevant": [
+        "3:0:1200"
+      ]
+    },
+    {
+      "id": "grid",
+      "question": "How does GridSearchCV select parameters?",
+      "evidence": [
+        {
+          "page": 4,
+          "start": 1374,
+          "end": 1519
+        }
+      ],
+      "relevant": [
+        "4:1050:2250"
+      ]
+    },
+    {
+      "id": "neighbors",
+      "question": "How does the nearest-neighbour method handle high dimensional input?",
+      "evidence": [
+        {
+          "page": 5,
+          "start": 659,
+          "end": 836
+        }
+      ],
+      "relevant": [
+        "5:0:1200"
+      ]
+    },
+    {
+      "id": "limits",
+      "question": "Why does Elastic Net struggle with very large problems?",
+      "evidence": [
+        {
+          "page": 5,
+          "start": 310,
+          "end": 659
+        }
+      ],
+      "relevant": [
+        "5:0:1200"
+      ]
+    },
+    {
+      "id": "unsupported-gpu",
+      "question": "Which GPU model was used for the Madelon benchmarks?",
+      "evidence": [],
+      "relevant": []
+    },
+    {
+      "id": "unsupported-quantum",
+      "question": "What quantum error correction code is evaluated?",
+      "evidence": [],
+      "relevant": []
+    }
+  ],
+  "page_text_sha256": [
+    "106c09f18d6175926e21ed9867cff3201ae3354788c4a6fed36e756e0d8e626d",
+    "be9bf50c45989fc9be2463aeee85258928782a27369ba44a545d181468fb296e",
+    "7454f8c1ce1a1ca36e9a56a49fc1b0e3f261f3f3d2e5552b2243acd883ab8f67",
+    "73ae92b591a7ba69f2d3099216bcc8e0fb226449faefd89da2a36a1c3efef7a5",
+    "126c10617fe9619b3daea8b140c9c68293c1a42717e29b71d6a566865ec3e8ce",
+    "9684724fe1d9a026c6b04fb83cda516f269e01c79b069539047542c2b89c56d9"
+  ]
+}

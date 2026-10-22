@@ -1,0 +1,186 @@
+{
+  "labels": "provisional-single-agent-reviewed-not-human-gold",
+  "dataset": {
+    "name": "scikit-learn-public-pilot-v1",
+    "kind": "labelled-corpus",
+    "passage_ids": [
+      "1:0:1200",
+      "1:1050:1589",
+      "2:0:1200",
+      "2:1050:2250",
+      "2:2100:2760",
+      "3:0:1200",
+      "3:1050:2250",
+      "3:2100:3300",
+      "3:3150:3338",
+      "4:0:1200",
+      "4:1050:2250",
+      "4:2100:3181",
+      "5:0:1200",
+      "5:1050:2250",
+      "5:2100:2863",
+      "6:0:1200",
+      "6:1050:1515"
+    ],
+    "queries": [
+      {
+        "id": "quality",
+        "relevant": [
+          "3:0:1200"
+        ]
+      },
+      {
+        "id": "grid",
+        "relevant": [
+          "4:1050:2250"
+        ]
+      },
+      {
+        "id": "neighbors",
+        "relevant": [
+          "5:0:1200"
+        ]
+      },
+      {
+        "id": "limits",
+        "relevant": [
+          "5:0:1200"
+        ]
+      },
+      {
+        "id": "unsupported-gpu",
+        "relevant": []
+      },
+      {
+        "id": "unsupported-quantum",
+        "relevant": []
+      }
+    ],
+    "runs": [
+      {
+        "query_id": "quality",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:0:1200",
+          "3:2100:3300",
+          "2:0:1200",
+          "4:0:1200",
+          "5:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 24.73150000150781
+      },
+      {
+        "query_id": "grid",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "4:1050:2250",
+          "3:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true
+        ],
+        "latency_ms": 10.707500005082693
+      },
+      {
+        "query_id": "neighbors",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:2100:3300",
+          "4:0:1200",
+          "2:0:1200",
+          "4:2100:3181",
+          "5:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 11.791299999458715
+      },
+      {
+        "query_id": "limits",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "5:0:1200",
+          "4:0:1200",
+          "4:2100:3181",
+          "5:2100:2863"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 8.28689999616472
+      },
+      {
+        "query_id": "unsupported-gpu",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:1050:2250",
+          "4:0:1200",
+          "2:0:1200",
+          "4:2100:3181",
+          "5:1050:2250"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 10.300600006303284
+      },
+      {
+        "query_id": "unsupported-quantum",
+        "engine": "postgresql_fts",
+        "retrieved": [
+          "3:0:1200",
+          "3:2100:3300",
+          "2:0:1200"
+        ],
+        "citation_valid": [
+          true,
+          true,
+          true
+        ],
+        "latency_ms": 7.969999998749699
+      }
+    ]
+  },
+  "report": {
+    "dataset": "scikit-learn-public-pilot-v1",
+    "kind": "labelled-corpus",
+    "engines": {
+      "postgresql_fts": {
+        "queries": 6,
+        "answerable_queries": 4,
+        "unsupported_queries": 2,
+        "recall_at_5": 0.75,
+        "recall_at_10": 0.75,
+        "mrr": 0.75,
+        "ndcg_at_10": 0.75,
+        "duplicate_rate": 0.0,
+        "citation_coverage": 1.0,
+        "unsupported_query_retrieval_rate": 1.0,
+        "latency_p50_ms": 10.300600006303284,
+        "latency_p95_ms": 24.73150000150781
+      }
+    },
+    "notice": "Metrics describe supplied rankings and citation audits only. Synthetic runs do not measure semantic quality. Retrieved passages are not generated claims; unsupported-claim rate is not measured."
+  },
+  "limitations": "One paper; provisional labels; retrieval-only timing; no live embeddings; no semantic accuracy or generated-answer claim."
+}

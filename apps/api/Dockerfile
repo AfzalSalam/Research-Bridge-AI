@@ -8,7 +8,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     UV_COMPILE_BYTECODE=1 \
-    UV_SYSTEM_PYTHON=1
+    PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies
 COPY pyproject.toml uv.lock ./
-RUN uv sync --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy project files
 COPY alembic.ini .
@@ -30,7 +30,7 @@ COPY app/ app/
 COPY README.md .
 
 # Install the project itself
-RUN uv pip install -e .
+RUN uv sync --frozen --no-dev
 
 # Create a non-root user
 RUN useradd -m appuser && chown -R appuser /app

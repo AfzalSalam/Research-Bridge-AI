@@ -1,0 +1,90 @@
+{
+  "name": "liblinear-public-pilot-v1",
+  "title": "LIBLINEAR: A Library for Large Linear Classification",
+  "authors": "Rong-En Fan, Kai-Wei Chang, Cho-Jui Hsieh, Xiang-Rui Wang, Chih-Jen Lin",
+  "year": 2008,
+  "source_url": "https://www.jmlr.org/papers/volume9/fan08a/fan08a.pdf",
+  "landing_url": "https://www.jmlr.org/papers/v9/fan08a.html",
+  "license_evidence_url": "https://jmlr.org/author-info.html",
+  "license_note": "Publisher author guidance states CC-BY; no PDF redistribution in this fixture.",
+  "pdf_sha256": "86b3b03c8ff30d9a633884daa00159add25d04d99b64d4010f4894a087127d0a",
+  "page_text_sha256": [
+    "e49ebc85ed78b83704eb3e6426b1834d7a36739a380ce7e8bf2600ee20457bff",
+    "59b673c23d7070451c9c3ae428111ef81551b64b10bf6bd5a5aa033082fdd9e3",
+    "704d95ee323719b468031e012452037efb3e01f57d96991494092ffeb8f8daec",
+    "f9ace56a10f24eaebfe4508651e119c6a7cf3513a4f7d684dc0f7e6bb3e944b7"
+  ],
+  "label_status": "provisional-single-agent-reviewed-not-human-gold",
+  "extraction": "pypdf 6.20.0; strip/NUL removal; 1200 chars stride 1050; physical PDF pages",
+  "extraction_warning": "pypdf emitted missing fontTools warnings for CFF fonts; prose spans reviewed; equations/figure labels excluded from evidence questions.",
+  "queries": [
+    {
+      "id": "solver",
+      "question": "Which optimization method is used for logistic regression?",
+      "evidence": [
+        {
+          "page": 2,
+          "start": 1019,
+          "end": 1113
+        }
+      ],
+      "relevant": [
+        "2:0:1200"
+      ]
+    },
+    {
+      "id": "multiclass",
+      "question": "How are problems with more than two categories handled?",
+      "evidence": [
+        {
+          "page": 2,
+          "start": 1280,
+          "end": 1422
+        }
+      ],
+      "relevant": [
+        "2:1050:2250"
+      ]
+    },
+    {
+      "id": "separate",
+      "question": "Why are LIBLINEAR and LIBSVM kept as separate packages?",
+      "evidence": [
+        {
+          "page": 2,
+          "start": 1711,
+          "end": 1923
+        }
+      ],
+      "relevant": [
+        "2:1050:2250"
+      ]
+    },
+    {
+      "id": "validation",
+      "question": "How is the penalty parameter selected in the comparison experiments?",
+      "evidence": [
+        {
+          "page": 3,
+          "start": 2651,
+          "end": 2835
+        }
+      ],
+      "relevant": [
+        "3:2100:3254"
+      ]
+    },
+    {
+      "id": "unsupported-gpu",
+      "question": "Which GPU model was used in the training experiments?",
+      "evidence": [],
+      "relevant": []
+    },
+    {
+      "id": "unsupported-transformer",
+      "question": "How many attention heads does the classifier use?",
+      "evidence": [],
+      "relevant": []
+    }
+  ]
+}

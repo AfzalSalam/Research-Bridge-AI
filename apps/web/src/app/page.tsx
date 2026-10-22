@@ -139,11 +139,6 @@ function GlowCard({
   return (
     <article
       className={`glow-card rounded-2xl border border-border bg-card p-6 ${className}`}
-      onPointerMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
-        e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
-      }}
     >
       {children}
     </article>
@@ -323,12 +318,12 @@ export default function Home() {
         <div className="mx-auto max-w-[1160px] px-7">
           <Reveal>
             <h2 className="font-serif text-[clamp(30px,4vw,48px)] font-semibold leading-[1.1] tracking-[-0.02em]">
-              Rules we won't bend
+              Rules we won&apos;t bend
             </h2>
           </Reveal>
           <Reveal delay={60}>
             <p className="mb-12 mt-3 max-w-[36em] text-muted-foreground">
-              Trust matters when you're writing to someone who doesn't know you yet.
+              Trust matters when you&apos;re writing to someone who doesn&apos;t know you yet.
             </p>
           </Reveal>
 

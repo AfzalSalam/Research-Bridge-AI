@@ -88,7 +88,7 @@ describe("LiveOutreachWorkspace", () => {
     expect(screen.getByRole("button", { name: "Copied for your review" })).toBeEnabled();
   });
 
-  it("enforces the two-paper selection limit", () => {
+  it("enforces the two-paper selection limit", async () => {
     const papers = [
       candidate.supportingPapers[0],
       {
@@ -109,9 +109,9 @@ describe("LiveOutreachWorkspace", () => {
     });
 
     fireEvent.click(screen.getByRole("checkbox", { name: /Second supporting paper/ }));
-    expect(screen.getByRole("checkbox", { name: /Third supporting paper/ })).toBeDisabled();
+    await waitFor(() => expect(screen.getByRole("checkbox", { name: /Third supporting paper/ })).toBeDisabled());
     fireEvent.click(screen.getByRole("checkbox", { name: /Human-centred AI/ }));
-    expect(screen.getByRole("checkbox", { name: /Third supporting paper/ })).toBeEnabled();
+    await waitFor(() => expect(screen.getByRole("checkbox", { name: /Third supporting paper/ })).toBeEnabled());
   });
 
   it("recovers an optimistic version conflict from the persisted draft", async () => {

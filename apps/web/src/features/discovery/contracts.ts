@@ -9,7 +9,7 @@ export const livePaperSearchFormSchema = z.object({
     .trim()
     .min(3, "Enter a topic, DOI, or OpenAlex Work ID.")
     .max(300),
-  limit: z.coerce.number().int().min(1).max(25),
+  limit: z.coerce.number().int().min(1).max(30),
 });
 
 export const paperInstitutionSchema = z.object({
@@ -97,7 +97,7 @@ export const liveMentorSearchFormSchema = z.object({
     .trim()
     .min(3, "Enter a topic, DOI, or OpenAlex Work ID.")
     .max(300),
-  paperLimit: z.coerce.number().int().min(1).max(25),
+  paperLimit: z.coerce.number().int().min(1).max(30),
 });
 
 const mentorFeatureContributionSchema = z.object({
@@ -158,7 +158,7 @@ export const mentorDiscoveryResponseSchema = z.object({
   query: z.string().min(1),
   queryKind: z.enum(["text", "doi", "openalex-id"]),
   ordering: z.literal("deterministic-evidence-policy"),
-  profileMode: z.literal("saved-or-fictional-fallback"),
+  profileMode: z.literal("authenticated-account"),
   profileInputs: z.object({
     researchInterests: z.array(z.string().min(1)),
     skills: z.array(z.string().min(1)),

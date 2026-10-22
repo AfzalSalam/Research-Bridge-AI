@@ -1,6 +1,6 @@
 import { Sdk, type AccountProfile as GeneratedAccountProfile } from "@/lib/api/generated";
 import { client } from "@/lib/api/generated/client.gen";
-import { parseApiData } from "@/lib/api/result";
+import { ApiError, parseApiData } from "@/lib/api/result";
 import { z } from "zod";
 
 const shortText = z.string().trim().min(2).max(120);
@@ -29,6 +29,10 @@ function commaList(maxItems: number, label: string) {
     .min(2, `Add at least one ${label}.`)
     .max(240)
     .refine(
+      (value) => value.split(",").some((item) => item.trim()),
+      `Add at least one ${label}.`,
+    )
+    .refine(
       (value) => value.split(",").filter((item) => item.trim()).length <= maxItems,
       `Add no more than ${maxItems} ${label}.`,
     )
@@ -37,8 +41,8 @@ function commaList(maxItems: number, label: string) {
         value
           .split(",")
           .filter((item) => item.trim())
-          .every((item) => item.trim().length >= 2),
-      `Each ${label.replace(/s$/, "")} must contain at least 2 characters.`,
+          .every((item) => item.trim().length >= 2 && item.trim().length <= 120),
+      `Each ${label.replace(/s$/, "")} must contain 2 to 120 characters.`,
     )
     .refine(
       (value) => hasUniqueTerms(value.split(",").filter((item) => item.trim())),
@@ -66,6 +70,36 @@ export const accountProfileResponseSchema = z.object({
 
 export type AccountProfile = z.infer<typeof accountProfileSchema>;
 
+export function accountProfileQueryKey(userId: string | null) {
+  return ["account-profile", userId] as const;
+}
+
+export function accountProfileToFormValues(profile: AccountProfile): AccountProfileFormValues {
+  return {
+    ...profile,
+    researchInterests: profile.researchInterests.join(", "),
+    skills: profile.skills.join(", "),
+  };
+}
+
+export function profileFormValuesToAccountProfile(values: AccountProfileFormValues): AccountProfile {
+  const commaSeparatedValues = (value: string) =>
+    value.split(",").map((item) => item.trim()).filter(Boolean);
+
+  return accountProfileSchema.parse({
+    ...values,
+    researchInterests: commaSeparatedValues(values.researchInterests),
+    skills: commaSeparatedValues(values.skills),
+  });
+}
+
+export function profileErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : "Your profile could not be saved.";
+  return error instanceof ApiError && error.requestId
+    ? `${message} Request reference: ${error.requestId}.`
+    : message;
+}
+
 const sdk = new Sdk({ client });
 
 export async function getAccountProfile(signal?: AbortSignal): Promise<AccountProfile | null> {
@@ -78,7 +112,7 @@ export async function updateAccountProfile(
   profile: AccountProfile,
   signal?: AbortSignal,
 ): Promise<AccountProfile> {
-  const body = profile satisfies GeneratedAccountProfile;
+  const body = accountProfileSchema.parse(profile) satisfies GeneratedAccountProfile;
   const result = await sdk.updateAccountProfileApiV1ProfilePut({ body, signal });
   return parseApiData(result, accountProfileSchema);
 }

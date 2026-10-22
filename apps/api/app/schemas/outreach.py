@@ -108,7 +108,8 @@ class OutreachDraftResponse(ApiModel):
     id: UUID
     mentor_id: UUID
     recipient_display_name: str
-    recipient_contact: None = None
+    recipient_contact: str | None = None
+    contact_provenance: dict[str, str] | None = None
     recipient_source_url: HttpUrl
     recipient_last_verified_at: datetime
     subject: DraftSubject

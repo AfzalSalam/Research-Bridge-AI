@@ -6,14 +6,14 @@ We use Redis directly with a simple sliding window counter to avoid that couplin
 
 import logging
 import time
-from collections.abc import Callable
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import HTTPException, Request
+from fastapi.params import Depends as DependsParameter
 
 logger = logging.getLogger(__name__)
 
 
-def rate_limit(times: int, seconds: int) -> Callable:
+def rate_limit(times: int, seconds: int) -> DependsParameter:
     """A graceful rate limiter that fails open if Redis is unavailable."""
 
     async def _rate_limit(request: Request) -> None:
@@ -44,4 +44,4 @@ def rate_limit(times: int, seconds: int) -> Callable:
         except Exception:
             logger.warning("Rate limiting failed, failing open", exc_info=True)
 
-    return Depends(_rate_limit)
+    return DependsParameter(dependency=_rate_limit)
